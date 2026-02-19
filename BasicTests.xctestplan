@@ -1,0 +1,35 @@
+{
+  "configurations" : [
+    {
+      "id" : "76057A66-61B7-48D7-B180-F0AE8FBA6ABC",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "AgentTest",
+        "ConnectionlessExchangeTest",
+        "CredentialsTest",
+        "LedgerServiceTest",
+        "OobTest\/testCreateWithOfferCredentialMessage()",
+        "OobTest\/testCredentialOffer()",
+        "ProblemReportsTest",
+        "ProofsTest",
+        "RevocationTest"
+      ],
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "AriesFrameworkTests",
+        "name" : "AriesFrameworkTests"
+      }
+    }
+  ],
+  "version" : 1
+}
