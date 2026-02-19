@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>wallet-app-ios</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Use camera to scan QR codes</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth is used for credential exchange</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>MEDIATOR_URL</key>
+	<string>https://idd.serpro.gov.br/mediator_http?oob=eyJAdHlwZSI6ICJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzEuMS9pbnZpdGF0aW9uIiwgIkBpZCI6ICJlZTZmODE0MC0zNzMzLTRhYTItYTdmMy04MDdhMWZjZjhhNjQiLCAibGFiZWwiOiAiTWVkaWFkb3IgQUNBLVB5IGJlc3UiLCAiaGFuZHNoYWtlX3Byb3RvY29scyI6IFsiaHR0cHM6Ly9kaWRjb21tLm9yZy9kaWRleGNoYW5nZS8xLjAiXSwgInNlcnZpY2VzIjogW3siaWQiOiAiI2lubGluZSIsICJ0eXBlIjogImRpZC1jb21tdW5pY2F0aW9uIiwgInJlY2lwaWVudEtleXMiOiBbImRpZDprZXk6ejZNa21vUUpRVEpidDh5Wm83V3k4R0FadzJwWlVZSkI1d0I3c1NMUjZaWDRneXRNI3o2TWttb1FKUVRKYnQ4eVpvN1d5OEdBWncycFpVWUpCNXdCN3NTTFI2Wlg0Z3l0TSJdLCAic2VydmljZUVuZHBvaW50IjogImh0dHBzOi8vaWRkLnNlcnByby5nb3YuYnIvbWVkaWF0b3JfaHR0cCJ9XX0</string>
+	<key>CHAIN_ID</key>
+	<string>$(CHAIN_ID)</string>
+	<key>CACHE_DEFAULT_TTL_DAYS</key>
+	<string>$(CACHE_DEFAULT_TTL_DAYS)</string>
+	<key>CACHE_SCHEMA_TTL_DAYS</key>
+	<string>$(CACHE_SCHEMA_TTL_DAYS)</string>
+	<key>CACHE_REVREG_TTL_DAYS</key>
+	<string>$(CACHE_REVREG_TTL_DAYS)</string>
+	<key>CACHE_TAILS_TTL_DAYS</key>
+	<string>$(CACHE_TAILS_TTL_DAYS)</string>
+	<key>CREDDEF_TTL_MAP</key>
+	<string>$(CREDDEF_TTL_MAP)</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>O app precisa descobrir dispositivos próximos para transferir JSONs offline.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>O aplicativo precisa anunciar dados via Bluetooth.</string>
+	<key>NSBluetoothWhileInUseUsageDescription</key>
+	<string> aplicativo precisa usar o Bluetooth enquanto estiver em uso.</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>192.0.0.1</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_json-transfer._tcp</string>
+	</array>
+</dict>
+</plist>

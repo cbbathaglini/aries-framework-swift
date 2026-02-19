@@ -1,0 +1,15 @@
+//
+//  Config.xcconfig
+//  wallet-app-ios
+//
+//  Created by Carine Bertagnolli Bathaglini on 12/10/25.
+//
+
+MEDIATOR_URL="https:\/\/idd.serpro.gov.br/mediator_http?oob=eyJAdHlwZSI6ICJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzEuMS9pbnZpdGF0aW9uIiwgIkBpZCI6ICJlZTZmODE0MC0zNzMzLTRhYTItYTdmMy04MDdhMWZjZjhhNjQiLCAibGFiZWwiOiAiTWVkaWFkb3IgQUNBLVB5IGJlc3UiLCAiaGFuZHNoYWtlX3Byb3RvY29scyI6IFsiaHR0cHM6Ly9kaWRjb21tLm9yZy9kaWRleGNoYW5nZS8xLjAiXSwgInNlcnZpY2VzIjogW3siaWQiOiAiI2lubGluZSIsICJ0eXBlIjogImRpZC1jb21tdW5pY2F0aW9uIiwgInJlY2lwaWVudEtleXMiOiBbImRpZDprZXk6ejZNa21vUUpRVEpidDh5Wm83V3k4R0FadzJwWlVZSkI1d0I3c1NMUjZaWDRneXRNI3o2TWttb1FKUVRKYnQ4eVpvN1d5OEdBWncycFpVWUpCNXdCN3NTTFI2Wlg0Z3l0TSJdLCAic2VydmljZUVuZHBvaW50IjogImh0dHBzOi8vaWRkLnNlcnByby5nb3YuYnIvbWVkaWF0b3JfaHR0cCJ9XX0"
+CHAIN_ID=1337
+
+CREDDEF_TTL_MAP="did:ethr:serpro:0x4b5028369449d52d6e00bc3f5be5ca8c21a31a05/anoncreds/v0/CLAIM_DEF/did:ethr:serpro:0x4b5028369449d52d6e00bc3f5be5ca8c21a31a05:schema_60db0826-fe30-4ab0-b0f5-bf128a18497a:1.0/default,1;did:ethr:serpro:0x4b5028369449d52d6e00bc3f5be5ca8c21a31a05/anoncreds/v0/CLAIM_DEF/did:ethr:serpro:0x4b5028369449d52d6e00bc3f5be5ca8c21a31a05:schema_revoked_26b39cb5-6d49-4048-9333-1b527b4946aa:1.0/default,7;"
+CACHE_DEFAULT_TTL_DAYS = 1
+CACHE_SCHEMA_TTL_DAYS = 30
+CACHE_REVREG_TTL_DAYS = 30
+CACHE_TAILS_TTL_DAYS = 30
