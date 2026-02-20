@@ -292,8 +292,8 @@ public class OutOfBandCommand {
         if try await agent.connectionService.fetchState(connectionRecord: connection) != .Complete {
             var result = false
             switch handshakeProtocol {
-            case .Connections:
-                result = try await agent.connectionService.waitForConnection()
+//            case .Connections:
+//                result = try await agent.connectionService.waitForConnection()
             case .DidExchange10, .DidExchange11:
                 result = try await agent.didExchangeService.waitForConnection()
             }

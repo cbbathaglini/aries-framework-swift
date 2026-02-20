@@ -7,18 +7,18 @@ public class Agent {
     public var agentConfig: AgentConfig
     public var agentDelegate: AgentDelegate?
 
-    var mediationRecipient: MediationRecipient!
-    public var connectionRepository: ConnectionRepository!
-    public var connectionService: ConnectionService!
-    public var didExchangeService: DidExchangeService!
-    public var peerDIDService: PeerDIDService!
-    public var jwsService: JwsService!
-    public var messageSender: MessageSender!
+    public var mediationRecipient: MediationRecipientProtocol!
+    public var connectionRepository: ConnectionRepositoryProtocol!
+    public var connectionService: ConnectionServiceProtocol!
+    public var didExchangeService: DidExchangeServiceProtocol!
+    public var peerDIDService: PeerDIDServiceProtocol!
+    public var jwsService: JwsServiceProtocol!
+    public var messageSender: MessageSenderProtocol!
     var messageReceiver: MessageReceiver!
     public var dispatcher: Dispatcher!
     public var connections: ConnectionCommand!
     var outOfBandRepository: OutOfBandRepository!
-    var outOfBandService: OutOfBandService!
+    public var outOfBandService: OutOfBandServiceProtocol!
     public var oob: OutOfBandCommand!
     public var credentialExchangeRepository: CredentialExchangeRepository!
     public var didCommMessageRepository: DidCommMessageRepository!
@@ -29,7 +29,7 @@ public class Agent {
     public var revocationService: RevocationService!
     public var credentialService: CredentialService!
     public var credentials: CredentialsCommand!
-    public var credentialServiceV2: CredentialServiceV2!
+    public var credentialServiceV2: CredentialServiceV2Protocol!
     public var credentialsV2: CredentialsCommandV2!
     public var credentialRepository: CredentialRepository!
     public var proofRepository: ProofRepository!
@@ -40,10 +40,10 @@ public class Agent {
     public var revocationNotificationServiceV2: RevocationNotificationServiceV2!
     
     public var anoncredsModulesConfig: AnonCredsModuleConfig!
-    public var anonCredsRegistryService: AnonCredsRegistryService!
+    public var anonCredsRegistryService: AnonCredsRegistryServiceProtocol!
     
     /** credential v2 **/
-    public var anonCredsIssuerService: AnonCredsRsIssuerService!
+    public var anonCredsIssuerService: AnonCredsIssuerService!
     public var anonCredsHolderService: AnonCredsRsHolderService!
     public var anonCredsCredentialRepository: AnonCredsCredentialRepository!
     public var anonCredsCredentialDefinitionRepository: AnonCredsCredentialDefinitionRepository!
@@ -53,7 +53,8 @@ public class Agent {
     public var anonCredsRevocationRegistryDefinitionPrivateRepository: AnonCredsRevocationRegistryDefinitionPrivateRepository!
     
     public var basicMessages: BasicMessageCommand!
-    public var basicMessageRepository: BasicMessageRepository!
+    public var basicMessageRepository: BasicMessageRepositoryProtocol!
+    
     public var w3cCredentialsModuleConfig : W3cCredentialsModuleConfig!
     public var w3cCredentialService : W3cCredentialService!
     public var w3cJsonLdCredentialService : W3cJsonLdCredentialService!
@@ -67,7 +68,7 @@ public class Agent {
     public var verifierRepository: VerifierRepository!
 
 
-    public var wallet: Wallet!
+    public var wallet: WalletProtocol!
     private var _isInitialized = false
 
     var bleInboundTransport: BleInboundTransport!
@@ -210,12 +211,10 @@ public class Agent {
         mediationRecipient.close()
         try await ledgerService.close()
         await messageSender.close()
-        if wallet.session != nil {
-            try await wallet.close()
-        }
+        try await wallet.close()
         self._isInitialized = false
     }
-
+    
     func setInitialized() {
         self._isInitialized = true
     }

@@ -54,19 +54,29 @@ extension SignatureDecorator: Codable {
         return connection
     }
 
-    static func signData(data: Data, wallet: Wallet, verkey: String) async throws -> SignatureDecorator {
+    static func signData(
+        data: Data,
+        wallet: WalletProtocol,
+        verkey: String
+    ) async throws -> SignatureDecorator {
+
         var signatureData = Data(count: 8)
         signatureData.append(data)
-        guard let signKey = try await wallet.session!.fetchKey(name: verkey, forUpdate: false) else {
-            throw AriesFrameworkError.frameworkError("Key not found: \(verkey)")
-        }
-        let signature = try signKey.loadLocalKey().signMessage(message: signatureData, sigType: nil)
-        let signatureType = "https://didcomm.org/signature/1.0/ed25519Sha512_single"
-        let signer = verkey
+
+        let signatureBytes = try await wallet.sign(
+            data: signatureData,
+            verkey: verkey
+        )
+
         return SignatureDecorator(
-            signatureType: signatureType,
-            signatureData: signatureData.base64EncodedString().base64ToBase64url(),
-            signer: signer,
-            signature: Data(signature).base64EncodedString().base64ToBase64url())
+            signatureType: "https://didcomm.org/signature/1.0/ed25519Sha512_single",
+            signatureData: signatureData
+                .base64EncodedString()
+                .base64ToBase64url(),
+            signer: verkey,
+            signature: Data(signatureBytes)
+                .base64EncodedString()
+                .base64ToBase64url()
+        )
     }
 }

@@ -3,12 +3,12 @@ import Foundation
 import os
 
 public class DidExchangeService {
-    let agent: Agent
-    let connectionRepository: ConnectionRepository
+    let agent: DidExchangeAgentProtocol
+    let connectionRepository: ConnectionRepositoryProtocol
     let connectionWaiter = AsyncWaiter()
     let logger = Logger(subsystem: "AriesFramework", category: "DidExchangeService")
 
-    init(agent: Agent) {
+    init(agent: DidExchangeAgentProtocol) {
         self.agent = agent
         self.connectionRepository = agent.connectionRepository
     }
@@ -167,7 +167,7 @@ public class DidExchangeService {
         return connectionRecord
     }
 
-    func verifyDidRotate(message: DidExchangeResponseMessage, connectionRecord: ConnectionRecord) throws {
+    public func verifyDidRotate(message: DidExchangeResponseMessage, connectionRecord: ConnectionRecord) throws {
         guard let didRotateAttachment = message.didRotate,
               let jws = didRotateAttachment.data.jws,
               let base64Payload = didRotateAttachment.data.base64,
@@ -221,7 +221,7 @@ public class DidExchangeService {
         agent.agentDelegate?.onConnectionStateChanged(connectionRecord: connectionRecord)
     }
 
-    func waitForConnection() async throws -> Bool {
+    public func waitForConnection() async throws -> Bool {
         return try await connectionWaiter.wait()
     }
 

@@ -21,7 +21,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         self.agent = agent
     }
 
-    func storeCredential(
+    public func storeCredential(
         options: StoreCredentialOptions,
         metadata: [String: Any]?
     ) async throws -> String {
@@ -70,7 +70,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         return record.id
     }
 
-    func legacyToW3cCredential(options: LegacyToW3cCredentialOptions) async throws -> W3cJsonLdVerifiableCredential {
+    public func legacyToW3cCredential(options: LegacyToW3cCredentialOptions) async throws -> W3cJsonLdVerifiableCredential {
         let anonCredsCredential = options.credential
         let issuerId = options.issuerId
         let processOptions = options.processOptions
@@ -101,7 +101,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         return jsonLdVC
     }
 
-    func createProof(options: CreateProofOptions) async throws -> AnonCredsProof {
+    public func createProof(options: CreateProofOptions) async throws -> AnonCredsProof {
         let requestMessage = options.requestMessage
         let proofRequest = options.proofRequest
         let proofFormats = options.proofFormats
@@ -513,7 +513,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         }
     }
     
-    func getCredentialsForProofRequest(options: GetCredentialsForProofRequestOptions) async throws -> GetCredentialsForProofRequestReturn {
+    public func getCredentialsForProofRequest(options: GetCredentialsForProofRequestOptions) async throws -> GetCredentialsForProofRequestReturn {
         let proofRequest = options.proofRequest
         let referent = options.attributeReferent
 
@@ -723,7 +723,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         return record
     }
     
-    func getCredential(
+    public func getCredential(
         credentialId: String,
         useUnqualifiedIdentifiersIfPresent: Bool? = nil
     ) async throws -> AnonCredsCredentialInfo {
@@ -741,7 +741,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         return try getAnoncredsCredentialInfoFromRecord(legacyRecord)
     }
     
-    func createCredentialRequest(options: CreateCredentialHolderRequestOptions) async throws -> CreateCredentialRequestReturn {
+    public func createCredentialRequest(options: CreateCredentialHolderRequestOptions) async throws -> CreateCredentialRequestReturn {
         let useLegacyProverDid = options.useLegacyProverDid ?? false
         let credDef = options.credentialDefinition
         let credOffer = options.credentialOffer
@@ -779,7 +779,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         )
     }
     
-    func deleteCredential(credentialId: String) async throws {
+    public func deleteCredential(credentialId: String) async throws {
         if let record = try await agent.w3cCredentialRepository.findById(credentialId) {
             try await agent.w3cCredentialRepository.delete(record)
             return
@@ -789,7 +789,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         try await agent.anonCredsCredentialRepository.delete(legacyRecord)
     }
     
-    func createLinkSecret(options: CreateLinkSecretOptions? = nil) async throws -> CreateLinkSecretReturn {
+    public func createLinkSecret(options: CreateLinkSecretOptions? = nil) async throws -> CreateLinkSecretReturn {
         return CreateLinkSecretReturn(
             linkSecretId: options?.linkSecretId ?? RecordUtils.generateId(),
             linkSecret: try anoncreds_uniffi.createLinkSecret()

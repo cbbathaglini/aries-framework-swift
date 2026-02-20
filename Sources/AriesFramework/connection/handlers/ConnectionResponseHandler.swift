@@ -1,19 +1,25 @@
 
 import Foundation
 
+
 class ConnectionResponseHandler: MessageHandler {
-    let agent: Agent
+    let agent: ConnectionResponseHandlerAgentProtocol
     let messageType = ConnectionResponseMessage.type
 
-    init(agent: Agent) {
+    init(agent: ConnectionResponseHandlerAgentProtocol) {
         self.agent = agent
     }
 
     func handle(messageContext: InboundMessageContext) async throws -> OutboundMessage? {
-        let connection = try await agent.connectionService.processResponse(messageContext: messageContext)
+        let connection =
+            try await agent.connectionService.processResponse(messageContext: messageContext)
 
         if connection.autoAcceptConnection ?? agent.agentConfig.autoAcceptConnections {
-            return try await agent.connectionService.createTrustPing(connectionId: connection.id, responseRequested: false)
+            return try await agent.connectionService.createTrustPing(
+                connectionId: connection.id,
+                responseRequested: false,
+                comment: nil
+            )
         }
 
         return nil

@@ -3,15 +3,15 @@ import Foundation
 import os
 
 public class ConnectionCommand {
-    let agent: Agent
+    let agent: ConnectionCommandAgentProtocol
     let logger = Logger(subsystem: "AriesFramework", category: "ConnectionCommand")
 
-    init(agent: Agent, dispatcher: Dispatcher) {
+    init(agent: ConnectionCommandAgentProtocol, dispatcher: DispatcherProtocol) {
         self.agent = agent
         registerHandlers(dispatcher: dispatcher)
     }
 
-    func registerHandlers(dispatcher: Dispatcher) {
+    func registerHandlers(dispatcher: DispatcherProtocol) {
         dispatcher.registerHandler(handler: ConnectionRequestHandler(agent: agent))
         dispatcher.registerHandler(handler: ConnectionResponseHandler(agent: agent))
         dispatcher.registerHandler(handler: TrustPingMessageHandler(agent: agent))
@@ -110,7 +110,9 @@ public class ConnectionCommand {
     */
     public func acceptInvitation(connectionId: String, autoAcceptConnection: Bool?) async throws -> ConnectionRecord {
         logDebug("Accept connection invitation")
-        let message = try await agent.connectionService.createRequest(connectionId: connectionId, autoAcceptConnection: autoAcceptConnection)
+        let message = try await agent.connectionService.createRequest(
+            connectionId: connectionId,
+            autoAcceptConnection: autoAcceptConnection)
         try await agent.messageSender.send(message: message)
         return message.connection
     }
@@ -130,12 +132,11 @@ public class ConnectionCommand {
 
         let message: OutboundMessage
         switch handshakeProtocol {
-        case .Connections:
-            message = try await agent.connectionService.createRequest(connectionId: connection.id,
-                label: config?.label,
-                imageUrl: config?.imageUrl,
-                autoAcceptConnection: config?.autoAcceptConnection)
-
+//        case .Connections:
+//            message = try await agent.connectionService.createRequest(connectionId: connection.id,
+//                label: config?.label,
+//                imageUrl: config?.imageUrl,
+//                autoAcceptConnection: config?.autoAcceptConnection)
         case .DidExchange10, .DidExchange11:
             message = try await agent.didExchangeService.createRequest(connectionId: connection.id,
                 label: config?.label,

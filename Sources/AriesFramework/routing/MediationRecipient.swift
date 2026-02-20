@@ -24,7 +24,7 @@ class MediationRecipient {
         dispatcher.registerHandler(handler: KeylistUpdateResponseHandler(agent: agent))
     }
 
-    func initialize(mediatorConnectionsInvite: String) async throws {
+    public func initialize(mediatorConnectionsInvite: String) async throws {
         logDebug("Initialize mediation with invitation: \(mediatorConnectionsInvite)")
 
         let (outOfBandInvitation, invitation) = try await InvitationUrlParser.parseUrl(mediatorConnectionsInvite)
@@ -59,17 +59,17 @@ class MediationRecipient {
         }
     }
 
-    func close() {
+    public func close() {
         pickupTimer?.invalidate()
     }
 
-    func assertInvitationUrl() async throws {
+    public func assertInvitationUrl() async throws {
         if let mediationRecord = try await repository.getDefault(), !hasSameInvitationUrl(record: mediationRecord) {
             try await repository.delete(mediationRecord)
         }
     }
 
-    func requestMediationIfNecessry(connection: ConnectionRecord) async throws {
+    public func requestMediationIfNecessry(connection: ConnectionRecord) async throws {
         if let mediationRecord = try await repository.getDefault() {
             if mediationRecord.isReady() {
                 try await initiateMessagePickup(mediator: mediationRecord)
@@ -98,11 +98,11 @@ class MediationRecipient {
         try mediationRecord.assertReady()
     }
 
-    func hasSameInvitationUrl(record: MediationRecord) -> Bool {
+    public func hasSameInvitationUrl(record: MediationRecord) -> Bool {
         return record.invitationUrl == agent.agentConfig.mediatorConnectionsInvite
     }
 
-    func initiateMessagePickup(mediator: MediationRecord) async throws {
+    public func initiateMessagePickup(mediator: MediationRecord) async throws {
         let mediatorConnection = try await agent.connectionRepository.getById(mediator.connectionId)
         try await self.pickupMessages(mediatorConnection: mediatorConnection)
 
@@ -115,7 +115,7 @@ class MediationRecipient {
         }
     }
 
-    func pickupMessages(mediatorConnection: ConnectionRecord) async throws {
+    public func pickupMessages(mediatorConnection: ConnectionRecord) async throws {
         try mediatorConnection.assertReady()
 
         if agent.agentConfig.mediatorPickupStrategy == .PickUpV1 {
@@ -129,7 +129,7 @@ class MediationRecipient {
         }
     }
 
-    func pickupMessages() async throws {
+    public func pickupMessages() async throws {
         guard let mediator = try await repository.getDefault(), mediator.isReady() else {
             return
         }
@@ -137,7 +137,7 @@ class MediationRecipient {
         try await pickupMessages(mediatorConnection: mediatorConnection)
     }
 
-    func getRoutingInfo() async throws -> ([String], [String]) {
+    public func getRoutingInfo() async throws -> ([String], [String]) {
         if agent.isBluetoothOn {
             return ([try agent.bleInboundTransport.endpoint()], [])
         }
@@ -148,7 +148,7 @@ class MediationRecipient {
         return (endpoints, routingKeys)
     }
 
-    func getRouting() async throws -> Routing {
+    public func getRouting() async throws -> Routing {
         let (endpoints, routingKeys) = try await getRoutingInfo()
         let (did, verkey) = try await agent.wallet.createDid()
         let mediator = try await repository.getDefault()
@@ -159,7 +159,7 @@ class MediationRecipient {
         return Routing(endpoints: endpoints, verkey: verkey, did: did, routingKeys: routingKeys, mediatorId: mediator?.id)
     }
 
-    func createRequest(connection: ConnectionRecord) async throws -> OutboundMessage {
+    public func createRequest(connection: ConnectionRecord) async throws -> OutboundMessage {
         let message = MediationRequestMessage(sentTime: Date())
         let mediationRecord = MediationRecord(state: .Requested, role: .Mediator, connectionId: connection.id, threadId: connection.id, invitationUrl: agent.agentConfig.mediatorConnectionsInvite!)
         try await repository.save(mediationRecord)
@@ -167,7 +167,7 @@ class MediationRecipient {
         return OutboundMessage(payload: message, connection: connection)
     }
 
-    func processMediationGrant(messageContext: InboundMessageContext) async throws {
+    public func processMediationGrant(messageContext: InboundMessageContext) async throws {
         let connection = try messageContext.assertReadyConnection()
         var mediationRecord = try await repository.getByConnectionId(connection.id)
         let decoder = JSONDecoder()
@@ -191,7 +191,7 @@ class MediationRecipient {
         try await initiateMessagePickup(mediator: mediationRecord)
     }
 
-    func processMediationDeny(messageContext: InboundMessageContext) async throws {
+    public func processMediationDeny(messageContext: InboundMessageContext) async throws {
         let connection = try messageContext.assertReadyConnection()
         var mediationRecord = try await repository.getByConnectionId(connection.id)
         try mediationRecord.assertState(.Requested)
@@ -202,7 +202,7 @@ class MediationRecipient {
         mediationWaiter.finish()
     }
 
-    func processBatchMessage(messageContext: InboundMessageContext) async throws {
+    public func processBatchMessage(messageContext: InboundMessageContext) async throws {
         if messageContext.connection == nil {
             throw AriesFrameworkError.frameworkError("No connection associated with incoming message with id \(messageContext.message.id)")
         }
@@ -217,7 +217,7 @@ class MediationRecipient {
         }
     }
 
-    func processKeylistUpdateResults(messageContext: InboundMessageContext) async throws {
+    public func processKeylistUpdateResults(messageContext: InboundMessageContext) async throws {
         let connection = try messageContext.assertReadyConnection()
         let mediationRecord = try await repository.getByConnectionId(connection.id)
         try mediationRecord.assertReady()
@@ -235,7 +235,7 @@ class MediationRecipient {
         keylistWaiter.finish()
     }
 
-    func keylistUpdate(mediator: MediationRecord, verkey: String) async throws {
+    public func keylistUpdate(mediator: MediationRecord, verkey: String) async throws {
         try mediator.assertReady()
         let keylistUpdateMessage = KeylistUpdateMessage(updates: [KeylistUpdate(recipientKey: verkey, action: .add)])
         let connection = try await agent.connectionRepository.getById(mediator.connectionId)

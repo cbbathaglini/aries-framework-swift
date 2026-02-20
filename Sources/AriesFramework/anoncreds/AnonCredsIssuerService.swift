@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol AnonCredsIssuerService {
+public protocol AnonCredsIssuerService {
     func createCredentialOffer(credentialDefinitionId: String) async throws -> AnonCredsCredentialOffer
 
     func createCredential(options: CreateCredentialOptions) async throws -> CreateCredentialReturn

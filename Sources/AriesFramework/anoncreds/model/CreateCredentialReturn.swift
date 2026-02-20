@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct CreateCredentialReturn: Codable, CustomStringConvertible {
+public struct CreateCredentialReturn: Codable, CustomStringConvertible {
     let credential: AnonCredsCredential
     let credentialRevocationId: String?
 
-    var description: String {
+    public var description: String {
         return "CreateCredentialReturn(credential: \(credential), credentialRevocationId: \(credentialRevocationId ?? "nil"))"
     }
 }

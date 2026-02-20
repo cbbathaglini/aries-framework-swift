@@ -20,30 +20,30 @@ public class JwsService {
      - Returns: A JWS object.
     */
     public func createJws(payload: Data, verkey: String) async throws -> JwsGeneralFormat {
-        guard let keyEntry = try await agent.wallet.session!.fetchKey(name: verkey, forUpdate: false) else {
-            throw AriesFrameworkError.frameworkError("Unable to find key for verkey: \(verkey)")
-        }
-        let key = try keyEntry.loadLocalKey()
-        let jwkJson = try key.toJwkPublic(alg: nil).data(using: .utf8)!
-        guard let jwk = try JSONSerialization.jsonObject(with: jwkJson) as? [String: Any] else {
-            throw AriesFrameworkError.frameworkError("Unable to parse JWK JSON: \(jwkJson)")
-        }
-        let protectedHeader = [
+
+        let jwk = try await agent.wallet.getJwkPublic(verkey: verkey)
+
+        let protectedHeader: [String: Any] = [
             "alg": "EdDSA",
             "jwk": jwk
-        ] as [String: Any]
-        let protectedHeaderJson = try JSONSerialization.data(withJSONObject: protectedHeader)
-        let base64ProtectedHeader = protectedHeaderJson.base64EncodedString().base64ToBase64url()
-        let base64Payload = payload.base64EncodedString().base64ToBase64url()
-
-        let message = "\(base64ProtectedHeader).\(base64Payload)".data(using: .utf8)!
-        let signature = try key.signMessage(message: message, sigType: nil)
-        let base64Signature = signature.base64EncodedString().base64ToBase64url()
-        let header = [
-            "kid": try DIDParser.ConvertVerkeyToDidKey(verkey: verkey)
         ]
 
-        return JwsGeneralFormat(header: header, signature: base64Signature, protected: base64ProtectedHeader)
+        let protectedData = try JSONSerialization.data(withJSONObject: protectedHeader)
+        let base64Protected = protectedData.base64EncodedString().base64ToBase64url()
+        let base64Payload = payload.base64EncodedString().base64ToBase64url()
+
+        let message = "\(base64Protected).\(base64Payload)".data(using: .utf8)!
+
+        let signature = try await agent.wallet.sign(
+            data: message,
+            verkey: verkey
+        )
+
+        return JwsGeneralFormat(
+            header: ["kid": try DIDParser.ConvertVerkeyToDidKey(verkey: verkey)],
+            signature: signature.base64EncodedString().base64ToBase64url(),
+            protected: base64Protected
+        )
     }
 
     /**
@@ -55,33 +55,32 @@ public class JwsService {
      - Returns: A tuple containing the validity of the JWS and the signer's verkey.
     */
     public func verifyJws(jws: Jws, payload: Data) throws -> (isValid: Bool, signer: String) {
-        logDebug("Verifying JWS...")
-        var firstSig: JwsGeneralFormat!
-        switch jws {
-        case let .flattened(list):
-            if list.signatures.count == 0 {
-                throw AriesFrameworkError.frameworkError("No signatures found in JWS")
+
+        let sig: JwsGeneralFormat = {
+            switch jws {
+            case .flattened(let list): return list.signatures.first!
+            case .general(let jws): return jws
             }
-            firstSig = list.signatures.first!
-        case let .general(jws):
-            firstSig = jws
-        }
-        guard let protectedJson = Data(base64Encoded: firstSig.protected.base64urlToBase64()),
-              let protected = try JSONSerialization.jsonObject(with: protectedJson) as? [String: Any],
-              let signature = Data(base64Encoded: firstSig.signature.base64urlToBase64()),
-              let jwk = protected["jwk"] else {
-            throw AriesFrameworkError.frameworkError("Invalid Jws: \(String(describing: firstSig))")
-        }
+        }()
+
+        let protectedJson = Data(base64Encoded: sig.protected.base64urlToBase64())!
+        let protected = try JSONSerialization.jsonObject(with: protectedJson) as! [String: Any]
+        let jwk = protected["jwk"]!
         let jwkData = try JSONSerialization.data(withJSONObject: jwk)
         let jwkString = String(data: jwkData, encoding: .utf8)!
-        logDebug("jwk: \(jwkString)")
-        let key = try agent.wallet.keyFactory.fromJwk(jwk: jwkString)
-        let publicBytes = try key.toPublicBytes()
-        let signer = Base58.encode([UInt8](publicBytes))
 
         let base64Payload = payload.base64EncodedString().base64ToBase64url()
-        let message = "\(firstSig.protected).\(base64Payload)".data(using: .utf8)!
-        let isValid = try key.verifySignature(message: message, signature: signature, sigType: nil)
+        let message = "\(sig.protected).\(base64Payload)".data(using: .utf8)!
+
+        let signature = Data(base64Encoded: sig.signature.base64urlToBase64())!
+
+        let isValid = try agent.wallet.verify(
+            message: message,
+            signature: signature,
+            jwk: jwkString
+        )
+
+        let signer = try agent.wallet.verkeyFromJwk(jwk: jwkString)
 
         return (isValid, signer)
     }

@@ -70,7 +70,7 @@ public class OutOfBandService {
         try await outOfBandRepository.save(outOfBandRecord)
     }
 
-    func updateState(outOfBandRecord: inout OutOfBandRecord, newState: OutOfBandState) async throws {
+    public func updateState(outOfBandRecord: inout OutOfBandRecord, newState: OutOfBandState) async throws {
         outOfBandRecord.state = newState
         try await outOfBandRepository.update(outOfBandRecord)
         if newState == .Done {
@@ -109,7 +109,7 @@ public class OutOfBandService {
         try await outOfBandRepository.delete(outOfBandRecord)
     }
 
-    func waitForHandshakeReuse() async throws -> Bool {
+    public func waitForHandshakeReuse() async throws -> Bool {
         return try await handshakeReuseWaiter.wait()
     }
 

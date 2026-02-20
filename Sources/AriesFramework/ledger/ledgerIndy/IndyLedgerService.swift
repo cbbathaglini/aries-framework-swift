@@ -302,16 +302,24 @@ public class IndyLedgerService: LedgerService {
         }
     }
 
-    public func submitWriteRequest(_ request: Request, did: DidInfo) async throws {
+    public func submitWriteRequest(
+        _ request: Request,
+        did: DidInfo
+    ) async throws {
+
         if pool == nil {
             throw AriesFrameworkError.frameworkError("Pool is not initialized")
         }
 
-        guard let signKey = try await agent.wallet.session!.fetchKey(name: did.verkey, forUpdate: false) else {
-            throw AriesFrameworkError.frameworkError("Key not found: \(did.verkey)")
-        }
-        let signatureData = try request.signatureInput().data(using: .utf8)!
-        let signature = try signKey.loadLocalKey().signMessage(message: signatureData, sigType: nil)
+        let signatureData = try request
+            .signatureInput()
+            .data(using: .utf8)!
+
+        let signature = try await agent.wallet.sign(
+            data: signatureData,
+            verkey: did.verkey
+        )
+
         try request.setSignature(signature: signature)
 
         let response = try await pool!.submitRequest(request: request)

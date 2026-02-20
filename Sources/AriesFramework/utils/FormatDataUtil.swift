@@ -41,7 +41,7 @@ class FormatDataUtil {
                 )
                 attachments = linked.map { $0.attachment }
             } catch {
-                throw CredoError("Erro ao vincular attachments ao preview: \(error)") 
+                throw CredoError("Erro ao vincular attachments ao preview: \(error)")
             }
         }
         
@@ -64,7 +64,7 @@ class FormatDataUtil {
     }
 
     static func fetchSchema(agent: Agent, schemaId: String) async throws -> FetchSchemaReturn {
-        let registry = try await agent.anonCredsRegistryService.getRegistryForIdentifier(for: schemaId)
+        let registry : AnonCredsRegistry = try await agent.anonCredsRegistryService.getRegistryForIdentifier(for: schemaId)
         let result = try await registry.getSchema(agent: agent, schemaId: schemaId)
 
         guard let schema = result.schema else {

@@ -52,7 +52,7 @@ public class Wallet {
         return "sqlite://" + storePath
     }
 
-    func initialize() async throws {
+    public func initialize() async throws {
         logDebug("Initializing wallet for \(self.agent.agentConfig.label)")
         if store != nil {
           logger.warning("Wallet already initialized.")
@@ -85,7 +85,7 @@ public class Wallet {
         }
     }
 
-    func close() async throws {
+    public func close() async throws {
         logDebug("Closing wallet")
         try await session?.closeSession()
         try await store?.closeStore()
@@ -95,7 +95,7 @@ public class Wallet {
         linkSecretId = nil
     }
 
-    func delete() async throws {
+    public func delete() async throws {
         let userDefaults = UserDefaults.standard
         if store != nil {
             try? await close()
@@ -220,7 +220,7 @@ public class Wallet {
                     let recipientExchangeKey = try recipientKeyEntry.loadLocalKey().convertKey(alg: .x25519)
                     if sender != nil {
                         senderKey = String(data: try crypto.boxSealOpen(receiverKey: recipientExchangeKey, ciphertext: sender!), encoding: .utf8)
-                        let senderKeyBytes = try Base58.decode(senderKey!) 
+                        let senderKeyBytes = try Base58.decode(senderKey!)
                         let senderExchangeKey = try keyFactory.fromPublicBytes(alg: .ed25519, bytes: Data(senderKeyBytes)).convertKey(alg: .x25519)
                         payloadKey = try crypto.boxOpen(receiverKey: recipientExchangeKey, senderKey: senderExchangeKey, message: encryptedKey, nonce: iv!)
                     } else {
@@ -249,5 +249,79 @@ public class Wallet {
         } catch {
             throw AriesFrameworkError.frameworkError("Cannot unpack message: \(error)")
         }
+    }
+}
+
+extension Wallet {
+
+    public func saveRecord(
+        category: String,
+        id: String,
+        value: Data,
+        tags: String?
+    ) async throws {
+        try await session!.update(
+            operation: .insert,
+            category: category,
+            name: id,
+            value: value,
+            tags: tags,
+            expiryMs: nil
+        )
+    }
+
+    public func updateRecord(
+        category: String,
+        id: String,
+        value: Data,
+        tags: String?
+    ) async throws {
+        try await session!.update(
+            operation: .replace,
+            category: category,
+            name: id,
+            value: value,
+            tags: tags,
+            expiryMs: nil
+        )
+    }
+
+    public func deleteRecord(
+        category: String,
+        id: String
+    ) async throws {
+        try await session!.update(
+            operation: .remove,
+            category: category,
+            name: id,
+            value: Data(),
+            tags: nil,
+            expiryMs: nil
+        )
+    }
+
+    public func fetchRecord(
+        category: String,
+        id: String
+    ) async throws -> AskarEntry? {
+        try await session!.fetch(
+            category: category,
+            name: id,
+            forUpdate: false
+        )
+    }
+
+    public func queryRecords(
+        category: String,
+        query: String
+    ) async throws -> [AskarEntry] {
+        let scan = try await store!.scan(
+            profile: nil,
+            category: category,
+            tagFilter: query,
+            offset: nil,
+            limit: nil
+        )
+        return try await scan.fetchAll()
     }
 }

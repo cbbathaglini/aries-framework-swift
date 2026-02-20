@@ -15,7 +15,7 @@ public class AnonCredsRsIssuerService: AnonCredsIssuerService {
         self.agent = agent
     }
 
-    func createCredentialOffer(credentialDefinitionId: String) async throws -> AnonCredsCredentialOffer {
+    public func createCredentialOffer(credentialDefinitionId: String) async throws -> AnonCredsCredentialOffer {
         let credentialDefinitionRecord = try await agent.anonCredsCredentialDefinitionRepository
             .getByCredentialDefinitionId(credentialDefinitionId)
 
@@ -54,7 +54,7 @@ public class AnonCredsRsIssuerService: AnonCredsIssuerService {
         return decodedOffer
     }
 
-    func createCredential(options: CreateCredentialOptions) async throws -> CreateCredentialReturn {
+    public func createCredential(options: CreateCredentialOptions) async throws -> CreateCredentialReturn {
         throw NSError(domain: "NotImplemented", code: 0, userInfo: [NSLocalizedDescriptionKey: "createCredential not implemented yet"])
     }
 }

@@ -8,25 +8,34 @@
 import Foundation
 
 class BasicMessageHandler: MessageHandler {
-    let agent: Agent
+    let agent: BasicMessageHandlerAgentProtocol
     let messageType = BasicMessage.type
 
-    init(agent: Agent) {
+    init(agent: BasicMessageHandlerAgentProtocol) {
         self.agent = agent
     }
 
     func handle(messageContext: InboundMessageContext) async throws -> OutboundMessage? {
-        let basicMessage = try JSONDecoder().decode(BasicMessage.self, from: Data(messageContext.plaintextMessage.utf8))
 
-        let basicMessageRecord = BasicMessageRecord(
+        guard let repository = agent.basicMessageRepository else {
+            throw AriesFrameworkError.frameworkError(
+                "BasicMessageRepository not initialized"
+            )
+        }
+
+        let basicMessage = try JSONDecoder().decode(
+            BasicMessage.self,
+            from: Data(messageContext.plaintextMessage.utf8)
+        )
+
+        let record = BasicMessageRecord(
             content: basicMessage.content,
             connectionRecord: messageContext.connection
         )
-        
-        try await agent.basicMessageRepository.save(basicMessageRecord)
-        print("basic messsage: \(basicMessageRecord)")
 
-        agent.agentDelegate?.onBasicMessageChanged(record: basicMessageRecord)
+        try await repository.save(record)
+        agent.agentDelegate?.onBasicMessageChanged(record: record)
+
         return nil
     }
 }

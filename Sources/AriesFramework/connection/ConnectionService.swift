@@ -11,12 +11,12 @@ public struct Routing {
 }
 
 public class ConnectionService {
-    let agent: Agent
-    let connectionRepository: ConnectionRepository
+    let agent: ConnectionServiceAgentProtocol
+    let connectionRepository: ConnectionRepositoryProtocol
     let connectionWaiter = AsyncWaiter()
     let logger = Logger(subsystem: "AriesFramework", category: "ConnectionService")
 
-    init(agent: Agent) {
+    init(agent: ConnectionServiceAgentProtocol) {
         self.agent = agent
         self.connectionRepository = agent.connectionRepository
     }
@@ -121,7 +121,7 @@ public class ConnectionService {
         return connectionRecord
     }
 
-    func createConnection(
+    public func createConnection(
         role: ConnectionRole,
         state: ConnectionState,
         invitation: ConnectionInvitationMessage? = nil,
@@ -370,8 +370,9 @@ public class ConnectionService {
 
         return OutboundMessage(payload: trustPing, connection: connectionRecord)
     }
+    
 
-    func updateState(connectionRecord: inout ConnectionRecord, newState: ConnectionState) async throws {
+    public func updateState(connectionRecord: inout ConnectionRecord, newState: ConnectionState) async throws {
         connectionRecord.state = newState
         try await self.connectionRepository.update(connectionRecord)
         if newState == ConnectionState.Complete {
@@ -380,7 +381,7 @@ public class ConnectionService {
         agent.agentDelegate?.onConnectionStateChanged(connectionRecord: connectionRecord)
     }
 
-    func fetchState(connectionRecord: ConnectionRecord) async throws -> ConnectionState {
+    public func fetchState(connectionRecord: ConnectionRecord) async throws -> ConnectionState {
         if connectionRecord.state == ConnectionState.Complete {
             return connectionRecord.state
         }
@@ -454,7 +455,7 @@ public class ConnectionService {
         return try await connectionRepository.getById(id)
     }
 
-    func waitForConnection() async throws -> Bool {
+    public func waitForConnection() async throws -> Bool {
         return try await connectionWaiter.wait()
     }
 
@@ -462,7 +463,7 @@ public class ConnectionService {
         connectionWaiter.finish()
     }
     
-    func matchIncomingMessageToRequestMessageInOutOfBandExchange(
+    public func matchIncomingMessageToRequestMessageInOutOfBandExchange(
         messageContext: InboundMessageContext,
         expectedConnectionId: String? = nil
     ) async throws {

@@ -5,7 +5,7 @@
 //  Created by Carine Bertagnolli Bathaglini on 26/09/25.
 //
 
-struct CreateCredentialOptions: Codable {
+public struct CreateCredentialOptions: Codable {
     let credentialOffer: AnonCredsCredentialOffer
     let credentialRequest: AnonCredsCredentialRequest
     let credentialValues: AnonCredsCredentialValues

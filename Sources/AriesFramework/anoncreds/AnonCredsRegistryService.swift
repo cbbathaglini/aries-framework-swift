@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-public class AnonCredsRegistryService {
+public class AnonCredsRegistryService : AnonCredsRegistryServiceProtocol{
     private let agent: Agent
     private let logger = Logger(subsystem: "org.hyperledger.ariesframework", category: "AnonCredsRegistryService")
 

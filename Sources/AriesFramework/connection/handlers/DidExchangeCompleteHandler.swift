@@ -1,18 +1,25 @@
 
 import Foundation
 
-class DidExchangeCompleteHandler: MessageHandler {
-    let agent: Agent
+final class DidExchangeCompleteHandler: MessageHandler {
+
+    let agent: DidExchangeCompleteHandlerAgentProtocol
     let messageType = DidExchangeCompleteMessage.type
 
-    init(agent: Agent) {
+    init(agent: DidExchangeCompleteHandlerAgentProtocol) {
         self.agent = agent
     }
 
     func handle(messageContext: InboundMessageContext) async throws -> OutboundMessage? {
-        if var connection = messageContext.connection, connection.state == .Responded {
-            try await agent.connectionService.updateState(connectionRecord: &connection, newState: .Complete)
+        if var connection = messageContext.connection,
+           connection.state == .Responded {
+
+            try await agent.connectionService.updateState(
+                connectionRecord: &connection,
+                newState: .Complete
+            )
         }
+
         return nil
     }
 }

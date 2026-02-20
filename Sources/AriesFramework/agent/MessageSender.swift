@@ -21,7 +21,7 @@ public class MessageSender {
         self.defaultOutboundTransport = outboundTransport
     }
 
-    func outboundTransportForEndpoint(_ endpoint: String) -> OutboundTransport? {
+    public func outboundTransportForEndpoint(_ endpoint: String) -> OutboundTransport? {
         if defaultOutboundTransport != nil {
             return defaultOutboundTransport
         } else if endpoint.hasPrefix("http://") || endpoint.hasPrefix("https://") {
@@ -35,7 +35,7 @@ public class MessageSender {
         }
     }
 
-    func decorateMessage(_ message: OutboundMessage) -> AgentMessage {
+    public func decorateMessage(_ message: OutboundMessage) -> AgentMessage {
         let agentMessage = message.payload
 //        if agent.agentConfig.useLegacyDidSovPrefix {
 //            agentMessage.replaceNewDidCommPrefixWithLegacyDidSov()
@@ -90,7 +90,7 @@ public class MessageSender {
         throw AriesFrameworkError.frameworkError("Message is undeliverable to connection \(message.connection.id)")
     }
 
-    func findDidCommServices(connection: ConnectionRecord) throws -> [DidDocService] {
+    public func findDidCommServices(connection: ConnectionRecord) throws -> [DidDocService] {
         if (connection.theirDidDoc) != nil {
             return connection.theirDidDoc!.didCommServices()
         }
@@ -111,7 +111,7 @@ public class MessageSender {
         return []
     }
 
-    func sendMessageToService(message: AgentMessage, service: DidDocService, senderKey: String, connectionId: String) async throws {
+    public func sendMessageToService(message: AgentMessage, service: DidDocService, senderKey: String, connectionId: String) async throws {
         let keys = EnvelopeKeys(
             recipientKeys: service.recipientKeys,
             routingKeys: service.routingKeys ?? [],
@@ -127,7 +127,7 @@ public class MessageSender {
         try await outboundTransport.sendPackage(outboundPackage)
     }
 
-    func packMessage(_ message: AgentMessage, keys: EnvelopeKeys, endpoint: String, connectionId: String) async throws -> OutboundPackage {
+    public func packMessage(_ message: AgentMessage, keys: EnvelopeKeys, endpoint: String, connectionId: String) async throws -> OutboundPackage {
         var encryptedMessage = try await agent.wallet.pack(message: message, recipientKeys: keys.recipientKeys, senderVerkey: keys.senderKey)
 
         var recipientKeys = keys.recipientKeys
@@ -147,7 +147,7 @@ public class MessageSender {
             connectionId: connectionId)
     }
 
-    func close() async {
+    public func close() async {
         await wsOutboundTransport.closeSocket()
     }
 }

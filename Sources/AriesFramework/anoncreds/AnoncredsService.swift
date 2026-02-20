@@ -14,16 +14,21 @@ public struct AnoncredsService {
     public func createLinkSecret() async throws -> String {
         let linkSecretId = UUID().uuidString
         let linkSecret = try anoncreds_uniffi.createLinkSecret()
-        try await agent.wallet.session!.update(operation: .insert, category: secretCategory, name: linkSecretId, value: linkSecret.data(using: .utf8)!, tags: nil, expiryMs: nil)
+
+        try await agent.wallet.storeLinkSecret(
+            id: linkSecretId,
+            value: linkSecret,
+            category: secretCategory
+        )
 
         return linkSecretId
     }
 
     public func getLinkSecret(id: String) async throws -> String {
-        guard let linkSecret = try await agent.wallet.session!.fetch(category: secretCategory, name: id, forUpdate: false) else {
-            throw AriesFrameworkError.recordNotFoundError("Link secret not found for id \(id)")
-        }
-        return String(data: linkSecret.value(), encoding: .utf8)!
+        return try await agent.wallet.getLinkSecret(
+            id: id,
+            category: secretCategory
+        )
     }
 
     func getCredentialsForProofRequest(_ proofRequest: ProofRequest, referent: String) async throws -> [IndyCredentialInfo] {

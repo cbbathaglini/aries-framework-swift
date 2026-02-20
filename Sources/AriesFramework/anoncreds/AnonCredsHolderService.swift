@@ -5,7 +5,7 @@
 //  Created by Carine Bertagnolli Bathaglini on 26/09/25.
 //
 
-protocol AnonCredsHolderService {
+public protocol AnonCredsHolderService {
     
     func storeCredential(
         options: StoreCredentialOptions,

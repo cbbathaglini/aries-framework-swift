@@ -45,3 +45,19 @@ extension AnonCredsCredentialProposal: CustomStringConvertible {
         """
     }
 }
+
+extension AnonCredsCredentialProposal {
+    func validate() throws {
+        guard credentialDefinitionId != nil else {
+            throw CredoError("Missing credentialDefinitionId in AnonCredsCredentialProposal")
+        }
+
+        guard
+            schemaId != nil ||
+            schemaName != nil ||
+            schemaIssuerId != nil
+        else {
+            throw CredoError("Missing schema identification in AnonCredsCredentialProposal")
+        }
+    }
+}

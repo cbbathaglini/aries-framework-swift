@@ -86,7 +86,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         let json = try JSONSerialization.jsonObject(with: encodedMetadata, options: [])
         if let jsonValue = json as? [String: Any] {
             for (key, value) in jsonValue {
-                credentialExchangeRecord.metadata[key] = value as! AnyCodable
+                credentialExchangeRecord.metadata[key] = AnyCodable(value) // as! AnyCodable
             }
         } else {
             credentialExchangeRecord.metadata[MetadataKeys.anonCredsCredentialMetadataKey] = json as! AnyCodable
@@ -105,6 +105,9 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
             credentialRecord: CredentialExchangeRecord
     ) async throws{
         let proposal: AnonCredsCredentialProposal = try FormatDataUtil.parseAttachmentData(attachment, as: AnonCredsCredentialProposal.self)
+        
+        try proposal.validate()
+        
         logDebug("Processed proposal schemaid: \(proposal)")
     }
    
