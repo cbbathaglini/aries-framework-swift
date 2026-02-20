@@ -13,3 +13,5 @@ public class AnonCredsCredentialDefinitionRepository: Repository<AnonCredsCreden
         return try await getSingleByQuery(query)
     }
 }
+
+extension AnonCredsCredentialDefinitionRepository: AnonCredsCredentialDefinitionRepositoryProtocol {}

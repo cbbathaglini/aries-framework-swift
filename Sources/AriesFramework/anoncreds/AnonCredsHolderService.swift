@@ -39,4 +39,6 @@ public protocol AnonCredsHolderService {
     func getCredentialsForProofRequest(
         options: GetCredentialsForProofRequestOptions
     ) async throws -> GetCredentialsForProofRequestReturn
+    
+    func generateNonce() -> String 
 }

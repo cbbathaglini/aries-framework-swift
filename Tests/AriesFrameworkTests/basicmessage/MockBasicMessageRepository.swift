@@ -11,7 +11,7 @@ final class MockBasicMessageRepository: BasicMessageRepositoryProtocol {
 
     // MARK: - Spy state
     var receivedConnectionId: String?
-    var savedRecord: BasicMessageRecord?
+    private(set) var savedRecords: [BasicMessageRecord] = []
     var resultToReturn: [BasicMessageRecord] = []
     var errorToThrow: Error?
 
@@ -30,10 +30,9 @@ final class MockBasicMessageRepository: BasicMessageRepositoryProtocol {
     }
 
     func save(_ record: BasicMessageRecord) async throws {
-        savedRecord = record
-
         if let errorToThrow {
             throw errorToThrow
         }
+        savedRecords.append(record)
     }
 }

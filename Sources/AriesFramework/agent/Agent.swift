@@ -44,9 +44,9 @@ public class Agent {
     
     /** credential v2 **/
     public var anonCredsIssuerService: AnonCredsIssuerService!
-    public var anonCredsHolderService: AnonCredsRsHolderService!
+    public var anonCredsHolderService: AnonCredsHolderService!
     public var anonCredsCredentialRepository: AnonCredsCredentialRepository!
-    public var anonCredsCredentialDefinitionRepository: AnonCredsCredentialDefinitionRepository!
+    public var anonCredsCredentialDefinitionRepository: AnonCredsCredentialDefinitionRepositoryProtocol!
     public var anonCredsLinkSecretRepository: AnonCredsLinkSecretRepository!
     public var anonCredsKeyCorrectnessProofRepository: AnonCredsKeyCorrectnessProofRepository!
     public var w3cCredentialRepository: W3cCredentialRepository!

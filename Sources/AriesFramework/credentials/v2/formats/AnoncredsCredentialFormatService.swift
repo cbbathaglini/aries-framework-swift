@@ -566,7 +566,10 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
                                )
 
         if let revRegId = anonCredsCredential.revRegId {
-            let credential = try await agent.anonCredsHolderService.getCredential(credentialId: credentialId)
+            let credential = try await agent.anonCredsHolderService.getCredential(
+                credentialId: credentialId,
+                useUnqualifiedIdentifiersIfPresent: nil
+            )
 
             let metadata = AnonCredsCredentialMetadata(
                 revocationRegistryId: credential.revocationRegistryId,
@@ -772,7 +775,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         do {
             let jsonData = try encoder.encode(metadata)
             let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
-            credentialExchangeRecord.metadata[MetadataKeys.anonCredsCredentialMetadataKey] = jsonObject as! AnyCodable
+            credentialExchangeRecord.metadata[MetadataKeys.anonCredsCredentialMetadataKey] = AnyCodable(jsonObject) // as! AnyCodable
 
         } catch {
             throw CredoError("Error convertig to JsonElement: \(error)")
