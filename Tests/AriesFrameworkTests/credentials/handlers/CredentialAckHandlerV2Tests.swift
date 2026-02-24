@@ -24,17 +24,17 @@ final class CredentialAckHandlerV2Tests: XCTestCase {
     }
 
     func test_handle_callsProcessAck_andReturnsNil() async throws {
-        // Arrange
+        
         let spyService = SpyCredentialServiceV2()
         let agent = makeAgentWithSpy(spy: spyService)
         let handler = CredentialAckHandlerV2(agent: agent)
 
         let messageContext = InboundMessageContextTestFactory.make()
 
-        // Act
+        
         let result = try await handler.handle(messageContext: messageContext)
 
-        // Assert
+        
         XCTAssertTrue(spyService.processAckCalled)
         XCTAssertNotNil(spyService.receivedMessageContext)
 

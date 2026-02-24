@@ -11,7 +11,7 @@ import XCTest
 final class AnoncredsCredentialFormatServiceTests: XCTestCase {
     
     func test_createProposal_success() async throws {
-        // Arrange
+        
         let agent = Agent(
             agentConfig: .test(),
             agentDelegate: nil
@@ -22,19 +22,17 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
         let formats = AnoncredsCredentialFormatTestFactory.validCredentialFormats()
         let record = CredentialExchangeRecordTestFactory.empty()
 
-        // Act
+        
         let result = try await service.createProposal(
             credentialFormats: formats,
             credentialExchangeRecord: record
         )
 
-        // Assert — Format
         XCTAssertEqual(
             result.format.format,
             AnoncredsCredentialFormatService.ANONCREDS_CREDENTIAL_FILTER
         )
 
-        // Assert — Attachment
         XCTAssertEqual(result.attachment.id, result.format.attachId)
 
         let json = try result.attachment.getDataAsJson()
@@ -44,13 +42,12 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
         XCTAssertTrue(json.contains("schema_version"))
         XCTAssertTrue(json.contains("cred_def_id"))
 
-        // Assert — Preview attributes
         XCTAssertNotNil(result.previewAttribute)
         XCTAssertFalse(result.previewAttribute!.isEmpty)
     }
     
     func test_createProposal_invalidProposal_throws() async {
-        // Arrange
+        
         let agent = Agent(
             agentConfig: .test(),
             agentDelegate: nil
@@ -60,7 +57,6 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
         let formats = AnoncredsCredentialFormatTestFactory.invalidCredentialFormats()
         let record = CredentialExchangeRecordTestFactory.empty()
 
-        // Act / Assert
         await XCTAssertThrowsErrorAsync {
             try await service.createProposal(
                 credentialFormats: formats,
@@ -70,7 +66,7 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
     }
     
     func test_processProposal_success() async throws {
-        // Arrange
+        
         let agent = Agent(
             agentConfig: .test(),
             agentDelegate: nil
@@ -95,7 +91,6 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
 
         let record = CredentialExchangeRecordBuilder().build()
 
-        // Act / Assert 
         try await service.processProposal(
             attachment: attachment,
             credentialRecord: record
@@ -103,7 +98,7 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
     }
     
     func test_processProposal_invalidAttachment_throws() async {
-        // Arrange
+        
         let agent = Agent(
             agentConfig: .test(),
             agentDelegate: nil
@@ -118,7 +113,6 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
 
         let record = CredentialExchangeRecordBuilder().build()
 
-        // Act / Assert
         await XCTAssertThrowsErrorAsync {
             try await service.processProposal(
                 attachment: attachment,
@@ -128,7 +122,7 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
     }
     
     func test_acceptProposal_success() async throws {
-        // Arrange
+        
         let agent = Agent(
             agentConfig: .test(),
             agentDelegate: nil
@@ -204,7 +198,7 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
             ])
             .build()
 
-        // Act
+        
         let result = try await service.acceptProposal(
             attachmentId: "offer-attach",
             credentialFormats: credentialFormats,
@@ -212,7 +206,7 @@ final class AnoncredsCredentialFormatServiceTests: XCTestCase {
             proposalAttachments: proposalAttachment
         )
 
-        // Assert
+        
         XCTAssertEqual(
             result.format.format,
             AnoncredsCredentialFormatService.ANONCREDS_CREDENTIAL_OFFER

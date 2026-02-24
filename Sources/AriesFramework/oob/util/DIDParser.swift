@@ -74,12 +74,28 @@ public class DIDParser {
         return try ConvertFingerprintToVerkey(fingerprint: methodId)
     }
 
+//    public static func ConvertFingerprintToVerkey(fingerprint: String) throws -> String {
+//        let base58PublicKey = fingerprint.dropFirst(1)
+//        let bytes = try Base58.decode(String(base58PublicKey))
+//        guard !bytes.isEmpty else {
+//            throw AriesFrameworkError.frameworkError("Decoded fingerprint is empty: \(fingerprint)")
+//        }
+//
+//        let codec = bytes.prefix(2)
+//        if Array(codec) != MULTICODEC_PREFIX_ED25519 {
+//            throw AriesFrameworkError.frameworkError("Invalid DID key codec: \(codec)")
+//        }
+//
+//        let verkey = bytes.dropFirst(2)
+//        return Base58.encode(Array(verkey))
+//    }
+    
     public static func ConvertFingerprintToVerkey(fingerprint: String) throws -> String {
+        print("🧨 ConvertFingerprintToVerkey fingerprint =", fingerprint)
+
         let base58PublicKey = fingerprint.dropFirst(1)
         let bytes = try Base58.decode(String(base58PublicKey))
-        guard !bytes.isEmpty else {
-            throw AriesFrameworkError.frameworkError("Decoded fingerprint is empty: \(fingerprint)")
-        }
+        print("🧨 bytes.prefix(8) =", Array(bytes.prefix(8)))
 
         let codec = bytes.prefix(2)
         if Array(codec) != MULTICODEC_PREFIX_ED25519 {

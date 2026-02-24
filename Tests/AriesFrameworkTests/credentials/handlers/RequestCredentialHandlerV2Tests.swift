@@ -25,7 +25,7 @@ final class RequestCredentialHandlerV2Tests: XCTestCase {
     
     
     func test_handle_autoRespondTrue_returnsOutboundMessage() async throws {
-        // Arrange
+        
         let spy = SpyCredentialServiceV2()
         spy.shouldAutoRespondToRequestResult = true
 
@@ -38,10 +38,10 @@ final class RequestCredentialHandlerV2Tests: XCTestCase {
             connection: connection
         )
 
-        // Act
+        
         let outbound = try await handler.handle(messageContext: messageContext)
 
-        // Assert
+        
         XCTAssertNotNil(outbound)
         XCTAssertTrue(spy.processRequestCalled)
         XCTAssertTrue(spy.acceptRequestCalled)
@@ -51,7 +51,7 @@ final class RequestCredentialHandlerV2Tests: XCTestCase {
     
     
     func test_handle_autoRespondFalse_returnsNil() async throws {
-        // Arrange
+        
         let spy = SpyCredentialServiceV2()
         spy.shouldAutoRespondToRequestResult = false
 
@@ -60,10 +60,10 @@ final class RequestCredentialHandlerV2Tests: XCTestCase {
 
         let messageContext = InboundMessageContextTestFactory.make()
 
-        // Act
+        
         let outbound = try await handler.handle(messageContext: messageContext)
 
-        // Assert
+        
         XCTAssertNil(outbound)
         XCTAssertTrue(spy.processRequestCalled)
         XCTAssertTrue(spy.shouldAutoRespondToRequestCalled)

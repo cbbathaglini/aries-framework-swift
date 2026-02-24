@@ -51,7 +51,7 @@ enum OutOfBandInvitationTestFactory {
     private static func didCommService(
         id: String = "didcomm-1",
         serviceEndpoint: String = "https://example.com",
-        recipientKeys: [String] = ["did:key:z6MkpTestKey"],
+        recipientKeys: [String] = [validRecipientDidKey()],
         routingKeys: [String]? = nil
     ) -> OutOfBandDidCommService {
         .oobDidDocument(
@@ -62,5 +62,15 @@ enum OutOfBandInvitationTestFactory {
                 routingKeys: routingKeys
             )
         )
+    }
+    
+    
+    private static func validRecipientDidKey() -> String {
+        let verkey = "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
+        do {
+            return try DIDParser.ConvertVerkeyToDidKey(verkey: verkey)
+        } catch {
+            fatalError("OutOfBandInvitationTestFactory: failed to build did:key from verkey. Error: \(error)")
+        }
     }
 }

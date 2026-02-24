@@ -11,16 +11,21 @@ final class MockCredentialFormatService: CredentialFormatService {
 
     // MARK: - Identidade do formato
 
+   
     let formatKey: String
     let credentialRecordType: String
+    private let supportedFormats: Set<String>
 
     init(
         formatKey: String = "anoncreds",
-        credentialRecordType: String = "anoncreds"
+        credentialRecordType: String = "anoncreds",
+        supportedFormats: Set<String> = ["anoncreds/credential@v1.0"]
     ) {
         self.formatKey = formatKey
         self.credentialRecordType = credentialRecordType
+        self.supportedFormats = supportedFormats
     }
+
 
     // MARK: - Spies (chamadas)
 

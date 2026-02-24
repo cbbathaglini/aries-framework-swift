@@ -32,6 +32,9 @@ public class Agent {
     public var credentialServiceV2: CredentialServiceV2Protocol!
     public var credentialsV2: CredentialsCommandV2!
     public var credentialRepository: CredentialRepository!
+    
+    public var credentialV2Dependencies: CredentialV2DependenciesProviding = DefaultCredentialV2DependenciesProvider()
+    
     public var proofRepository: ProofRepository!
     public var proofService: ProofService!
     public var proofs: ProofCommand!

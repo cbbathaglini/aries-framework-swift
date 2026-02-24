@@ -11,7 +11,7 @@ import XCTest
 final class BasicMessageHandlerTests: XCTestCase {
 
     func test_handle_success_savesAndNotifies() async throws {
-        // Arrange
+        
         let repository = MockBasicMessageRepository()
         let delegate = MockAgentDelegate()
 
@@ -33,10 +33,10 @@ final class BasicMessageHandlerTests: XCTestCase {
             recipientVerkey: nil
         )
 
-        // Act
+        
         let result = try await handler.handle(messageContext: context)
 
-        // Assert
+        
         XCTAssertNil(result)
         XCTAssertEqual(repository.savedRecords.count, 1)
         XCTAssertEqual(repository.savedRecords.first?.content, "Hello")

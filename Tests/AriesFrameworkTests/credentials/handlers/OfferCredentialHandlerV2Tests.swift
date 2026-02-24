@@ -24,7 +24,7 @@ final class OfferCredentialHandlerV2Tests: XCTestCase {
     }
     
     func test_handle_autoRespondTrue_returnsRequestMessage() async throws {
-        // Arrange
+        
         let spy = SpyCredentialServiceV2()
         spy.shouldAutoRespondToOfferResult = true
 
@@ -35,10 +35,10 @@ final class OfferCredentialHandlerV2Tests: XCTestCase {
             connection: ConnectionRecordTestFactory.readyConnection()
         )
 
-        // Act
+        
         let result = try await handler.handle(messageContext: messageContext)
 
-        // Assert
+        
         XCTAssertTrue(spy.processOfferCalled)
         XCTAssertTrue(spy.shouldAutoRespondToOfferCalled)
         XCTAssertTrue(spy.acceptOfferCalled)
@@ -48,7 +48,7 @@ final class OfferCredentialHandlerV2Tests: XCTestCase {
     }
     
     func test_handle_autoRespondFalse_returnsNil() async throws {
-        // Arrange
+        
         let spy = SpyCredentialServiceV2()
         spy.shouldAutoRespondToOfferResult = false
 
@@ -59,10 +59,10 @@ final class OfferCredentialHandlerV2Tests: XCTestCase {
             connection: ConnectionRecordTestFactory.readyConnection()
         )
 
-        // Act
+        
         let result = try await handler.handle(messageContext: messageContext)
 
-        // Assert
+        
         XCTAssertTrue(spy.processOfferCalled)
         XCTAssertTrue(spy.shouldAutoRespondToOfferCalled)
         XCTAssertFalse(spy.acceptOfferCalled)

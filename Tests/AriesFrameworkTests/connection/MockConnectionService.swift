@@ -5,6 +5,7 @@
 //  Created by Carine Bertagnolli Bathaglini on 19/12/25.
 //
 
+import Foundation
 @testable import AriesFramework
 
 final class MockConnectionService: ConnectionServiceProtocol {
@@ -16,6 +17,9 @@ final class MockConnectionService: ConnectionServiceProtocol {
     
    private(set) var receivedCreateRequestConnectionId: String?
    private(set) var receivedAutoAcceptConnection: Bool?
+    
+   private(set) var receivedUpdateStateConnectionId: String?
+   private(set) var receivedNewState: ConnectionState?
 
    // MARK: - Captured inputs
 
@@ -113,7 +117,14 @@ final class MockConnectionService: ConnectionServiceProtocol {
         connectionRecord: inout ConnectionRecord,
         newState: ConnectionState
     ) async throws {
-        fatalError()
+        updateStateCalled = true
+        receivedUpdateStateConnectionId = connectionRecord.id
+        receivedNewState = newState
+
+        connectionRecord.state = newState
+        connectionRecord.updatedAt = Date()
+        
+        try await repo.update(connectionRecord)
     }
 
     func matchIncomingMessageToRequestMessageInOutOfBandExchange(

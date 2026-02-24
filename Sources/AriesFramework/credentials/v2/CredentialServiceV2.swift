@@ -18,14 +18,24 @@ public final class CredentialServiceV2 {
     private var didCommMessageRepository: DidCommMessageRepository { agent.didCommMessageRepository }
 
     private let credentialFormats: [any CredentialFormatService]
-    private let credentialFormatCoordinator: CredentialFormatCoordinator
+    private let credentialFormatCoordinator: CredentialFormatCoordinatorProtocol
 
+//    public init(agent: Agent) {
+//        self.agent = agent
+//        self.credentialFormats = [
+//            AnoncredsCredentialFormatService(agent: agent)
+//        ]
+//        self.credentialFormatCoordinator = CredentialFormatCoordinator(agent: agent, formatServices: credentialFormats)
+//
+//        Registers(agent: agent).initialize()
+//    }
+    
     public init(agent: Agent) {
         self.agent = agent
-        self.credentialFormats = [
-            AnoncredsCredentialFormatService(agent: agent)
-        ]
-        self.credentialFormatCoordinator = CredentialFormatCoordinator(agent: agent, formatServices: credentialFormats)
+
+        let formats = agent.credentialV2Dependencies.makeFormatServices(agent: agent)
+        self.credentialFormats = formats
+        self.credentialFormatCoordinator = agent.credentialV2Dependencies.makeCoordinator(agent: agent, formatServices: formats)
 
         Registers(agent: agent).initialize()
     }

@@ -25,7 +25,7 @@ final class IssueCredentialHandlerV2Tests: XCTestCase {
     
     
     func test_handle_autoRespondTrue_returnsOutboundMessage() async throws {
-        // Arrange
+        
         let spy = SpyCredentialServiceV2()
         spy.shouldAutoRespondResult = true
 
@@ -36,10 +36,10 @@ final class IssueCredentialHandlerV2Tests: XCTestCase {
             connection: ConnectionRecordTestFactory.readyConnection()
         )
 
-        // Act
+        
         let result = try await handler.handle(messageContext: messageContext)
 
-        // Assert
+        
         XCTAssertTrue(spy.processCredentialCalled)
         XCTAssertTrue(spy.shouldAutoRespondCalled)
         XCTAssertTrue(spy.acceptCredentialCalled)
@@ -49,7 +49,7 @@ final class IssueCredentialHandlerV2Tests: XCTestCase {
     }
     
     func test_handle_autoRespondFalse_returnsNil() async throws {
-        // Arrange
+        
         let spy = SpyCredentialServiceV2()
         spy.shouldAutoRespondResult = false
 
@@ -60,10 +60,10 @@ final class IssueCredentialHandlerV2Tests: XCTestCase {
             connection: ConnectionRecordTestFactory.readyConnection()
         )
 
-        // Act
+        
         let result = try await handler.handle(messageContext: messageContext)
 
-        // Assert
+        
         XCTAssertTrue(spy.processCredentialCalled)
         XCTAssertTrue(spy.shouldAutoRespondCalled)
         XCTAssertFalse(spy.acceptCredentialCalled)

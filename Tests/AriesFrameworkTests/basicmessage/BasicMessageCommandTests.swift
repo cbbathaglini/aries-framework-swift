@@ -11,17 +11,17 @@ import XCTest
 final class BasicMessageCommandTests: XCTestCase {
 
     func testBasicMessageCommand_registersHandler() {
-        // Arrange
+        
         let dispatcher = MockDispatcher()
         let agent = MockAgent()
 
-        // Act
+        
         _ = BasicMessageCommand(
             agent: agent,
             dispatcher: dispatcher
         )
 
-        // Assert
+        
         XCTAssertEqual(dispatcher.registeredHandlers.count, 1)
         XCTAssertTrue(dispatcher.registeredHandlers.first is BasicMessageHandler)
     }

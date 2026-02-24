@@ -10,7 +10,7 @@ enum DidDocTestFactory {
 
     static func minimal(
         did: String = "did:test:123",
-        recipientKey: String = "test-recipient-key"
+        recipientKey: String = "GJ1SzoWzavQYfNL9XkaJdrQejfztN4XqdsiV4ct3LXKL"
     ) -> DidDoc {
 
         let publicKey = Ed25119Sig2018(
@@ -26,11 +26,13 @@ enum DidDocTestFactory {
             )
         )
 
+        let recipientDidKey = (try? DIDParser.ConvertVerkeyToDidKey(verkey: recipientKey)) ?? recipientKey
+
         let service = DidDocService.indyAgent(
             IndyAgentService(
                 id: "#IndyAgentService",
                 serviceEndpoint: "http://localhost",
-                recipientKeys: [recipientKey],
+                recipientKeys: [recipientDidKey],
                 routingKeys: []
             )
         )

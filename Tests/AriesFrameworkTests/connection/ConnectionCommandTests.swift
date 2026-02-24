@@ -109,7 +109,7 @@ final class ConnectionCommandTests: XCTestCase {
     }
     
     func test_receiveInvitation_withoutAutoAccept_returnsConnection() async throws {
-        // Arrange
+        
         let connection = ConnectionRecordTestFactory.notReadyConnection()
         connectionService.processInvitationResult = connection
 
@@ -121,13 +121,13 @@ final class ConnectionCommandTests: XCTestCase {
             mediatorId: nil
         )
 
-        // Act
+        
         let result = try await command.receiveInvitation(
             ConnectionInvitationMessage(label: "test"),
             autoAcceptConnection: false
         )
 
-        // Assert
+        
         XCTAssertTrue(connectionService.processInvitationCalled)
         XCTAssertFalse(connectionService.createRequestCalled)
         XCTAssertTrue(messageSender.sentMessages.isEmpty)
@@ -155,8 +155,17 @@ final class ConnectionCommandTests: XCTestCase {
     }
     
     func test_receiveInvitationFromUrl_delegatesToReceiveInvitation() async throws {
-        let invitation = ConnectionInvitationMessage(label: "test")
-        let url = try invitation.toUrl(domain: URL)
+       
+        let invitation = ConnectionInvitationMessageTestFactory.minimal()
+
+        let jsonData = try JSONEncoder().encode(invitation)
+        let b64 = jsonData.base64EncodedString()
+        let b64url = b64
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+
+        let url = "http://example.com/ssi?c_i=\(b64url)"
 
         let connection = ConnectionRecordTestFactory.notReadyConnection()
         connectionService.processInvitationResult = connection

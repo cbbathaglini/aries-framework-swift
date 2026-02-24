@@ -12,17 +12,34 @@ final class MockDidCommMessageRepository: DidCommMessageRepository {
 
     private var store: [DidCommKey: DidCommMessageRecord] = [:]
     private var fallbackStore: [DidCommMessageRecord] = []
+    
+    private var stringStore: [DidCommKey: String] = [:] // key -> json
+    private var typedStore:  [DidCommKey: Any] = [:]     // key -> typed
+
+    private func key(recordId: String, type: String, role: DidCommMessageRole?) -> String {
+        "\(recordId)|\(type)|\(role?.rawValue ?? "nil")"
+    }
+
+    func stubString(recordId: String, type: String, role: DidCommMessageRole?, json: String) {
+        let key = makeKey(associatedRecordId: recordId, messageType: type, role: role)
+        stringStore[key] = json
+    }
+
+    func stubTyped<T>(recordId: String, type: String, role: DidCommMessageRole?, message: T) {
+        let key = makeKey(associatedRecordId: recordId, messageType: type, role: role)
+        typedStore[key] = message
+    }
+
 
     // MARK: - Helpers
 
     private func normalizeType(_ type: String) -> String {
         if agent.agentConfig.useLegacyDidSovPrefix {
-            return Dispatcher.replaceNewDidCommPrefixWithLegacyDidSov(
-                messageType: type
-            )
+            return Dispatcher.replaceNewDidCommPrefixWithLegacyDidSov(messageType: type)
         }
         return type
     }
+
 
     private func makeKey(
         associatedRecordId: String,
@@ -139,13 +156,18 @@ final class MockDidCommMessageRepository: DidCommMessageRepository {
         messageType: String,
         role: DidCommMessageRole
     ) async throws -> String? {
-        let key = makeKey(
+
+        let k = makeKey(
             associatedRecordId: associatedRecordId,
             messageType: messageType,
             role: role
         )
 
-        return store[key]?.message
+        if let stubbed = stringStore[k] {
+            return stubbed
+        }
+
+        return store[k]?.message
     }
 
     override func findAgentMessage(
@@ -166,12 +188,24 @@ final class MockDidCommMessageRepository: DidCommMessageRepository {
         messageType: String,
         role: DidCommMessageRole
     ) async throws -> T? {
+
         let key = makeKey(
             associatedRecordId: associatedRecordId,
             messageType: messageType,
             role: role
         )
 
+        if let any = typedStore[key] as? T {
+            return any
+        }
+
+        // 2) se stubou string, decodifica
+        if let json = stringStore[key],
+           let data = json.data(using: .utf8) {
+            return try JSONDecoder().decode(T.self, from: data)
+        }
+
+        // 3) fallback pro store "real"
         guard let record = store[key],
               let data = record.message.data(using: .utf8) else {
             return nil

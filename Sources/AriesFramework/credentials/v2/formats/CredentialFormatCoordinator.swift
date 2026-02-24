@@ -553,7 +553,7 @@ public final class CredentialFormatCoordinator {
         return format.attachId
     }
     
-    func getAttachmentForService(
+    public func getAttachmentForService(
         credentialFormatService: any CredentialFormatService,
         formats: [Format],
         attachments: [Attachment]
@@ -567,3 +567,5 @@ public final class CredentialFormatCoordinator {
         return attachment
     }
 }
+
+extension CredentialFormatCoordinator: CredentialFormatCoordinatorProtocol {}

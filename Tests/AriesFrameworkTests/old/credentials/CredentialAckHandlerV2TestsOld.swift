@@ -46,7 +46,7 @@
 //        let handler = CredentialAckHandlerV2(agent: agent)
 //        let context = MockInboundMessageContext()
 //
-//        // When
+//        
 //        let result = try await handler.handle(messageContext: context)
 //
 //        // Then
@@ -61,7 +61,7 @@
 //        let handler = CredentialAckHandlerV2(agent: agent)
 //        let context = MockInboundMessageContext()
 //
-//        // When / Then
+//        //when / Then
 //        await XCTAssertThrowsError(try await handler.handle(messageContext: context))
 //    }
 //}
