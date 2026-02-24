@@ -168,23 +168,19 @@ public class BesuLedgerService: LedgerService {
     
     
     public func getTailsPath() async throws -> String {
-        let start = Date()
+        let fileManager = FileManager.default
 
-        if let cached = await tailsPathCache.getIfFresh(LedgerCacheDefaults.TAILS_PATH) {
-            logDebug("[CACHE HIT] getTailsPath took \(Int(Date().timeIntervalSince(start)*1000))ms")
-            return cached
+        guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unable to retrieve the documents directory"])
         }
 
-        let path = try await tailsPathCache.getOrLoad(LedgerCacheDefaults.TAILS_PATH) {
-            let fm = FileManager.default
-            let base = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            let tails = base.appendingPathComponent("tails", isDirectory: true)
-            try? fm.createDirectory(at: tails, withIntermediateDirectories: true)
-            return tails.path
+        let tailsFolder = documentsDirectory.appendingPathComponent("tails")
+
+        if !fileManager.fileExists(atPath: tailsFolder.path) {
+            try fileManager.createDirectory(at: tailsFolder, withIntermediateDirectories: true, attributes: nil)
         }
 
-        logDebug("[CACHE STORE] getTailsPath took \(Int(Date().timeIntervalSince(start)*1000))ms")
-        return path
+        return tailsFolder.path
     }
     
     public func getLedgerClient(network: String? = nil) throws -> LedgerClient {
