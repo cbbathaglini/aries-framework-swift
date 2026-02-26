@@ -42,7 +42,9 @@ class MediationRecipient {
             let routing = try await self.getRouting()
             var connection = try await agent.connectionService.processInvitation(invitation,
                 outOfBandInvitation: outOfBandInvitation, routing: routing, autoAcceptConnection: true)
+        
             let message : OutboundMessage = try await agent.connectionService.createRequest(connectionId: connection.id)
+            let message : OutboundMessage = try await agent.didExchangeService.createRequest(connectionId: connection.id) //remoção do connectionservice
             print("mensagem mediador \(message)")
             try await agent.messageSender.send(message: message)
 
