@@ -25,6 +25,9 @@ final class MockCredentialExchangeRepository: CredentialExchangeRepository {
     
     private(set) var getByThreadAndRoleCalled = false
     private(set) var findByThreadRoleAndConnectionIdCalled = false
+    
+    var getByW3cCredentialIdCalled = false
+    var stubbedById: [String: CredentialExchangeRecord] = [:]
 
     override func getByThreadAndRole(
         threadId: String,
@@ -154,6 +157,13 @@ final class MockCredentialExchangeRepository: CredentialExchangeRepository {
         }
         return raw
     }
+    
+    override func getByW3cCredentialId(_ id: String) async throws -> CredentialExchangeRecord {
+        getByW3cCredentialIdCalled = true
+        if let r = stubbedById[id] { return r }
+        throw CredoError("Credential not found")
+    }
+    
     // MARK: - Test helpers
 
     func stub(_ records: [CredentialExchangeRecord]) {

@@ -91,11 +91,9 @@ public class DIDParser {
 //    }
     
     public static func ConvertFingerprintToVerkey(fingerprint: String) throws -> String {
-        print("🧨 ConvertFingerprintToVerkey fingerprint =", fingerprint)
 
         let base58PublicKey = fingerprint.dropFirst(1)
         let bytes = try Base58.decode(String(base58PublicKey))
-        print("🧨 bytes.prefix(8) =", Array(bytes.prefix(8)))
 
         let codec = bytes.prefix(2)
         if Array(codec) != MULTICODEC_PREFIX_ED25519 {

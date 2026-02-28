@@ -320,7 +320,7 @@ public class AnoncredsProofFormatService: ProofFormatService {
         )
     }
     
-    private func validateCredentialChosen(
+    public func validateCredentialChosen(
         chosenCredentialId: String?,
         proofRequest: AnonCredsProofRequest
     ) async throws {

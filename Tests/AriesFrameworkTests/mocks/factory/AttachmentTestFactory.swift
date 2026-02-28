@@ -96,6 +96,33 @@ enum AttachmentTestFactory {
             data: AttachmentData(json: jsonString)
         )
     }
+    
+    static func decodeFromAttachment<T: Decodable>(
+        _ type: T.Type,
+        attachment: Attachment,
+        decoder: JSONDecoder = JSONDecoder()
+    ) throws -> T {
+        
+        if let json = attachment.data.json {
+            guard let data = json.data(using: .utf8) else {
+                throw CredoError("Attachment json is not valid UTF-8")
+            }
+            return try decoder.decode(T.self, from: data)
+        }
+
+        if let base64 = attachment.data.base64 {
+            guard let data = Data(base64Encoded: base64) else {
+                throw CredoError("Attachment base64 is invalid")
+            }
+            return try decoder.decode(T.self, from: data)
+        }
+
+        if attachment.data.links != nil {
+            throw CredoError("Attachment links not supported in tests decodeFromAttachment")
+        }
+
+        throw CredoError("Attachment has no decodable data (json/base64)")
+    }
 
     // MARK: - Dummy / Minimal
 
