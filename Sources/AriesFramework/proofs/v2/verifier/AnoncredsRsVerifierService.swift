@@ -59,6 +59,7 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
                 agent: agent
             )
 
+
         // If the presentation does NOT use revocation
         if holderTimestamp == nil || revRegId == nil {
             do {

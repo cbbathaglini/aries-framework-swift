@@ -179,11 +179,17 @@ struct WalletMainView: View {
                 NavigationLink(destination: ConnectionsHistoricalView()) {
                     navigationRow(icon: "link.circle.fill", title: "Connection History", subtitle: "Review previous connections")
                 }
+                
                 NavigationLink(destination: ProofListView()) {
                     navigationRow(icon: "checkmark.seal.fill", title: "Proofs", subtitle: "Manage proof requests")
                 }
+                
                 NavigationLink(destination: InvitationView()) {
                     navigationRow(icon: "envelope.open.fill", title: "Generate Invitation", subtitle: "Create invitations for new agents")
+                }
+                
+                NavigationLink(destination: W3cCredentialView()) {
+                    navigationRow(icon: "envelope.open.fill", title: "W3C Credential", subtitle: "Eca w3c credential")
                 }
                 
             }

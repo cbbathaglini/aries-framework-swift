@@ -4,18 +4,22 @@ import AriesFramework
 
 struct VerifierProofView: View {
     @State private var scannedJSON: String?
+    @State private var editableRequestJSON: String = ""
+
     @State private var statusMessage = "Point the camera at the requester's QR code."
     @State private var presentationResult: [String: Any]?
     @State private var isProcessing = false
+
     @State private var proofRequest: AnonCredsProofRequest?
     @State private var availableCredentials: [CredentialInfo] = []
     @State private var selectedCredentialId: String?
     @State private var proofRecord: ProofExchangeRecord?
-    
-    @State private var qrParts: [UIImage] = []
 
     // store all generated qrcodes
     @State private var qrCodes: [UIImage] = []
+
+    // debounce reparse while editing
+    @State private var reparseTask: Task<Void, Never>?
 
     @StateObject private var proofHandler = ProofHandler.shared
 
@@ -25,7 +29,7 @@ struct VerifierProofView: View {
                 Text("📷 Scan Proof Request QR Code")
                     .font(.title2)
                     .bold()
-                
+
                 // SCAN
                 if scannedJSON == nil {
                     CodeScannerView(codeTypes: [.qr]) { result in
@@ -40,32 +44,52 @@ struct VerifierProofView: View {
                     .cornerRadius(12)
                     .shadow(radius: 4)
                 } else {
-                    ScrollView {
-                        Text("📥 Proof Request received:")
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("📥 Proof Request (editable):")
                             .font(.headline)
-                        
-                        Text(scannedJSON ?? "")
-                            .font(.footnote)
-                            .padding()
+
+                        TextEditor(text: $editableRequestJSON)
+                            .font(.system(.footnote, design: .monospaced))
+                            .frame(height: 240)
+                            .padding(12)
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(8)
                             .textSelection(.enabled)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .onChange(of: editableRequestJSON) { _ in
+                                debounceReparse()
+                            }
+
+                        HStack(spacing: 12) {
+                            Button("↻ Re-parse & Reload Credentials") {
+                                Task { await reparseAndReload() }
+                            }
+                            .buttonStyle(.bordered)
+
+                            Button("🧹 Reset") {
+                                editableRequestJSON = scannedJSON ?? ""
+                                Task { await reparseAndReload() }
+                            }
+                            .buttonStyle(.bordered)
+                        }
                     }
-                    .frame(height: 200)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
+
                 // List of credentials
                 if !availableCredentials.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Select a compatible credential:")
                             .font(.headline)
-                        
+
                         Picker("Credential", selection: $selectedCredentialId) {
                             Text("Choose...").tag(nil as String?)
                             ForEach(availableCredentials, id: \.id) { cred in
                                 VStack(alignment: .leading) {
                                     Text("📄 \(cred.id ?? "No schema")")
                                         .font(.subheadline)
+
                                     ForEach(cred.attrs.keys.sorted(), id: \.self) { key in
                                         Text("• \(key): \(cred.attrs[key] ?? "")")
                                             .font(.caption)
@@ -79,7 +103,7 @@ struct VerifierProofView: View {
                     }
                     .padding(.horizontal)
                 }
-                
+
                 if let selectedCredentialId = selectedCredentialId, !selectedCredentialId.isEmpty {
                     Button(action: { Task { await generatePresentation() } }) {
                         if isProcessing {
@@ -96,12 +120,13 @@ struct VerifierProofView: View {
                     }
                     .padding(.horizontal)
                 }
-                
+
                 // RESULT JSON
                 if let presentationResult {
                     Divider()
                     Text("✅ Proof Presentation Generated")
                         .font(.headline)
+
                     ScrollView {
                         Text(prettyJSONString(from: presentationResult))
                             .font(.footnote)
@@ -110,13 +135,12 @@ struct VerifierProofView: View {
                             .cornerRadius(8)
                             .textSelection(.enabled)
                     }
-                    
-                    
+
                     if !qrCodes.isEmpty {
                         Divider()
                         Text("📡 Generated QR Codes")
                             .font(.headline)
-                        
+
                         ScrollView(.horizontal, showsIndicators: true) {
                             HStack(spacing: 20) {
                                 ForEach(Array(qrCodes.enumerated()), id: \.offset) { idx, qr in
@@ -124,14 +148,13 @@ struct VerifierProofView: View {
                                         Text("QR \(idx+1)/\(qrCodes.count)")
                                             .font(.caption)
                                             .foregroundColor(.white)
-                                        
-                                        Image(uiImage: qr)
+
+                                        Image(uiImage: qrWithWhiteBackground(qr))
                                             .resizable()
                                             .interpolation(.none)
                                             .scaledToFit()
                                             .frame(width: 240, height: 240)
-                                            .padding(12)
-                                            .background(Color.white) // FÁCIL, EFICIENTE, PERFEITO
+                                            .background(Color.white)
                                             .cornerRadius(12)
                                             .shadow(radius: 4)
                                     }
@@ -141,36 +164,7 @@ struct VerifierProofView: View {
                         }
                     }
                 }
-                
-                if !qrCodes.isEmpty {
-                    Divider()
-                    Text("📡 Generated QR Codes")
-                        .font(.headline)
 
-                    ScrollView(.horizontal, showsIndicators: true) {
-                        HStack(spacing: 20) {
-                            ForEach(Array(qrCodes.enumerated()), id: \.offset) { idx, qr in
-                                VStack {
-                                    Text("QR \(idx+1)/\(qrCodes.count)")
-                                        .font(.caption)
-                                        .foregroundColor(.white)
-
-                                    Image(uiImage: qrWithWhiteBackground(qr))
-                                        .resizable()
-                                        .interpolation(.none)
-                                        .scaledToFit()
-                                        .frame(width: 240, height: 240)
-                                        .background(Color.white)
-                                        .cornerRadius(12)
-                                        .shadow(radius: 4)
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-                
-                }
-                
                 Divider()
                 Text(statusMessage)
                     .font(.footnote)
@@ -182,20 +176,62 @@ struct VerifierProofView: View {
         }
     }
 
+    // MARK: - Scan -> fill editable JSON
+
     @MainActor
     private func handleScanned(code: String) async {
         scannedJSON = code
+        editableRequestJSON = code // ✅ preenche o campo (editável)
         statusMessage = "📄 QR scanned successfully. Loading compatible credentials..."
 
+        await reparseAndReload()  // ✅ parseia baseado no editável
+    }
+
+    // MARK: - Debounce reparse while typing
+
+    private func debounceReparse() {
+        reparseTask?.cancel()
+        reparseTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
+            await reparseAndReload()
+        }
+    }
+
+    // MARK: - Reparse edited JSON -> update proofRequest + list
+
+    @MainActor
+    private func reparseAndReload() async {
         do {
-            guard let data = code.data(using: .utf8) else { return }
+            let code = editableRequestJSON.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !code.isEmpty else {
+                statusMessage = "❌ Empty request JSON."
+                proofRequest = nil
+                availableCredentials = []
+                selectedCredentialId = nil
+                presentationResult = nil
+                qrCodes = []
+                return
+            }
+
+            guard let data = code.data(using: .utf8) else {
+                statusMessage = "❌ Invalid UTF-8."
+                return
+            }
 
             let decoded = try JSONDecoder().decode(RequestPresentationMessageV2.self, from: data)
             let anonCredsProofString = try decoded.anoncredsProofRequest()
 
-            guard let proofData = anonCredsProofString.data(using: .utf8) else { return }
+            guard let proofData = anonCredsProofString.data(using: .utf8) else {
+                statusMessage = "❌ Could not extract anoncreds proof request."
+                return
+            }
 
             proofRequest = try JSONDecoder().decode(AnonCredsProofRequest.self, from: proofData)
+
+            // reset seleção/resultado porque a request pode ter mudado
+            selectedCredentialId = nil
+            presentationResult = nil
+            qrCodes = []
 
             await loadAvailableCredentials()
 
@@ -204,9 +240,16 @@ struct VerifierProofView: View {
                 : "✅ \(availableCredentials.count) compatible credential(s) found."
 
         } catch {
-            statusMessage = "❌ Error: \(error.localizedDescription)"
+            statusMessage = "❌ Error parsing edited request: \(error.localizedDescription)"
+            proofRequest = nil
+            availableCredentials = []
+            selectedCredentialId = nil
+            presentationResult = nil
+            qrCodes = []
         }
     }
+
+    // MARK: - Load creds compatible with proofRequest
 
     private func loadAvailableCredentials() async {
         guard let proof = proofRequest else { return }
@@ -217,9 +260,7 @@ struct VerifierProofView: View {
             .flatMap { $0 }
 
         let requestedAttrNames = proof.requestedAttributes.values
-            .compactMap {
-                $0.names ?? ($0.name != nil ? [$0.name!] : [])
-            }
+            .compactMap { $0.names ?? ($0.name != nil ? [$0.name!] : []) }
             .flatMap { $0 }
 
         let compatible = allRecords.compactMap { record -> CredentialInfo? in
@@ -247,18 +288,29 @@ struct VerifierProofView: View {
         await MainActor.run { availableCredentials = compatible }
     }
 
+    // MARK: - Generate presentation using EDITED request JSON
+
     private func generatePresentation() async {
-        guard let code = scannedJSON else { return }
         guard let selectedCredentialId = selectedCredentialId else { return }
+
+        let code = editableRequestJSON.trimmingCharacters(in: .whitespacesAndNewlines) // ✅ usa o editado
+        guard !code.isEmpty else {
+            await MainActor.run { statusMessage = "❌ Empty request JSON." }
+            return
+        }
 
         isProcessing = true
         qrCodes = []
 
         do {
-            let data = code.data(using: .utf8)!
-            let dict = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+            guard let data = code.data(using: .utf8) else {
+                throw NSError(domain: "VerifierProofView", code: 0,
+                              userInfo: [NSLocalizedDescriptionKey: "Invalid UTF-8 request JSON"])
+            }
 
+            let dict = try JSONSerialization.jsonObject(with: data) as! [String: Any]
             let jsonData = try JSONSerialization.data(withJSONObject: dict)
+
             let requestMsg = try JSONDecoder().decode(RequestPresentationMessageV2.self, from: jsonData)
 
             let record = try await agent!.proofCommandV2.processRequest(requestMessage: requestMsg)
@@ -274,7 +326,7 @@ struct VerifierProofView: View {
             encoder.outputFormatting = []
             let minifiedData = try encoder.encode(presentation)
 
-            let jsonString = String(data: minifiedData, encoding: .utf8)!
+            let jsonString = String(data: minifiedData, encoding: .utf8) ?? ""
             print("TAMANHO JSON:", jsonString.count)
 
             qrCodes = generateMultiQR(from: jsonString)
@@ -289,26 +341,14 @@ struct VerifierProofView: View {
         isProcessing = false
     }
 
+    
+    
+    // MARK: - Helpers
+
     private func prettyJSONString(from dict: [String: Any]) -> String {
         guard let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
         else { return "{}" }
         return String(data: data, encoding: .utf8) ?? "{}"
-    }
-
-    
-
-    func splitIntoQRChunks(_ base64: String, chunkSize: Int = 2000) -> [String] {
-        var chunks: [String] = []
-        var start = base64.startIndex
-
-        while start < base64.endIndex {
-            let end = base64.index(start, offsetBy: chunkSize, limitedBy: base64.endIndex) ?? base64.endIndex
-            chunks.append(String(base64[start..<end]))
-            start = end
-        }
-
-        let total = chunks.count
-        return chunks.enumerated().map { "VP\($0+1)/\(total):" + $1 }
     }
 
     func generateMultiQR(from text: String, chunkSize: Int = 1500) -> [UIImage] {
@@ -342,7 +382,7 @@ struct VerifierProofView: View {
 
         return UIImage(ciImage: img)
     }
-    
+
     func qrWithWhiteBackground(_ image: UIImage) -> UIImage {
         let rect = CGRect(origin: .zero, size: image.size)
 
@@ -356,4 +396,5 @@ struct VerifierProofView: View {
 
         return final!
     }
+    
 }

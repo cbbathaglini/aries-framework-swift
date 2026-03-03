@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		13006EDA2EA0648200E50A48 /* RequestProofViewVerifierConnectionLess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13006ED92EA0648100E50A48 /* RequestProofViewVerifierConnectionLess.swift */; };
+		131071CD2F57102A0097A232 /* W3cCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131071CC2F5710290097A232 /* W3cCredentialView.swift */; };
 		1332E3462F3223D80040A9DF /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1332E3452F3223D60040A9DF /* AppConfig.swift */; };
 		1353DCF02D88B80100EB616A /* genesiscpqd.txn in Resources */ = {isa = PBXBuildFile; fileRef = 1353DCEF2D88B80100EB616A /* genesiscpqd.txn */; };
 		136525792EEC40BA00B70F5D /* Anoncreds in Frameworks */ = {isa = PBXBuildFile; productRef = 136525782EEC40BA00B70F5D /* Anoncreds */; };
@@ -77,6 +78,7 @@
 /* Begin PBXFileReference section */
 		13006ED92EA0648100E50A48 /* RequestProofViewVerifierConnectionLess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProofViewVerifierConnectionLess.swift; sourceTree = "<group>"; };
 		13023ED82E9BF23C003FE97C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		131071CC2F5710290097A232 /* W3cCredentialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = W3cCredentialView.swift; sourceTree = "<group>"; };
 		1332E3452F3223D60040A9DF /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		1353DCEF2D88B80100EB616A /* genesiscpqd.txn */ = {isa = PBXFileReference; lastKnownFileType = text; path = genesiscpqd.txn; sourceTree = "<group>"; };
 		138277F32EA24C2200D895FB /* BluetoothView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothView.swift; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 		BB5C467D270C1500008D77AE /* wallet-app-ios */ = {
 			isa = PBXGroup;
 			children = (
+				131071CC2F5710290097A232 /* W3cCredentialView.swift */,
 				1332E3452F3223D60040A9DF /* AppConfig.swift */,
 				13F71D842EC5FA8A00ABFCDD /* LoggedOutView.swift */,
 				13DAEF332EC4B70D007E2DA7 /* ProofDetailLoaderView.swift */,
@@ -355,6 +358,7 @@
 				13D1C1322E9D5E9B006F96F9 /* ProofDetailView.swift in Sources */,
 				138277FA2EA250AC00D895FB /* PresentationHandler.swift in Sources */,
 				13006EDA2EA0648200E50A48 /* RequestProofViewVerifierConnectionLess.swift in Sources */,
+				131071CD2F57102A0097A232 /* W3cCredentialView.swift in Sources */,
 				138277FE2EA2904C00D895FB /* ReceivingPresentationViewOld.swift in Sources */,
 				13D1C1302E9D5DF6006F96F9 /* ProofListView.swift in Sources */,
 				13A19B3D2EBD290300AEA41F /* VerifierHandler.swift in Sources */,

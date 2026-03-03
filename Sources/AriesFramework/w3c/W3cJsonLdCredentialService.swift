@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AnyCodable
 
 public class W3cJsonLdCredentialService {
     private let agent: Agent
@@ -19,13 +20,9 @@ public class W3cJsonLdCredentialService {
     }
 
     public func getExpandedTypesForCredential(
-        credential: W3cJsonLdVerifiableCredential
+        contextList: [AnyCodable],
+        types: [String]
     ) throws -> [String: [String]] {
-        print("credential2 => \(credential)")
-
-        let contextList = credential.context
-        let types = credential.type
-
         let expandedTypes = W3cTypeExpander.expandTypes(
             spec: W3cTypeExpander.ContextSpec(contexts: contextList),
             types: types

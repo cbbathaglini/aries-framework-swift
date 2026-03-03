@@ -51,7 +51,33 @@ public class W3cCredentialRecord: BaseRecord, Codable {
     }
 
     public func getTags() -> Tags {
-        return tags ?? [:]
+        var t = (tags ?? [:])
+
+        let subjectIds: [String] = credential.credentialSubject
+            .compactMap { $0.id?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        if let first = subjectIds.first {
+            t["subjectId"] = first
+            t["subjectIds"] = Array(Set(subjectIds)).joined(separator: ",") // distinct
+        } else {
+            t["subjectId"] = ""
+            t["subjectIds"] = ""
+        }
+
+        if let given = credential.id, !given.isEmpty {
+            t["givenId"] = given
+        }
+
+        t["issuerId"] = String(describing: credential.issuer)
+        t["types"] = credential.type.joined(separator: ",")
+
+        for sid in Array(Set(subjectIds)) {
+            t["subjectId:\(sid)"] = "1"
+        }
+
+        self.tags = t
+        return t
     }
 
     func getTagsAux() -> Tags {

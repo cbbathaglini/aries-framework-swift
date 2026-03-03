@@ -442,6 +442,7 @@ public class AnoncredsProofFormatService: ProofFormatService {
         
         logDebug("anonCredsProof: \(jsonStringProof)")
         
+        
         for (referent, attribute) in anonCredsProof.requestedProof.revealedAttrs {
             guard checkValidCredentialValueEncoding(raw: attribute.raw, encoded: attribute.encoded) else {
                 throw CredoError(
@@ -880,8 +881,9 @@ public class AnoncredsProofFormatService: ProofFormatService {
         
     }
     
-    private func checkValidCredentialValueEncoding(raw: Any, encoded: String) -> Bool {
-        return encoded == AnonCredsEncoder.encodeCredentialValue(raw)
+    func checkValidCredentialValueEncoding(raw: Any?, encoded: String) -> Bool {
+        let expected = AnonCredsEncoder.encodeCredentialValue(raw)
+        return expected == encoded
     }
     
     private func convert(input: [String: AnonCredsCredentialDefinition]) async throws -> [String: CredentialDefinition] {

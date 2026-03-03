@@ -21,27 +21,39 @@ public struct W3cCredentialSubject: Codable {
         let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
 
         var tempClaims: [String: AnyCodable] = [:]
+        var foundId: String? = nil
+
         for key in container.allKeys {
-            if key.stringValue == "id" {
-                id = try container.decodeIfPresent(String.self, forKey: key)
-            } else {
+            switch key.stringValue {
+            case "@id":
+                foundId = try container.decodeIfPresent(String.self, forKey: key)
+            case "id":
+                let v = try container.decodeIfPresent(String.self, forKey: key)
+                if foundId == nil { foundId = v }
+            default:
                 tempClaims[key.stringValue] = try container.decode(AnyCodable.self, forKey: key)
             }
         }
-        claims = tempClaims
+
+        self.id = foundId
+        self.claims = tempClaims
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: DynamicCodingKeys.self)
+
         if let id = id {
-            try container.encode(id, forKey: DynamicCodingKeys(stringValue: "id")!)
+            try container.encode(id, forKey: DynamicCodingKeys(stringValue: "@id")!)
         }
+
         if let claims = claims {
             for (key, value) in claims {
+                if key == "@id" || key == "id" { continue }
                 try container.encode(value, forKey: DynamicCodingKeys(stringValue: key)!)
             }
         }
     }
+        
 
     struct DynamicCodingKeys: CodingKey {
         var stringValue: String
