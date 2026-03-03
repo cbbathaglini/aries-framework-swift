@@ -38,7 +38,6 @@ final class W3cCredentialViewModel: ObservableObject {
         isLoadingAction = action
     }
 
-    // Kotlin: saveButton.onClick -> IO -> processAndStorew3cCredential -> UI resultText
     func saveCredential() {
         guard let agent = agent else { return }
 
@@ -53,12 +52,8 @@ final class W3cCredentialViewModel: ObservableObject {
         Task {
             do {
                 let savedRecord = try await agent.w3cCredentialService.processAndStorew3cCredential(rawJson: raw)
-
-                // Kotlin mostra o record.id (storage id)
                 self.resultText = "Salvo com sucesso.\n(id detectado: \(savedRecord.id))"
 
-                // opcional: já atualizar lista pra “parecer” que salvou
-                // (igual muitas telas Android fazem)
                 let all = try await agent.w3cCredentialService.getAll()
                 self.records = all.map { W3cCredentialRecordUI.from(record: $0) }
 
@@ -70,7 +65,6 @@ final class W3cCredentialViewModel: ObservableObject {
         }
     }
 
-    // Kotlin: listButton.onClick -> repo.getAll -> adapter.submit(all) + resultText
     func listAll() {
         guard let agent = agent else { return }
 
@@ -89,7 +83,6 @@ final class W3cCredentialViewModel: ObservableObject {
         }
     }
 
-    // Kotlin: getButton.onClick -> service.findByCredentialSubjectId(id) -> adapter.submit(results)
     func searchBySubjectId() {
         guard let agent = agent else { return }
 
@@ -132,7 +125,6 @@ struct W3cCredentialView: View {
             ScrollView {
                 VStack(spacing: 16) {
 
-                    // JSON input (EditText grande)
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Cole aqui o JSON da W3C Verifiable Credential")
                             .font(.headline)
@@ -148,7 +140,6 @@ struct W3cCredentialView: View {
                             .textInputAutocapitalization(.never)
                     }
 
-                    // ID input
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Credential Subject ID (did:jwk:...)")
                             .font(.headline)
@@ -159,7 +150,6 @@ struct W3cCredentialView: View {
                             .textInputAutocapitalization(.never)
                     }
 
-                    // Buttons (3 actions, igual Kotlin)
                     VStack(spacing: 10) {
 
                         Button { vm.saveCredential() } label: {
@@ -186,8 +176,6 @@ struct W3cCredentialView: View {
                         }
                         .disabled(vm.isLoadingAction != nil)
                     }
-
-                    // resultText (TextView)
                     if !vm.resultText.isEmpty {
                         Text(vm.resultText)
                             .font(.footnote)
@@ -196,7 +184,7 @@ struct W3cCredentialView: View {
                             .padding(.top, 4)
                     }
 
-                    // RecyclerView (cards list)
+                
                     if !vm.records.isEmpty {
                         Divider().padding(.top, 6)
 
@@ -312,9 +300,9 @@ struct W3cCredentialCard: View {
 // MARK: - UI Model (equivalente ao item do adapter)
 
 struct W3cCredentialRecordUI: Identifiable, Equatable {
-    let id: String               // record.id (storage id)
-    let givenId: String?         // credential.id
-    let subjectId: String?       // credentialSubject[0].id
+    let id: String
+    let givenId: String?
+    let subjectId: String?
     let issuer: String?
     let types: [String]
     let createdAt: Date?
