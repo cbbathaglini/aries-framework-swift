@@ -8,6 +8,7 @@
 
 import SwiftUI
 import AriesFramework
+import anoncreds_uniffi
 
 // MARK: - ViewModel (igual Kotlin Activity + adapter)
 
@@ -50,21 +51,51 @@ final class W3cCredentialViewModel: ObservableObject {
         setLoading(.save)
 
         Task {
+            defer { setLoading(nil) }
+
             do {
+                // 1) salva a credencial W3C
                 let savedRecord = try await agent.w3cCredentialService.processAndStorew3cCredential(rawJson: raw)
                 self.resultText = "Salvo com sucesso.\n(id detectado: \(savedRecord.id))"
 
+                // ---- TESTE REVERT TO ANONCREDS CREDENTIAL
+                let parsed = try parseJsonObject(raw)
+
+                // 3) alguns fluxos colam { "credential": { ...VC... } } e outros colam a VC direto
+                let credentialJson: Any
+                if let inner = parsed["credential"] {
+                    credentialJson = inner
+                } else {
+                    credentialJson = parsed
+                }
+
+                let credential = try CredentialConversions().credentialFromW3cJson(w3cCredentialJson: raw)
+                print("credentialW3cStr: \(credential.toJson())")
+                // ---- FIM DO TESTE
+
+                // 5) recarrega lista
                 let all = try await agent.w3cCredentialService.getAll()
                 self.records = all.map { W3cCredentialRecordUI.from(record: $0) }
 
             } catch {
                 popup("Erro ao salvar: \(error.localizedDescription)")
             }
-
-            setLoading(nil)
         }
     }
 
+    ///remover
+    private func parseJsonObject(_ raw: String) throws -> [String: Any] {
+        guard let data = raw.data(using: .utf8) else {
+            throw NSError(domain: "W3cCredentialService", code: 0,
+                          userInfo: [NSLocalizedDescriptionKey: "Invalid UTF-8"])
+        }
+        let any = try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
+        guard let obj = any as? [String: Any] else {
+            throw NSError(domain: "W3cCredentialService", code: 0,
+                          userInfo: [NSLocalizedDescriptionKey: "Expected JSON object"])
+        }
+        return obj
+    }
     func listAll() {
         guard let agent = agent else { return }
 
