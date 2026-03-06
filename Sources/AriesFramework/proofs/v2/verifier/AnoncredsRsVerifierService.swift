@@ -25,6 +25,9 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
         let proof = options.proof
         let schemas = options.schemas
         let credentialDefinitions = options.credentialDefinitions
+        
+        try AnonCredsEncoder.checkEncodes(anonCredsProof: proof)
+        
         let proofJson = try presentationMessage.anoncredsProof()
         let proofIdentifiers: [ProofIdentifier] = proof.identifiers.map { id in
             ProofIdentifier(

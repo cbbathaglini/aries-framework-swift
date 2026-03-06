@@ -442,28 +442,8 @@ public class AnoncredsProofFormatService: ProofFormatService {
         
         logDebug("anonCredsProof: \(jsonStringProof)")
         
-        for (referent, attribute) in anonCredsProof.requestedProof.revealedAttrs {
-            guard checkValidCredentialValueEncoding(raw: attribute.raw, encoded: attribute.encoded) else {
-                throw CredoError(
-                    "The encoded value for '\(referent)' is invalid. " +
-                    "Expected '\(AnonCredsEncoder.encodeCredentialValue(attribute.raw))'. " +
-                    "Actual '\(attribute.encoded)'"
-                )
-            }
-        }
         
-        for (_, group) in anonCredsProof.requestedProof.revealedAttrGroups ?? [:] {
-            for (attrName, attr) in group.values {
-                guard checkValidCredentialValueEncoding(raw: attr.raw, encoded: attr.encoded) else {
-                    throw CredoError(
-                        "The encoded value for '\(attrName)' is invalid. " +
-                        "Expected '\(AnonCredsEncoder.encodeCredentialValue(attr.raw))'. " +
-                        "Actual '\(attr.encoded)'"
-                    )
-                }
-            }
-        }
-       
+        try AnonCredsEncoder.checkEncodes(anonCredsProof: anonCredsProof)
 
         let schemaIds = Set(anonCredsProof.identifiers.map { $0.schemaId })
         let schemasMap = try await agent.ledgerService.getSchemas(schemaIds: schemaIds)
