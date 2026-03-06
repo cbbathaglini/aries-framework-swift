@@ -54,28 +54,36 @@ final class W3cCredentialViewModel: ObservableObject {
             defer { setLoading(nil) }
 
             do {
-                // 1) salva a credencial W3C
-                let savedRecord = try await agent.w3cCredentialService.processAndStorew3cCredential(rawJson: raw)
-                self.resultText = "Salvo com sucesso.\n(id detectado: \(savedRecord.id))"
-
-                // ---- TESTE REVERT TO ANONCREDS CREDENTIAL
-                let parsed = try parseJsonObject(raw)
-
-                // 3) alguns fluxos colam { "credential": { ...VC... } } e outros colam a VC direto
-                let credentialJson: Any
-                if let inner = parsed["credential"] {
-                    credentialJson = inner
-                } else {
-                    credentialJson = parsed
+                
+                let savedRecord = try await agent.ecaService.saveText(text: raw)
+                
+                let all = try await agent.ecaService.getAll() ?? []
+                self.records = all.compactMap { record in
+                    W3cCredentialRecordUI.from(record: record)
                 }
 
-                let credential = try CredentialConversions().credentialFromW3cJson(w3cCredentialJson: raw)
-                print("credentialW3cStr: \(credential.toJson())")
-                // ---- FIM DO TESTE
-
-                // 5) recarrega lista
-                let all = try await agent.w3cCredentialService.getAll()
-                self.records = all.map { W3cCredentialRecordUI.from(record: $0) }
+//                // 1) salva a credencial W3C
+//                let savedRecord = try await agent.w3cCredentialService.processAndStorew3cCredential(rawJson: raw)
+//                self.resultText = "Salvo com sucesso.\n(id detectado: \(savedRecord.id))"
+//
+//                // ------------ TESTE REVERT TO ANONCREDS CREDENTIAL ------------
+//                let parsed = try parseJsonObject(raw)
+//
+//                // 3) alguns fluxos colam { "credential": { ...VC... } } e outros colam a VC direto
+//                let credentialJson: Any
+//                if let inner = parsed["credential"] {
+//                    credentialJson = inner
+//                } else {
+//                    credentialJson = parsed
+//                }
+//
+//                let credential = try CredentialConversions().credentialFromW3cJson(w3cCredentialJson: raw)
+//                print("credentialW3cStr: \(credential.toJson())")
+//                // ------------ FIM DO TESTE ------------
+//
+//                // 5) recarrega lista
+//                let all = try await agent.w3cCredentialService.getAll()
+//                self.records = all.map { W3cCredentialRecordUI.from(record: $0) }
 
             } catch {
                 popup("Erro ao salvar: \(error.localizedDescription)")
@@ -100,41 +108,57 @@ final class W3cCredentialViewModel: ObservableObject {
         guard let agent = agent else { return }
 
         setLoading(.list)
-
+        
         Task {
-            do {
-                let all = try await agent.w3cCredentialService.getAll()
-                self.records = all.map { W3cCredentialRecordUI.from(record: $0) }
-                self.resultText = "Total: \(all.count)"
-            } catch {
-                popup("Erro ao listar: \(error.localizedDescription)")
-            }
+           do {
+               let all = try await agent.ecaService.getAll() ?? []
+               self.records = all.compactMap { record in
+                   W3cCredentialRecordUI.from(record: record)
+               }
+               self.resultText = "Total: \(all.count)"
+           } catch {
+               popup("Erro ao listar: \(error.localizedDescription)")
+           }
 
-            setLoading(nil)
-        }
+           setLoading(nil)
+       }
+
+//        Task {
+//            do {
+//                let all = try await agent.w3cCredentialService.getAll()
+//                self.records = all.map { W3cCredentialRecordUI.from(record: $0) }
+//                self.resultText = "Total: \(all.count)"
+//            } catch {
+//                popup("Erro ao listar: \(error.localizedDescription)")
+//            }
+//
+//            setLoading(nil)
+//        }
     }
 
     func searchBySubjectId() {
         guard let agent = agent else { return }
 
-        let q = subjectId.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !q.isEmpty else {
+        let subjectId = subjectId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !subjectId.isEmpty else {
             popup("Digite um id para buscar.")
             return
         }
 
         setLoading(.search)
-
+        
         Task {
             do {
-                let hits = try await agent.w3cCredentialService.findByCredentialSubjectId(subjectId: q)
+                let hits = try await agent.ecaService.getBySubjectId(subjectId)
 
-                if hits.isEmpty {
+                if hits.count == 0 {
                     self.records = []
-                    self.resultText = "Nada encontrado para subjectId=\(q)"
+                    self.resultText = "Nada encontrado para subjectId=\(subjectId)"
                 } else {
-                    self.records = hits.map { W3cCredentialRecordUI.from(record: $0) }
-                    self.resultText = "Encontradas: \(hits.count)"
+                    self.records = hits.map {
+                        W3cCredentialRecordUI.from(record: $0)
+                    }
+                    self.resultText = "Encontrada!!"
                 }
             } catch {
                 popup("Erro ao buscar: \(error.localizedDescription)")
@@ -142,6 +166,24 @@ final class W3cCredentialViewModel: ObservableObject {
 
             setLoading(nil)
         }
+
+//        Task {
+//            do {
+//                let hits = try await agent.w3cCredentialService.findByCredentialSubjectId(subjectId: q)
+//
+//                if hits.isEmpty {
+//                    self.records = []
+//                    self.resultText = "Nada encontrado para subjectId=\(q)"
+//                } else {
+//                    self.records = hits.map { W3cCredentialRecordUI.from(record: $0) }
+//                    self.resultText = "Encontradas: \(hits.count)"
+//                }
+//            } catch {
+//                popup("Erro ao buscar: \(error.localizedDescription)")
+//            }
+//
+//            setLoading(nil)
+//        }
     }
 }
 
@@ -272,17 +314,8 @@ struct W3cCredentialCard: View {
         VStack(alignment: .leading, spacing: 10) {
 
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(rec.title)
-                        .font(.headline)
-
-                    if let issuer = rec.issuer, !issuer.isEmpty {
-                        Text("Issuer: \(issuer)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                }
+                Text(rec.title)
+                    .font(.headline)
 
                 Spacer()
 
@@ -293,72 +326,138 @@ struct W3cCredentialCard: View {
 
             Divider().opacity(0.35)
 
-            keyValue("recordId", rec.id)
-
-            if let subjectId = rec.subjectId, !subjectId.isEmpty {
-                keyValue("subjectId", subjectId)
+            ScrollView(.vertical) {
+                Text(rec.rawJson)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundColor(.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
             }
-
-            if let givenId = rec.givenId, !givenId.isEmpty {
-                keyValue("givenId", givenId)
-            }
-
-            if !rec.types.isEmpty {
-                keyValue("types", rec.types.joined(separator: ", "))
-            }
+            .frame(maxHeight: 220)
         }
         .padding(14)
         .background(Color.gray.opacity(0.12))
         .cornerRadius(12)
-        .textSelection(.enabled)
-    }
-
-    private func keyValue(_ k: String, _ v: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            Text(k)
-                .font(.caption2)
-                .foregroundColor(.secondary)
-                .frame(width: 88, alignment: .leading)
-
-            Text(v)
-                .font(.caption)
-                .foregroundColor(.primary)
-                .lineLimit(3)
-        }
     }
 }
 
-// MARK: - UI Model (equivalente ao item do adapter)
-
-struct W3cCredentialRecordUI: Identifiable, Equatable {
+struct W3cCredentialRecordUI: Identifiable {
     let id: String
-    let givenId: String?
-    let subjectId: String?
-    let issuer: String?
-    let types: [String]
-    let createdAt: Date?
-
-    var title: String {
-        if types.isEmpty { return "Verifiable Credential" }
-        return types.prefix(2).joined(separator: " • ")
-    }
-
-    var createdAtText: String {
-        guard let createdAt else { return "" }
-        return createdAt.formatted(date: .abbreviated, time: .shortened)
-    }
-
-    static func from(record: W3cCredentialRecord) -> W3cCredentialRecordUI {
-        let subject = record.credential.credentialSubject.first?.id
-        let issuer = String(describing: record.credential.issuer)
-
-        return .init(
+    let title: String
+    let createdAtText: String
+    let rawJson: String
+    
+    private static let formatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .short
+        f.timeStyle = .short
+        return f
+    }()
+    
+    static func from(record: EcaRecord) -> W3cCredentialRecordUI {
+        W3cCredentialRecordUI(
             id: record.id,
-            givenId: record.credential.id,
-            subjectId: subject,
-            issuer: issuer,
-            types: record.credential.type,
-            createdAt: record.createdAt
+            title: "ECA Credential",
+            createdAtText: formatter.string(from: record.createdAt),
+            rawJson: record.credentialText
         )
     }
 }
+
+//struct W3cCredentialCard: View {
+//    let rec: W3cCredentialRecordUI
+//
+//    var body: some View {
+//        VStack(alignment: .leading, spacing: 10) {
+//
+//            HStack(alignment: .top) {
+//                VStack(alignment: .leading, spacing: 4) {
+//                    Text(rec.title)
+//                        .font(.headline)
+//
+//                    if let issuer = rec.issuer, !issuer.isEmpty {
+//                        Text("Issuer: \(issuer)")
+//                            .font(.caption)
+//                            .foregroundColor(.secondary)
+//                            .lineLimit(1)
+//                    }
+//                }
+//
+//                Spacer()
+//
+//                Text(rec.createdAtText)
+//                    .font(.caption2)
+//                    .foregroundColor(.secondary)
+//            }
+//
+//            Divider().opacity(0.35)
+//
+//            keyValue("recordId", rec.id)
+//
+//            if let subjectId = rec.subjectId, !subjectId.isEmpty {
+//                keyValue("subjectId", subjectId)
+//            }
+//
+//            if let givenId = rec.givenId, !givenId.isEmpty {
+//                keyValue("givenId", givenId)
+//            }
+//
+//            if !rec.types.isEmpty {
+//                keyValue("types", rec.types.joined(separator: ", "))
+//            }
+//        }
+//        .padding(14)
+//        .background(Color.gray.opacity(0.12))
+//        .cornerRadius(12)
+//        .textSelection(.enabled)
+//    }
+//
+//    private func keyValue(_ k: String, _ v: String) -> some View {
+//        HStack(alignment: .top, spacing: 10) {
+//            Text(k)
+//                .font(.caption2)
+//                .foregroundColor(.secondary)
+//                .frame(width: 88, alignment: .leading)
+//
+//            Text(v)
+//                .font(.caption)
+//                .foregroundColor(.primary)
+//                .lineLimit(3)
+//        }
+//    }
+//}
+
+// MARK: - UI Model (equivalente ao item do adapter)
+
+//struct W3cCredentialRecordUI: Identifiable, Equatable {
+//    let id: String
+//    let givenId: String?
+//    let subjectId: String?
+//    let issuer: String?
+//    let types: [String]
+//    let createdAt: Date?
+//
+//    var title: String {
+//        if types.isEmpty { return "Verifiable Credential" }
+//        return types.prefix(2).joined(separator: " • ")
+//    }
+//
+//    var createdAtText: String {
+//        guard let createdAt else { return "" }
+//        return createdAt.formatted(date: .abbreviated, time: .shortened)
+//    }
+//
+//    static func from(record: W3cCredentialRecord) -> W3cCredentialRecordUI {
+//        let subject = record.credential.credentialSubject.first?.id
+//        let issuer = String(describing: record.credential.issuer)
+//
+//        return .init(
+//            id: record.id,
+//            givenId: record.credential.id,
+//            subjectId: subject,
+//            issuer: issuer,
+//            types: record.credential.type,
+//            createdAt: record.createdAt
+//        )
+//    }
+//}

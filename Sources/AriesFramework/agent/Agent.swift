@@ -65,7 +65,10 @@ public class Agent {
     public var proofCommandV2 : ProofCommandV2!
     public var anoncredsVerifierService: AnonCredsVerifierService!
     public var verifierRepository: VerifierRepository!
-
+    
+    /** eca **/
+    public var ecaService: EcaService!
+    public var ecaRepository: EcaRepository!
 
     public var wallet: Wallet!
     private var _isInitialized = false
@@ -150,6 +153,10 @@ public class Agent {
         
         self.anoncredsVerifierService = AnonCredsRsVerifierService(agent: self)
         self.verifierRepository = VerifierRepository(agent: self)
+        
+        /** eca **/
+        self.ecaRepository = EcaRepository(agent: self)
+        self.ecaService = EcaService(agent: self)
     }
     
     private func initializeLedgerService() -> LedgerService {
