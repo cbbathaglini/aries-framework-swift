@@ -16,7 +16,7 @@ import anoncreds_uniffi
 final class W3cCredentialViewModel: ObservableObject {
 
     enum Action {
-        case save, list, search
+        case save, list, search, deleteById, deleteAll
     }
 
     @Published var vcJson: String = ""
@@ -135,6 +135,53 @@ final class W3cCredentialViewModel: ObservableObject {
 //            setLoading(nil)
 //        }
     }
+    
+    func deleteBySubjectId() {
+        guard let agent = agent else { return }
+
+        let subjectId = subjectId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !subjectId.isEmpty else {
+            popup("Digite um id para deletar.")
+            return
+        }
+
+        setLoading(.deleteById)
+
+        Task {
+            defer { setLoading(nil) }
+
+            do {
+                try await agent.ecaService.deleteById(subjectId)
+
+                let all = try await agent.ecaService.getAll() ?? []
+                self.records = all.compactMap { record in
+                    W3cCredentialRecordUI.from(record: record)
+                }
+
+                self.resultText = "Registros deletados para subjectId=\(subjectId)"
+            } catch {
+                popup("Erro ao deletar por id: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func deleteAll() {
+        guard let agent = agent else { return }
+
+        setLoading(.deleteAll)
+
+        Task {
+            defer { setLoading(nil) }
+
+            do {
+                try await agent.ecaService.deleteAll()
+                self.records = []
+                self.resultText = "Todos os registros foram deletados."
+            } catch {
+                popup("Erro ao deletar tudo: \(error.localizedDescription)")
+            }
+        }
+    }
 
     func searchBySubjectId() {
         guard let agent = agent else { return }
@@ -249,6 +296,23 @@ struct W3cCredentialView: View {
                         }
                         .disabled(vm.isLoadingAction != nil)
                     }
+                    
+                    Button { vm.deleteBySubjectId() } label: {
+                        PrimaryButtonLabel(
+                            title: "Deletar por ID",
+                            isLoading: vm.isLoadingAction == .deleteById
+                        )
+                    }
+                    .disabled(vm.isLoadingAction != nil)
+
+                    Button { vm.deleteAll() } label: {
+                        PrimaryButtonLabel(
+                            title: "Deletar todas",
+                            isLoading: vm.isLoadingAction == .deleteAll
+                        )
+                    }
+                    .disabled(vm.isLoadingAction != nil)
+                    
                     if !vm.resultText.isEmpty {
                         Text(vm.resultText)
                             .font(.footnote)

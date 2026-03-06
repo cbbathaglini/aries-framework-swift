@@ -39,4 +39,12 @@ public class EcaService {
         return try await agent.ecaRepository.getAll()
     }
     
+    public func deleteById(_ subjectId: String) async throws {
+        return try await agent.ecaRepository.deleteBySubjectId(subjectId)
+    }
+    
+    public func deleteAll() async throws {
+        return try await agent.ecaRepository.deleteAllRecords()
+    }
+    
 }
