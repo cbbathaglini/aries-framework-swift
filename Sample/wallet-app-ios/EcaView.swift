@@ -13,7 +13,7 @@ import anoncreds_uniffi
 // MARK: - ViewModel (igual Kotlin Activity + adapter)
 
 @MainActor
-final class W3cCredentialViewModel: ObservableObject {
+final class EcaViewModel: ObservableObject {
 
     enum Action {
         case save, list, search, deleteById, deleteAll
@@ -236,9 +236,9 @@ final class W3cCredentialViewModel: ObservableObject {
 
 // MARK: - View (UI igual Activity + layout)
 
-struct W3cCredentialView: View {
+struct EcaView: View {
 
-    @StateObject private var vm = W3cCredentialViewModel()
+    @StateObject private var vm = EcaViewModel()
 
     var body: some View {
         NavigationView {

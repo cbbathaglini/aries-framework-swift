@@ -188,9 +188,6 @@ struct WalletMainView: View {
                     navigationRow(icon: "envelope.open.fill", title: "Generate Invitation", subtitle: "Create invitations for new agents")
                 }
                 
-                NavigationLink(destination: W3cCredentialView()) {
-                    navigationRow(icon: "envelope.open.fill", title: "W3C Credential", subtitle: "Eca w3c credential")
-                }
                 
             }
         }
@@ -209,7 +206,7 @@ struct WalletMainView: View {
                 .buttonStyle(.borderedProminent)
                 
                 NavigationLink("(Holder) Scan Proof", destination: VerifierProofView())
-                NavigationLink("(Verifier) Receive Presentation", destination: ReceivingPresentationView())
+                NavigationLink("(Verifier) Receive Presentation QR", destination: ReceivingPresentationQRView())
                 NavigationLink("(Holder) Presentation List", destination: PresentationListView())
                 NavigationLink("(Verifier) Received Presentations", destination: ReceivedPresentationListView())
             }

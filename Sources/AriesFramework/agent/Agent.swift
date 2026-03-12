@@ -66,10 +66,6 @@ public class Agent {
     public var anoncredsVerifierService: AnonCredsVerifierService!
     public var verifierRepository: VerifierRepository!
     
-    /** eca **/
-    public var ecaService: EcaService!
-    public var ecaRepository: EcaRepository!
-
     public var wallet: Wallet!
     private var _isInitialized = false
 
@@ -82,7 +78,7 @@ public class Agent {
     public init(agentConfig: AgentConfig, agentDelegate: AgentDelegate?) {
         self.agentConfig = agentConfig
         self.agentDelegate = agentDelegate
-
+        
         self.wallet = Wallet(agent: self)
         self.historyRepository = HistoryRepository(agent: self)
         self.connectionRepository = ConnectionRepository(agent: self)
@@ -127,7 +123,7 @@ public class Agent {
         self.w3cCredentialRepository = W3cCredentialRepository(agent: self)
         self.anonCredsIssuerService = AnonCredsRsIssuerService(agent: self)
         self.anonCredsHolderService = AnonCredsRsHolderService(agent: self)
-    
+        
         self.anoncredsModulesConfig = AnonCredsModuleConfig(
             agent: self,
             options: AnonCredsModuleConfigOptions(
@@ -147,16 +143,13 @@ public class Agent {
             w3cJsonLdCredentialService: w3cJsonLdCredentialService
         )
         
-
+        
         self.proofServiceV2 = ProofServiceV2(agent: self)
         self.proofCommandV2 = ProofCommandV2(agent: self, dispatcher: dispatcher)
         
         self.anoncredsVerifierService = AnonCredsRsVerifierService(agent: self)
         self.verifierRepository = VerifierRepository(agent: self)
         
-        /** eca **/
-        self.ecaRepository = EcaRepository(agent: self)
-        self.ecaService = EcaService(agent: self)
     }
     
     private func initializeLedgerService() -> LedgerService {

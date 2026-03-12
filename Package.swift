@@ -27,7 +27,8 @@ let package = Package(
         .package(path: "./packages/anoncreds"),
         .package(path: "./packages/indy-besu"),
         .package(path: "./packages/askar"),
-        .package(path: "./packages/indy-vdr")
+        .package(path: "./packages/indy-vdr"),
+        .package(url: "https://github.com/OlehKulykov/PLzmaSDK.git", branch: "master")
     ],
     targets: [
 //        .binaryTarget(name: "AnoncredsLocal",
@@ -48,6 +49,7 @@ let package = Package(
                 .product(name: "IndyVdr", package: "indy-vdr"),
                 .product(name: "NIO", package: "swift-nio"),
                 .product(name: "NIOHTTP1", package: "swift-nio"),
+                .product(name: "PLzmaSDK", package: "plzmasdk"),
                 "CollectionConcurrencyKit",
                 "Base58Swift",
                 "Semaphore",

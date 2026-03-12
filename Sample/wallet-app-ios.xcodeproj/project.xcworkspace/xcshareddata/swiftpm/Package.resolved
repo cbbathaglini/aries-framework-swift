@@ -100,6 +100,15 @@
       }
     },
     {
+      "identity" : "plzmasdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "94a7e506f364d589d9e2c7d1c4552b0344e86c65"
+      }
+    },
+    {
       "identity" : "semaphore",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/Semaphore",
