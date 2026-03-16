@@ -35,32 +35,35 @@ class MediationRecipient {
         }
 
         try await assertInvitationUrl()
-
-        if let connection = await agent.connectionService.findByInvitationKey(recipientKey), connection.isReady() {
-            try await requestMediationIfNecessry(connection: connection)
-        } else {
-            let routing = try await self.getRouting()
-            var connection = try await agent.connectionService.processInvitation(invitation,
-                outOfBandInvitation: outOfBandInvitation, routing: routing, autoAcceptConnection: true)
-            
-            let message : OutboundMessage = try await agent.didExchangeService.createRequest(
-                connectionId: connection.id,
-                label: nil,
-                autoAcceptConnection: nil)
-            
-            print("mensagem mediador \(message)")
-            try await agent.messageSender.send(message: message)
-
-            if try await agent.connectionService.fetchState(connectionRecord: connection) != .Complete {
-                let result = try await agent.connectionService.waitForConnection()
-                if !result {
-                    throw AriesFrameworkError.frameworkError("Connection to the mediator timed out.")
+        do{
+            if let connection = await agent.connectionService.findByInvitationKey(recipientKey), connection.isReady() {
+                try await requestMediationIfNecessry(connection: connection)
+            } else {
+                let routing = try await self.getRouting()
+                var connection = try await agent.connectionService.processInvitation(invitation,
+                                                                                     outOfBandInvitation: outOfBandInvitation, routing: routing, autoAcceptConnection: true)
+                
+                let message : OutboundMessage = try await agent.didExchangeService.createRequest(
+                    connectionId: connection.id,
+                    label: nil,
+                    autoAcceptConnection: nil)
+                
+                print("mensagem mediador \(message)")
+                try await agent.messageSender.send(message: message)
+                
+                if try await agent.connectionService.fetchState(connectionRecord: connection) != .Complete {
+                    let result = try await agent.connectionService.waitForConnection()
+                    if !result {
+                        throw AriesFrameworkError.frameworkError("Connection to the mediator timed out.")
+                    }
                 }
+                
+                // Update connection record after the connection protocol.
+                connection = try await agent.connectionRepository.getById(connection.id)
+                try await requestMediationIfNecessry(connection: connection)
             }
-
-            // Update connection record after the connection protocol.
-            connection = try await agent.connectionRepository.getById(connection.id)
-            try await requestMediationIfNecessry(connection: connection)
+        }catch{
+            print("mensagem mediador errir \(error)")
         }
     }
 
@@ -155,7 +158,8 @@ class MediationRecipient {
 
     public func getRouting() async throws -> Routing {
         let (endpoints, routingKeys) = try await getRoutingInfo()
-        let (did, verkey) = try await agent.wallet.createDid()
+        let (did, verkey) = try await agent.wallet.createDid(seed: nil)
+        
         let mediator = try await repository.getDefault()
         if mediator != nil && mediator!.isReady() && !agent.isBluetoothOn {
             try await keylistUpdate(mediator: mediator!, verkey: verkey)

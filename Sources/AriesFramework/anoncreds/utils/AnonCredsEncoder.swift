@@ -1,4 +1,3 @@
-​//
 //  AnonCredsEncoder.swift
 //  aries-framework-swift
 //

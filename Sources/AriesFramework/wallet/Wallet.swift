@@ -250,78 +250,160 @@ public class Wallet {
             throw AriesFrameworkError.frameworkError("Cannot unpack message: \(error)")
         }
     }
-}
-
-extension Wallet {
-
+    
     public func saveRecord(
-        category: String,
+            category: String,
+            id: String,
+            value: Data,
+            tags: String?
+        ) async throws {
+            try await session!.update(
+                operation: .insert,
+                category: category,
+                name: id,
+                value: value,
+                tags: tags,
+                expiryMs: nil
+            )
+        }
+
+        public func updateRecord(
+            category: String,
+            id: String,
+            value: Data,
+            tags: String?
+        ) async throws {
+            try await session!.update(
+                operation: .replace,
+                category: category,
+                name: id,
+                value: value,
+                tags: tags,
+                expiryMs: nil
+            )
+        }
+
+        public func deleteRecord(
+            category: String,
+            id: String
+        ) async throws {
+            try await session!.update(
+                operation: .remove,
+                category: category,
+                name: id,
+                value: Data(),
+                tags: nil,
+                expiryMs: nil
+            )
+        }
+
+        public func fetchRecord(
+            category: String,
+            id: String
+        ) async throws -> AskarEntry? {
+            try await session!.fetch(
+                category: category,
+                name: id,
+                forUpdate: false
+            )
+        }
+
+        public func queryRecords(
+            category: String,
+            query: String
+        ) async throws -> [AskarEntry] {
+            let scan = try await store!.scan(
+                profile: nil,
+                category: category,
+                tagFilter: query,
+                offset: nil,
+                limit: nil
+            )
+            return try await scan.fetchAll()
+        }
+
+    
+    public func getJwkPublic(verkey: String) async throws -> [String: Any] {
+        guard let keyEntry = try await session!.fetchKey(name: verkey, forUpdate: false) else {
+            throw AriesFrameworkError.frameworkError("Key not found: \(verkey)")
+        }
+        let key = try keyEntry.loadLocalKey()
+        let jwkJson = try key.toJwkPublic(alg: nil)
+        guard let data = jwkJson.data(using: .utf8),
+              let jwk = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw AriesFrameworkError.frameworkError("Invalid JWK")
+        }
+        return jwk
+    }
+
+    public func verify(message: Data, signature: Data, jwk: String) throws -> Bool {
+       let key = try keyFactory.fromJwk(jwk: jwk)
+       return try key.verifySignature(message: message, signature: signature, sigType: nil)
+   }
+
+   public func verkeyFromJwk(jwk: String) throws -> String {
+       let key = try keyFactory.fromJwk(jwk: jwk)
+       let publicBytes = try key.toPublicBytes()
+       return Base58.encode([UInt8](publicBytes))
+   }
+    
+    public func sign(
+        data: Data,
+        verkey: String
+    ) async throws -> Data {
+        guard let session else {
+            throw AriesFrameworkError.frameworkError("Wallet not initialized")
+        }
+
+        guard let signKey = try await session.fetchKey(
+            name: verkey,
+            forUpdate: false
+        ) else {
+            throw AriesFrameworkError.frameworkError("Key not found: \(verkey)")
+        }
+
+        return try signKey
+            .loadLocalKey()
+            .signMessage(message: data, sigType: nil)
+    }
+    
+    
+    public func storeLinkSecret(
         id: String,
-        value: Data,
-        tags: String?
+        value: String,
+        category: String
     ) async throws {
         try await session!.update(
             operation: .insert,
             category: category,
             name: id,
-            value: value,
-            tags: tags,
-            expiryMs: nil
-        )
-    }
-
-    public func updateRecord(
-        category: String,
-        id: String,
-        value: Data,
-        tags: String?
-    ) async throws {
-        try await session!.update(
-            operation: .replace,
-            category: category,
-            name: id,
-            value: value,
-            tags: tags,
-            expiryMs: nil
-        )
-    }
-
-    public func deleteRecord(
-        category: String,
-        id: String
-    ) async throws {
-        try await session!.update(
-            operation: .remove,
-            category: category,
-            name: id,
-            value: Data(),
+            value: value.data(using: .utf8)!,
             tags: nil,
             expiryMs: nil
         )
     }
 
-    public func fetchRecord(
-        category: String,
-        id: String
-    ) async throws -> AskarEntry? {
-        try await session!.fetch(
+    public func getLinkSecret(
+        id: String,
+        category: String
+    ) async throws -> String {
+        guard let entry = try await session!.fetch(
             category: category,
             name: id,
             forUpdate: false
-        )
-    }
+        ) else {
+            throw AriesFrameworkError.recordNotFoundError(
+                "Link secret not found for id \(id)"
+            )
+        }
 
-    public func queryRecords(
-        category: String,
-        query: String
-    ) async throws -> [AskarEntry] {
-        let scan = try await store!.scan(
-            profile: nil,
-            category: category,
-            tagFilter: query,
-            offset: nil,
-            limit: nil
-        )
-        return try await scan.fetchAll()
+        return String(data: entry.value(), encoding: .utf8)!
+    }
+    
+}
+
+extension Wallet: WalletProtocol {
+    public var isInitialized: Bool {
+        session != nil
     }
 }
