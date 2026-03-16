@@ -195,6 +195,7 @@ public class ConnectionService {
         assert(connectionRecord.state == ConnectionState.Invited)
         assert(connectionRecord.role == ConnectionRole.Invitee)
 
+        // RFC 160
         let connectionRequest = ConnectionRequestMessage(
             id: connectionId,
             label: label ?? agent.agentConfig.label,

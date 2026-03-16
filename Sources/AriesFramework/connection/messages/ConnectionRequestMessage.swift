@@ -5,7 +5,6 @@ public class ConnectionRequestMessage: AgentMessage {
     var label: String
     var imageUrl: String?
     var connection: Connection
-    //public static var type: String = "https://didcomm.org/didexchange/1.0/request"
     public static var type: String = "https://didcomm.org/connections/1.0/request"
 
     private enum CodingKeys: String, CodingKey {

@@ -219,21 +219,44 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
                 let revocationStatusListJson = try statusList.toJson()
                 let statusListUniffi = try anoncreds_uniffi.RevocationStatusList(json:revocationStatusListJson)
 
-                let tailsFile = URL(fileURLWithPath: registryData.tailsFilePath)
-                    .appendingPathComponent(registryData.tailsHash!)
-                guard FileManager.default.fileExists(atPath: tailsFile.path) else {
-                    fatalError("Tails file not found at \(tailsFile.path)")
+                
+//                let tailsFile = URL(fileURLWithPath: registryData.tailsFilePath)
+//                    .appendingPathComponent(registryData.tailsHash!)
+//                logDebug("tails file: \(tailsFile.path)")
+//                guard FileManager.default.fileExists(atPath: tailsFile.path) else {
+//                    fatalError("Tails file not found at \(tailsFile.path)")
+//                }
+                
+                guard let hash = registryData.tailsHash else {
+                    fatalError("tailsHash is nil")
                 }
-                logDebug("tails file: \(tailsFile.path)")
+
+                guard let tailsURL = Tails.findTailsFile(
+                    tailsFilePath: registryData.tailsFilePath,
+                    tailsHash: hash
+                ) else {
+                    fatalError("""
+                    Tails file not found.
+                    savedBase=\(registryData.tailsFilePath)
+                    hash=\(hash)
+                    """)
+                }
+
+                let fm = FileManager.default
+                let tailsDirURL = tailsURL.deletingLastPathComponent()
+
+                logDebug("tails file resolved: \(tailsURL.path) exists=\(fm.fileExists(atPath: tailsURL.path))")
+                logDebug("tails dir: \(tailsDirURL.path) exists=\(fm.fileExists(atPath: tailsDirURL.path))")
 
                 revocationState = try Prover().createOrUpdateRevocationState(
                     revRegDef: revocationRegistryDefinition,
                     revStatusList: statusListUniffi,
                     revRegIdx: UInt32(credentialRevocationId) ?? 0,
-                    tailsPath: tailsFile.path,
+                    tailsPath: tailsURL.path,
                     revState: nil,
                     oldRevStatusList: nil
                 )
+            
             }
 
             let credential: Any

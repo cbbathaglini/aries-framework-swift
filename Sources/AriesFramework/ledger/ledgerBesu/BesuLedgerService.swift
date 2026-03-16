@@ -177,8 +177,8 @@ public class BesuLedgerService: LedgerService {
 
         let path = try await tailsPathCache.getOrLoad(LedgerCacheDefaults.TAILS_PATH) {
             let fm = FileManager.default
-            let base = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            let tails = base.appendingPathComponent("tails", isDirectory: true)
+            let docs = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let tails = docs.appendingPathComponent("tails", isDirectory: true)
             try? fm.createDirectory(at: tails, withIntermediateDirectories: true)
             return tails.path
         }
