@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class HistoryService {
+final class HistoryService : HistoryServiceProtocol {
     private let historyRepository: HistoryRepository
 
     init(historyRepository: HistoryRepository) {

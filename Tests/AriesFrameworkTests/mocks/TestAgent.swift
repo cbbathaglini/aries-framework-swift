@@ -50,7 +50,13 @@ extension AgentConfig {
         AgentConfigBuilder()
             .withLabel("TestAgent")
             .notAutoAcceptCredential()
+            .withUseBesuLedger(true)
+            .withBesuLedgerConfig(
+                BesuLedgerConfigBuilder()
+                    .setConfigFile("mock-besu-config.json")
+                    .setMultiledger(false)
+                    .build()
+            )
             .build()
-        
     }
 }

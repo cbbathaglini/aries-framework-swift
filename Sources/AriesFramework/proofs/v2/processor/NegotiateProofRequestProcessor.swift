@@ -13,11 +13,11 @@ import AnyCodable
 final class NegotiateProofRequestProcessor {
 
     // MARK: - Dependencies
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let common: CommonFunctions
 
     // MARK: - Initializer
-    init(proofFormatCoordinator: ProofFormatCoordinator, common: CommonFunctions) {
+    init(proofFormatCoordinator: ProofFormatCoordinatorProtocol, common: CommonFunctions) {
         self.proofFormatCoordinator = proofFormatCoordinator
         self.common = common
     }

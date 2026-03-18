@@ -14,14 +14,14 @@ final class AcceptProposalProofProcessor {
     // MARK: - Dependencies
     private let agent: Agent
     private let didCommMessageRepository: DidCommMessageRepository
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let common: CommonFunctions
 
     // MARK: - Initializer
     init(
         agent: Agent,
         didCommMessageRepository: DidCommMessageRepository,
-        proofFormatCoordinator: ProofFormatCoordinator,
+        proofFormatCoordinator: ProofFormatCoordinatorProtocol,
         common: CommonFunctions
     ) {
         self.agent = agent

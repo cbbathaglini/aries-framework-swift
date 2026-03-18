@@ -12,8 +12,14 @@ import AnyCodable
 final class MockAgentDelegate: AgentDelegate {
 
     var receivedRecord: BasicMessageRecord?
+    private(set) var receivedProofStateChanges: [ProofExchangeRecord] = []
 
     func onBasicMessageChanged(record: BasicMessageRecord) {
         receivedRecord = record
     }
+    
+    func onProofStateChangedV2(proofRecord: ProofExchangeRecord) {
+        receivedProofStateChanges.append(proofRecord)
+    }
+    
 }

@@ -9,16 +9,16 @@ import Foundation
 
 final class ProofRequestProcessor {
     private let agent: Agent
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let proofRepository: ProofRepository
-    private let historyService: HistoryService
+    private let historyService: HistoryServiceProtocol
     private let common: CommonFunctions
 
     init(
         agent: Agent,
-        proofFormatCoordinator: ProofFormatCoordinator,
+        proofFormatCoordinator: ProofFormatCoordinatorProtocol,
         proofRepository: ProofRepository,
-        historyService: HistoryService,
+        historyService: HistoryServiceProtocol,
         common: CommonFunctions
     ) {
         self.agent = agent
@@ -125,11 +125,16 @@ final class ProofRequestProcessor {
         )
 
         try await proofRepository.save(newRecord)
+        
         try await historyService.save(
             historyType: .proofRequestReceived,
             connection: connection,
             associatedRecordId: newRecord.id,
-            content: try message.toJsonString()
+            content: try message.toJsonString(),
+            proofRequestedCredentialsAnoncreds: nil,
+            credentials: nil,
+            credentialPreviewAttr: nil,
+            proofRequestedCredentials: nil
         )
 
         agent.agentDelegate?.onProofStateChangedV2(proofRecord: newRecord)

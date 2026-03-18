@@ -23,7 +23,7 @@ struct AcceptProofProposalServiceParams: Codable {
         comment: String? = nil,
         goalCode: String? = nil,
         goal: String? = nil,
-        autoAcceptProof: AutoAcceptProof,
+        autoAcceptProof: AutoAcceptProof = .never,
         willConfirm: Bool? = nil
     ) {
         self.proofRecord = proofRecord

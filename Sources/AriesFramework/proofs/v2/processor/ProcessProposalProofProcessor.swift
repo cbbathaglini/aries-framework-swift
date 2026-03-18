@@ -14,14 +14,14 @@ final class ProcessProposalProofProcessor {
     private let agent: Agent
     private let proofRepository: ProofRepository
     private let didCommMessageRepository: DidCommMessageRepository
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let common: CommonFunctions
 
     init(
         agent: Agent,
         proofRepository: ProofRepository,
         didCommMessageRepository: DidCommMessageRepository,
-        proofFormatCoordinator: ProofFormatCoordinator,
+        proofFormatCoordinator: ProofFormatCoordinatorProtocol,
         common: CommonFunctions
     ) {
         self.agent = agent

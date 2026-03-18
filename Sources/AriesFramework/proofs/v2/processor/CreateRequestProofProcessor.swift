@@ -12,10 +12,10 @@ final class CreateRequestProofProcessor {
 
 
     private let agent: Agent
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let common: CommonFunctions
 
-    init(agent: Agent, proofFormatCoordinator: ProofFormatCoordinator, common: CommonFunctions) {
+    init(agent: Agent, proofFormatCoordinator: ProofFormatCoordinatorProtocol, common: CommonFunctions) {
         self.agent = agent
         self.proofFormatCoordinator = proofFormatCoordinator
         self.common = common

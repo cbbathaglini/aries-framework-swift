@@ -9,16 +9,16 @@ import Foundation
 
 final class AcceptProofRequestProcessor {
     private let agent: Agent
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let proofRepository: ProofRepository
-    private let historyService: HistoryService
+    private let historyService: HistoryServiceProtocol
     private let common: CommonFunctions
     
     init(
         agent: Agent,
-        proofFormatCoordinator: ProofFormatCoordinator,
+        proofFormatCoordinator: ProofFormatCoordinatorProtocol,
         proofRepository: ProofRepository,
-        historyService: HistoryService,
+        historyService: HistoryServiceProtocol,
         common: CommonFunctions
     ) {
         self.agent = agent

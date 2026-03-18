@@ -13,7 +13,7 @@ final class ProcessPresentationProofProcessor {
     // MARK: - Dependencies
     private let agent: Agent
     private let proofRepository: ProofRepository
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let common: CommonFunctions
 
 
@@ -21,7 +21,7 @@ final class ProcessPresentationProofProcessor {
     init(
         agent: Agent,
         proofRepository: ProofRepository,
-        proofFormatCoordinator: ProofFormatCoordinator,
+        proofFormatCoordinator: ProofFormatCoordinatorProtocol,
         common: CommonFunctions
     ) {
         self.agent = agent

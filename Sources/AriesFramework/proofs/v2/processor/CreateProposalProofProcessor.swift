@@ -5,13 +5,6 @@
 //  Created by Carine Bertagnolli Bathaglini on 08/10/25.
 //
 
-//
-//  CreateProposalProofProcessor.swift
-//  aries-framework-swift
-//
-//  Created by Carine Bertagnolli Bathaglini on 08/10/25.
-//
-
 import Foundation
 import AnyCodable
 
@@ -21,14 +14,14 @@ final class CreateProposalProofProcessor {
     // MARK: - Dependencies
     private let agent: Agent
     private let proofRepository: ProofRepository
-    private let proofFormatCoordinator: ProofFormatCoordinator
+    private let proofFormatCoordinator: ProofFormatCoordinatorProtocol
     private let common: CommonFunctions
 
     // MARK: - Initializer
     init(
         agent: Agent,
         proofRepository: ProofRepository,
-        proofFormatCoordinator: ProofFormatCoordinator,
+        proofFormatCoordinator: ProofFormatCoordinatorProtocol,
         common: CommonFunctions
     ) {
         self.agent = agent

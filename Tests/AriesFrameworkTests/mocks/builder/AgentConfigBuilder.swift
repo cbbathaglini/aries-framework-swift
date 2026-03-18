@@ -64,22 +64,34 @@ public final class AgentConfigBuilder {
         self.mediatorConnectionsInvite = invite
         return self
     }
-    
-    
+
+    public func withMediatorPickupStrategy(_ strategy: MediatorPickupStrategy) -> Self {
+        self.mediatorPickupStrategy = strategy
+        return self
+    }
+
+    public func withAutoAcceptConnections(_ enabled: Bool) -> Self {
+        self.autoAcceptConnections = enabled
+        return self
+    }
+
+    public func withMediatorPollingInterval(_ interval: TimeInterval) -> Self {
+        self.mediatorPollingInterval = interval
+        return self
+    }
+
+    public func withMediatorEmptyReturnRetryInterval(_ interval: TimeInterval) -> Self {
+        self.mediatorEmptyReturnRetryInterval = interval
+        return self
+    }
+
     public func connectionImageUrl(_ url: String?) -> Self {
         self.connectionImageUrl = url
         return self
     }
-    
-    
 
     public func withEndpoints(_ endpoints: [String]) -> Self {
         self.agentEndpoints = endpoints
-        return self
-    }
-    
-    public func notAutoAcceptCredential() -> Self {
-        self.autoAcceptCredential = AutoAcceptCredential.never
         return self
     }
 
@@ -88,8 +100,65 @@ public final class AgentConfigBuilder {
         return self
     }
 
+    public func withAutoAcceptCredential(_ value: AutoAcceptCredential) -> Self {
+        self.autoAcceptCredential = value
+        return self
+    }
+
+    public func withAutoAcceptProof(_ value: AutoAcceptProof) -> Self {
+        self.autoAcceptProof = value
+        return self
+    }
+
+    public func notAutoAcceptCredential() -> Self {
+        self.autoAcceptCredential = .never
+        return self
+    }
+
+    public func notAutoAcceptProof() -> Self {
+        self.autoAcceptProof = .never
+        return self
+    }
+
+    public func withIgnoreRevocationCheck(_ enabled: Bool) -> Self {
+        self.ignoreRevocationCheck = enabled
+        return self
+    }
+
     public func enableLedger(_ enabled: Bool) -> Self {
         self.useLedgerService = enabled
+        return self
+    }
+
+    public func withUseLegacyDidSovPrefix(_ enabled: Bool) -> Self {
+        self.useLegacyDidSovPrefix = enabled
+        return self
+    }
+
+    public func withPreferredHandshakeProtocol(_ protocolValue: HandshakeProtocol) -> Self {
+        self.preferredHandshakeProtocol = protocolValue
+        return self
+    }
+
+    public func withUseBesuLedger(_ enabled: Bool) -> Self {
+        self.useBesuLedger = enabled
+        return self
+    }
+
+    public func withBesuLedgerConfig(_ config: BesuLedgerConfig?) -> Self {
+        self.besuLedgerConfig = config
+        return self
+    }
+
+    public func enableBesuLedger(_ config: BesuLedgerConfig) -> Self {
+        self.useBesuLedger = true
+        self.besuLedgerConfig = config
+        return self
+    }
+
+    public func disableBesuLedger() -> Self {
+        self.useBesuLedger = false
+        self.besuLedgerConfig = nil
         return self
     }
 

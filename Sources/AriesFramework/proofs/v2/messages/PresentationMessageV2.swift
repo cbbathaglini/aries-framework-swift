@@ -59,8 +59,8 @@ public class PresentationMessageV2: AgentMessage, CustomStringConvertible {
         self.goalCode = try container.decodeIfPresent(String.self, forKey: .goalCode)
         self.presentationAttachments = try container.decode([Attachment].self, forKey: .presentationAttachments)
         self.formats = try container.decode([ProofFormatSpec].self, forKey: .formats)
-        self.lastPresentation = try container.decode(Bool.self, forKey: .lastPresentation)
-        self.pleaseAck = try container.decode(AckDecorator.self, forKey: .pleaseAck)
+        self.lastPresentation = try container.decodeIfPresent(Bool.self, forKey: .lastPresentation)
+        self.pleaseAck = try container.decodeIfPresent(AckDecorator.self, forKey: .pleaseAck)
         if let timestamp = try? container.decode(Double.self, forKey: .createdAt) {
             if timestamp > 10_000_000_000 {
                 self.createdAt = Date(timeIntervalSince1970: timestamp / 1000)

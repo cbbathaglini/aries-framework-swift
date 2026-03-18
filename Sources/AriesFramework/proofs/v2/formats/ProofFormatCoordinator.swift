@@ -7,7 +7,7 @@
 import Foundation
 import os.log
 
-public final class ProofFormatCoordinator {
+public final class ProofFormatCoordinator : ProofFormatCoordinatorProtocol {
     public let agent: Agent
     public let formatServices: [any ProofFormatService]
     private let logger = Logger(subsystem: "org.hyperledger.ariesframework", category: "ProofFormatCoordinator")
@@ -401,3 +401,4 @@ public final class ProofFormatCoordinator {
     }
     
 }
+

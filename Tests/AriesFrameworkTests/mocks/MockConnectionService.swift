@@ -34,6 +34,11 @@ final class MockConnectionService: ConnectionServiceProtocol {
    var processInvitationResult: ConnectionRecord!
    var createRequestResult: OutboundMessage!
     
+    
+   private(set) var matchIncomingCalled = false
+   private(set) var receivedExpectedConnectionId: String?
+   var errorToThrow: Error?
+    
     private let repo: ConnectionRepositoryProtocol
 
     init(connectionRepository: ConnectionRepositoryProtocol) {
@@ -129,11 +134,16 @@ final class MockConnectionService: ConnectionServiceProtocol {
 
     func matchIncomingMessageToRequestMessageInOutOfBandExchange(
         messageContext: InboundMessageContext,
-        expectedConnectionId: String?
+        expectedConnectionId: String
     ) async throws {
-        fatalError()
-    }
+        matchIncomingCalled = true
+        receivedExpectedConnectionId = expectedConnectionId
 
+        if let errorToThrow {
+            throw errorToThrow
+        }
+    }
+    
     func createConnection(
         role: ConnectionRole,
         state: ConnectionState,
