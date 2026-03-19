@@ -50,6 +50,7 @@ public class CredentialExchangeRecord: BaseRecord {
     public static let type = "CredentialExchangeRecord"
     
     init(
+        id: String = RecordUtils.generateId(),
         tags: Tags? = nil,
         connectionId: String?,
         threadId: String,
@@ -69,9 +70,10 @@ public class CredentialExchangeRecord: BaseRecord {
         revRegId: String? = nil,
         revRegDefId: String? = nil,
         formats:[Format]? = nil,
-        metadata:[String:AnyCodable] = [:]
-        ) {
-
+        metadata:[String:AnyCodable] = [:],
+        credentialDefinitionId: String? = nil,
+    ) {
+        
         self.id = UUID().uuidString
         self.createdAt = Date()
         self.tags = tags
@@ -94,6 +96,7 @@ public class CredentialExchangeRecord: BaseRecord {
         self.revRegDefId = revRegDefId
         self.formats = formats
         self.metadata = metadata
+        self.credentialDefinitionId = credentialDefinitionId
     }
     
     public required init(from decoder: Decoder) throws {
@@ -463,6 +466,7 @@ class CredentialExchangeRecordBuilder {
 
     func build() -> CredentialExchangeRecord {
         return CredentialExchangeRecord(
+            id: id,
             tags: tags,
             connectionId: connectionId,
             threadId: threadId,
@@ -482,7 +486,8 @@ class CredentialExchangeRecordBuilder {
             revRegId: revRegId,
             revRegDefId: revRegDefId,
             formats: formats,
-            metadata: metadata
+            metadata: metadata,
+            credentialDefinitionId: credentialDefinitionId
         )
     }
 }

@@ -23,6 +23,7 @@ final class MockVerifierRepository: VerifierRepository {
     var queryResultsToReturn: [VerifierRecord] = []
 
     override func save(_ record: VerifierRecord) async throws {
+        print("✅ MockVerifierRepository.save chamado")
         saveCalled = true
         saved.append(record)
     }

@@ -31,6 +31,37 @@ final class MockProofServiceV2: ProofServiceV2 {
 
     private(set) var acceptRequestCallCount = 0
     private(set) var receivedAcceptRequestParams: AcceptProofRequestOptions?
+    
+    private(set) var createRequestCallCount = 0
+    private(set) var receivedCreateRequestParams: CreateProofRequestOptions?
+    
+    private(set) var processOfflineAckCallCount = 0
+    private(set) var receivedProcessOfflineAckProofRecord: ProofExchangeRecord?
+
+    private(set) var processPresentationOfflineCallCount = 0
+    private(set) var receivedProcessPresentationOfflineMessage: PresentationMessageV2?
+    
+    var processOfflineAckReturnMessage = PresentationAckMessageV2Builder()
+        .setThreadId("thread-id")
+        .setStatus(.OK)
+        .build()
+
+    var processOfflineAckReturnRecord = ProofExchangeRecordBuilder()
+        .setState(.Done)
+        .setProtocolVersion(ProofConstants.PROTOCOL_VERSION_V2)
+        .build()
+
+    var processOfflineAckErrorToThrow: Error?
+
+    var processPresentationOfflineRecordToReturn: ProofExchangeRecord? = nil
+
+    var createRequestReturnMessage = RequestPresentationMessageV2Builder().build()
+    var createRequestReturnRecord = ProofExchangeRecordBuilder()
+        .setState(.RequestSent)
+        .setProtocolVersion(ProofConstants.PROTOCOL_VERSION_V2)
+        .build()
+
+    var createRequestErrorToThrow: Error?
 
     var proofRecordToReturn = ProofExchangeRecordBuilder()
         .setState(.Done)
@@ -147,5 +178,38 @@ final class MockProofServiceV2: ProofServiceV2 {
         }
 
         return (acceptRequestReturnMessage, acceptRequestReturnRecord)
+    }
+    
+    override func createRequest(
+        params: CreateProofRequestOptions
+    ) async throws -> (RequestPresentationMessageV2, ProofExchangeRecord) {
+        print("✅ MockProofServiceV2.createRequest chamado")
+        createRequestCallCount += 1
+        receivedCreateRequestParams = params
+
+        if let createRequestErrorToThrow {
+            throw createRequestErrorToThrow
+        }
+
+        return (createRequestReturnMessage, createRequestReturnRecord)
+    }
+    
+    override func processOfflineAck(
+        proofRecord: ProofExchangeRecord
+    ) async throws -> (PresentationAckMessageV2, ProofExchangeRecord) {
+        processOfflineAckCallCount += 1
+        receivedProcessOfflineAckProofRecord = proofRecord
+
+        if let processOfflineAckErrorToThrow {
+            throw processOfflineAckErrorToThrow
+        }
+
+        return (processOfflineAckReturnMessage, processOfflineAckReturnRecord)
+    }
+
+    override func processPresentationOffline(message: PresentationMessageV2) async throws -> ProofExchangeRecord? {
+        processPresentationOfflineCallCount += 1
+        receivedProcessPresentationOfflineMessage = message
+        return processPresentationOfflineRecordToReturn
     }
 }

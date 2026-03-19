@@ -16,6 +16,7 @@ final class MockConnectionRepository: ConnectionRepositoryProtocol {
     }
     
     func save(_ record: ConnectionRecord) async throws {
+        print("✅ MockConnectionRepository.save chamado")
         store[record.id] = record
     }
     

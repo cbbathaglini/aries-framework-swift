@@ -21,3 +21,5 @@ public class HistoryRepository: Repository<HistoryRecord> {
             """)
     }
 }
+
+extension HistoryRepository: HistoryRepositoryProtocol {}

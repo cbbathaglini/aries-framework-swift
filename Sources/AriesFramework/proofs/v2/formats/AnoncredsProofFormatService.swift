@@ -339,10 +339,22 @@ public class AnoncredsProofFormatService: ProofFormatService {
 
         let credDefId = credential.credentialDefinitionId
 
-        let requestedAttrNames: Set<String> = Set(
-            proofRequest.requestedAttributes.values.flatMap { $0.names ?? [] }
-        )
+//        let requestedAttrNames: Set<String> = Set(
+//            proofRequest.requestedAttributes.values.flatMap { $0.names ?? [] }
+//        )
 
+        let requestedAttrNames: Set<String> = Set(
+            proofRequest.requestedAttributes.values.flatMap { requestedAttr in
+                if let names = requestedAttr.names, !names.isEmpty {
+                    return names
+                }
+                if let name = requestedAttr.name {
+                    return [name]
+                }
+                return []
+            }
+        )
+        
         let missingAttrs = requestedAttrNames.filter { recordAttrs[$0] == nil }
 
         if !missingAttrs.isEmpty {

@@ -38,6 +38,7 @@ final class MockMessageSender: MessageSenderProtocol {
         message: OutboundMessage,
         endpointPrefix: String?
     ) async throws {
+        print("✅ MockMessageSender.send chamado")
         sentMessages.append(message)
         receivedEndpointPrefix = endpointPrefix
     }

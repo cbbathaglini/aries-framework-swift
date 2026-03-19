@@ -34,3 +34,5 @@ public class VerifierRepository: Repository<VerifierRecord> {
     }
     
 }
+
+extension VerifierRepository: VerifierRepositoryProtocol {}

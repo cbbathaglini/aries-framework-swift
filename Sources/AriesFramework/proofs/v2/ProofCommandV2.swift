@@ -15,14 +15,14 @@ public class ProofCommandV2 {
     let historyService: HistoryService
     let logger = Logger(subsystem: "AriesFramework", category: "ProofCommandV2")
     
-    init(agent: Agent, dispatcher: Dispatcher) {
+    init(agent: Agent, dispatcher: DispatcherProtocol) {
         self.agent = agent
         self.historyService = HistoryService(historyRepository: agent.historyRepository)
         registerHandlers(dispatcher: dispatcher)
         registerMessages()
     }
     
-    private func registerHandlers(dispatcher: Dispatcher) {
+    private func registerHandlers(dispatcher: DispatcherProtocol) {
         dispatcher.registerHandler(handler: RequestPresentationHandlerV2(agent: agent))
         dispatcher.registerHandler(handler: PresentationHandlerV2(agent: agent))
         dispatcher.registerHandler(handler: PresentationAckHandlerV2(agent: agent))
