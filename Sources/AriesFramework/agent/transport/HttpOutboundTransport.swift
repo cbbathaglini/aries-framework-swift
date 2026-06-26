@@ -29,7 +29,11 @@ public class HttpOutboundTransport: OutboundTransport {
             logDebug("Requested response but got no data. Will initiate message pickup if necessary.")
             DispatchQueue.main.asyncAfter(deadline: .now() + agent.agentConfig.mediatorEmptyReturnRetryInterval) { [self] in
                 Task {
-                    try await self.agent.mediationRecipient.pickupMessages()
+                    do {
+                        try await self.agent.mediationRecipient.pickupMessages()
+                    } catch {
+                        self.logger.error("Mediator pickup retry failed: \(error.localizedDescription)")
+                    }
                 }
             }
         } else {

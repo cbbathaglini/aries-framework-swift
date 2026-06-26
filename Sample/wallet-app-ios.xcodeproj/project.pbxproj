@@ -313,6 +313,7 @@
 			mainGroup = BB5C4672270C1500008D77AE;
 			packageReferences = (
 				BB53D9E72952C958007D9952 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+				BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */,
 				138397902EB1407500F55D72 /* XCLocalSwiftPackageReference "../packages/indy-besu" */,
 				136525772EEC40BA00B70F5D /* XCLocalSwiftPackageReference "../packages/anoncreds" */,
 			);
@@ -613,6 +614,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
 		136525772EEC40BA00B70F5D /* XCLocalSwiftPackageReference "../packages/anoncreds" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../packages/anoncreds;
@@ -645,6 +650,7 @@
 		};
 		BB06E2FE2AFA12B800C4A04A /* AriesFramework */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */;
 			productName = AriesFramework;
 		};
 		BB53D9E82952C958007D9952 /* CodeScanner */ = {

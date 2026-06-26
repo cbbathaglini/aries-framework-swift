@@ -520,6 +520,10 @@ struct RequestProofView: View {
             
             await MainActor.run {
                 self.availableCredentials = compatible
+                if let selectedCredentialId,
+                   !compatible.contains(where: { $0.id == selectedCredentialId }) {
+                    self.selectedCredentialId = nil
+                }
             }
             
         } catch {

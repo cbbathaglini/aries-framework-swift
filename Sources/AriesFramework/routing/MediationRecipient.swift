@@ -111,7 +111,11 @@ class MediationRecipient {
         DispatchQueue.main.async {
             self.pickupTimer = Timer.scheduledTimer(withTimeInterval: self.agent.agentConfig.mediatorPollingInterval, repeats: true) { [self] timer in
                 Task {
-                    try await self.pickupMessages(mediatorConnection: mediatorConnection)
+                    do {
+                        try await self.pickupMessages(mediatorConnection: mediatorConnection)
+                    } catch {
+                        self.logger.error("Mediator pickup failed: \(error.localizedDescription)")
+                    }
                 }
             }
         }
@@ -125,6 +129,7 @@ class MediationRecipient {
             try await agent.messageSender.send(message: message)
         } else if agent.agentConfig.mediatorPickupStrategy == .Implicit {
             let message = OutboundMessage(payload: TrustPingMessage(comment: "pickup", responseRequested: false), connection: mediatorConnection)
+            logDebug("Initiating implicit mediator pickup over websocket")
             try await agent.messageSender.send(message: message, endpointPrefix: "ws")
         } else {
             throw AriesFrameworkError.frameworkError("Unsupported mediator pickup strategy: \(agent.agentConfig.mediatorPickupStrategy)")
