@@ -367,6 +367,8 @@ public class AnoncredsProofFormatService: ProofFormatService {
             )
         }
 
+        try validateLocalRevocationStatus(credential: credential, proofRequest: proofRequest)
+
         let predicates = proofRequest.requestedPredicates.values
 
         for predicate in predicates {
@@ -406,6 +408,42 @@ public class AnoncredsProofFormatService: ProofFormatService {
                 )
             }
         }
+    }
+
+    private func validateLocalRevocationStatus(
+        credential: CredentialExchangeRecord,
+        proofRequest: AnonCredsProofRequest
+    ) throws {
+        guard let revocationDate = credential.revocationNotification?.revocationDate else {
+            return
+        }
+
+        let intervals = revocationIntervals(from: proofRequest)
+        guard !intervals.isEmpty else {
+            return
+        }
+
+        let revocationTimestamp = UInt64(revocationDate.timeIntervalSince1970)
+
+        for interval in intervals {
+            let to = interval.to ?? UInt64(Date().timeIntervalSince1970)
+            if revocationTimestamp <= to {
+                throw CredoError("The selected credential was revoked within the requested non-revocation interval.")
+            }
+        }
+    }
+
+    private func revocationIntervals(from proofRequest: AnonCredsProofRequest) -> [AnonCredsNonRevokedInterval] {
+        var intervals: [AnonCredsNonRevokedInterval] = []
+
+        if let global = proofRequest.nonRevoked {
+            intervals.append(global)
+        }
+
+        intervals.append(contentsOf: proofRequest.requestedAttributes.values.compactMap { $0.nonRevoked })
+        intervals.append(contentsOf: proofRequest.requestedPredicates.values.compactMap { $0.nonRevoked })
+
+        return intervals
     }
 
     public func processPresentation(

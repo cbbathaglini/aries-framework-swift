@@ -151,9 +151,16 @@ class CredentialHandler: ObservableObject, AgentDelegate {
                 )
 
             case .Done:
+                let verifiedText: String
+                if let isVerified = proofRecord.isVerified {
+                    verifiedText = isVerified ? "Yes" : "No"
+                } else {
+                    verifiedText = "Unknown"
+                }
+
                 notificationHandler.addNotification(
                     title: "Proof completed",
-                    message: "Proof ID: \(proofRecord.id) - verified? \(proofRecord.isVerified)",
+                    message: "Proof ID: \(proofRecord.id) - verified? \(verifiedText)",
                     type: .proofDonev2,
                     proofRecordId: proofRecord.id
                 )
@@ -188,6 +195,14 @@ class CredentialHandler: ObservableObject, AgentDelegate {
     }
 
     // MARK: - REVOCATION
+    func onMediationStateChanged(mediationRecord: MediationRecord) {
+        notificationHandler.addNotification(
+            title: "Mediator \(mediationRecord.state.rawValue)",
+            message: "ConnectionID: \(mediationRecord.connectionId)",
+            type: .connection
+        )
+    }
+
     func onRevocationNotificationChanged(credentialExchangeRecord: CredentialExchangeRecord) {
         notificationHandler.addNotification(
             title: "Credential revoked",

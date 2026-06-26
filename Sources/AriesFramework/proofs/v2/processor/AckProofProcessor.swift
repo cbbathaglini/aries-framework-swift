@@ -67,7 +67,6 @@ final class AckProofProcessor {
         )
         */
 
-       
         try await common.updateState(proofRecord: &proofRecord, newState: .Done)
 
         logDebug("[end] ACK processed successfully — proof \(proofRecord.id) is now \(proofRecord.state.rawValue)")
