@@ -7,9 +7,9 @@
 
 import Foundation
 import BigInt
-import anoncreds_uniffi
 import os
 import AnyCodable
+import Anoncreds
 
 public class AnonCredsRsHolderService: AnonCredsHolderService {
 
@@ -81,12 +81,12 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
             throw CredoError("serialization error")
         }
 
-        let credential = try anoncreds_uniffi.Credential(json: credentialJson)
+        let credential = try Anoncreds.Credential(json: credentialJson)
 
-        let converter = anoncreds_uniffi.CredentialConversions()
+        let converter = Anoncreds.CredentialConversions()
         let w3cString = try converter.credentialToW3cJson(credential: credential, issuerIdString: issuerId, versionString: "1.1")
 
-        let w3cCredential = try anoncreds_uniffi.W3cCredential(json: w3cString)
+        let w3cCredential = try Anoncreds.W3cCredential(json: w3cString)
         var jsonLdVC = try convertToW3cJsonLd(w3cCredential: w3cCredential,
                                               credentialW3cStr: w3cString)
 
@@ -109,20 +109,20 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         let credentialDefinitions = options.credentialDefinitions
         let schemas = options.schemas
 
-        var rsCredentialDefinitions = [String: anoncreds_uniffi.CredentialDefinition]()
-        var rsSchemas = [String: anoncreds_uniffi.Schema]()
+        var rsCredentialDefinitions = [String: Anoncreds.CredentialDefinition]()
+        var rsSchemas = [String: Anoncreds.Schema]()
         var retrievedCredentials = [String: Any]()
 
         // Credential Definitions
         for (credDefId, credDef) in credentialDefinitions.credentialDefinitions {
             let jsonString = try credDef.toJson()
-            rsCredentialDefinitions[credDefId] = try anoncreds_uniffi.CredentialDefinition(json: jsonString)
+            rsCredentialDefinitions[credDefId] = try Anoncreds.CredentialDefinition(json: jsonString)
         }
 
         // Schemas
         for (schemaId, schema) in schemas.schemas {
             let json = try schema.toJson()
-            rsSchemas[schemaId] = try anoncreds_uniffi.Schema(json: json)
+            rsSchemas[schemaId] = try Anoncreds.Schema(json: json)
         }
 
         // Helpers
@@ -217,7 +217,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
                 let revocationRegistryDefinition = try RevocationRegistryDefinition(json: jsonString)
 
                 let revocationStatusListJson = try statusList.toJson()
-                let statusListUniffi = try anoncreds_uniffi.RevocationStatusList(json:revocationStatusListJson)
+                let statusListUniffi = try Anoncreds.RevocationStatusList(json:revocationStatusListJson)
 
                 
 //                let tailsFile = URL(fileURLWithPath: registryData.tailsFilePath)
@@ -271,7 +271,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
 
             let credJsonElement: Any
             
-            if let uniffiCred = credential as? anoncreds_uniffi.Credential {
+            if let uniffiCred = credential as? Anoncreds.Credential {
                             
                 let jsonString = uniffiCred.toJson()
                 var json = try JSONSerialization.jsonObject(
@@ -450,7 +450,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         let linkSecret = try await agent.anoncredsService.getLinkSecret(id: linkSecretId)
 
         let anoncredsRequest = try requestMessage.anoncredsProofRequest()
-        let presentationRequest = try anoncreds_uniffi.PresentationRequest(json: anoncredsRequest)
+        let presentationRequest = try Anoncreds.PresentationRequest(json: anoncredsRequest)
 
         let presentation = try Prover().createPresentation(
             presReq: presentationRequest,
@@ -596,7 +596,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         return GetCredentialsForProofRequestReturn(credentials: credentialWithMetadata + legacyCredentials)
     }
     
-    func convertToW3cJsonLd(w3cCredential: anoncreds_uniffi.W3cCredential, credentialW3cStr: String) throws -> W3cJsonLdVerifiableCredential {
+    func convertToW3cJsonLd(w3cCredential: Anoncreds.W3cCredential, credentialW3cStr: String) throws -> W3cJsonLdVerifiableCredential {
         print("w3cCredential: \(w3cCredential.toJson())")
 
         var element = try JSONSerialization.jsonObject(with: Data(w3cCredential.toJson().utf8), options: []) as! [String: Any]
@@ -622,7 +622,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
     }
     
     func processW3cCredential(
-        w3cCredential: anoncreds_uniffi.W3cCredential,
+        w3cCredential: Anoncreds.W3cCredential,
         crew3cJsonLdVC: W3cJsonLdVerifiableCredential,
         processOptions: ProcessOptions
     ) async throws -> W3cJsonLdVerifiableCredential {
@@ -690,7 +690,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         let regex = try NSRegularExpression(pattern: #""credentialSubject"\s*:\s*\[(\{.*?\})\]"#, options: [])
         encoded = regex.stringByReplacingMatches(in: encoded, options: [], range: NSRange(location: 0, length: encoded.utf16.count), withTemplate: "\"credentialSubject\": $1")
 
-        var credentialUniffi : anoncreds_uniffi.Credential
+        var credentialUniffi : Anoncreds.Credential
         
         var credentialW3cStr = ""
         do{
@@ -707,7 +707,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
             )
         }
 
-        let w3cCredential = try anoncreds_uniffi.W3cCredential(json: credentialW3cStr)
+        let w3cCredential = try Anoncreds.W3cCredential(json: credentialW3cStr)
 
         if credential.credentialSubject.count > 1 {
             throw NSError(domain: "CredoError", code: 100, userInfo: [NSLocalizedDescriptionKey: "Credential subject must be an object, not an array."])
@@ -787,7 +787,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         let credentialRequestTuple = try Prover().createCredentialRequest(
             entropy: entropy,
             proverDid: proverDid,
-            credDef: anoncreds_uniffi.CredentialDefinition(json: credDef),
+            credDef: Anoncreds.CredentialDefinition(json: credDef),
             linkSecret: linkSecret,
             linkSecretId: linkSecretId,
             credOffer: CredentialOffer(json: credOffer.toJsonString())
@@ -815,7 +815,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
     func createLinkSecret(options: CreateLinkSecretOptions? = nil) async throws -> CreateLinkSecretReturn {
         return CreateLinkSecretReturn(
             linkSecretId: options?.linkSecretId ?? RecordUtils.generateId(),
-            linkSecret: try anoncreds_uniffi.createLinkSecret()
+            linkSecret: try Anoncreds.createLinkSecret()
         )
     }
     

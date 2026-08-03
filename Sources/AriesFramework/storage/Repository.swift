@@ -1,7 +1,8 @@
 
 import Foundation
 import os
-import askar_uniffi
+import Askar
+
 
 struct WalletRecord: Codable {
     let id: String

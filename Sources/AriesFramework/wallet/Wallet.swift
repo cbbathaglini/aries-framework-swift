@@ -2,8 +2,8 @@
 
 import Foundation
 import os
-import askar_uniffi
 import Base58Swift
+import Askar
 
 public struct DidInfo {
     let did: String

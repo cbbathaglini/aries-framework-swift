@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import anoncreds_uniffi
 import os
 import AnyCodable
-
+import Anoncreds
 
 public class AnoncredsProofFormatService: ProofFormatService {
     

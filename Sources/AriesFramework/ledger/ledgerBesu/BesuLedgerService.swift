@@ -1,8 +1,8 @@
 import Foundation
-import indy_vdr_uniffi
-import anoncreds_uniffi
-import indy_besu_vdr_uniffi
+import IndyVdr
 import os
+import Anoncreds
+import indy_besu_vdr_uniffi
 
 public class BesuLedgerService: LedgerService {
     let agent: Agent

@@ -8,7 +8,6 @@
 import Foundation
 import AnyCodable
 import os
-import anoncreds_uniffi
 
 public class ProofCommandV2 {
     let agent: Agent

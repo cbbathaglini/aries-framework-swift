@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import anoncreds_uniffi
 import os
 import os.log
 

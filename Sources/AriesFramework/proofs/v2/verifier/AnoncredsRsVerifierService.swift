@@ -7,7 +7,7 @@
 
 import Foundation
 import os
-import anoncreds_uniffi
+import Anoncreds
 import indy_besu_vdr_uniffi
 
 public class AnonCredsRsVerifierService: AnonCredsVerifierService {
@@ -84,7 +84,7 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
 
         let revRegDefJson =
             try await agent.ledgerService.getRevocationRegistryDefinition(id: revRegId!)
-        let revRegDefUni = try anoncreds_uniffi.RevocationRegistryDefinition(json: revRegDefJson)
+        let revRegDefUni = try Anoncreds.RevocationRegistryDefinition(json: revRegDefJson)
 
         let revRegDefsMap = [revRegId!: revRegDefUni]
 
@@ -100,7 +100,7 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
             targetTimestamp: ts
         )
 
-        let statusListUniffi = try anoncreds_uniffi.RevocationStatusList(json: statusListJson)
+        let statusListUniffi = try Anoncreds.RevocationStatusList(json: statusListJson)
 
         do {
             let verified = try Verifier().verifyPresentation(

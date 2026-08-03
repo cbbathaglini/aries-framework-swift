@@ -1,7 +1,7 @@
 
 import Foundation
-import anoncreds_uniffi
 import os
+import Anoncreds
 
 public class CredentialService {
     let agent: Agent
@@ -279,7 +279,7 @@ public class CredentialService {
             revocationConfig = CredentialRevocationConfig(
                 regDef: try RevocationRegistryDefinition(json: revocationRecord.revocRegDef),
                 regDefPrivate: try RevocationRegistryDefinitionPrivate(json: revocationRecord.revocRegPrivate),
-                statusList: try anoncreds_uniffi.RevocationStatusList(json: revocationRecord.revocStatusList),
+                statusList: try Anoncreds.RevocationStatusList(json: revocationRecord.revocStatusList),
                 registryIndex: UInt32(registryIndex))
         }
 
@@ -325,7 +325,7 @@ public class CredentialService {
             threadId: issueMessage.threadId,
             connectionId: messageContext.connection?.id)
 
-        let credential = try anoncreds_uniffi.Credential(json: issueAttachment.getDataAsString())
+        let credential = try Anoncreds.Credential(json: issueAttachment.getDataAsString())
         let (schemaJson, _) = try await ledgerService.getSchema(schemaId: credential.schemaId())
         let schema = try Schema(json: schemaJson)
         let credentialDefinition = try CredentialDefinition(json: try await ledgerService.getCredentialDefinition(id: credential.credDefId()))

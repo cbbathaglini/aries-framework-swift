@@ -271,6 +271,7 @@
 				BB5C4678270C1500008D77AE /* Frameworks */,
 				BB5C4679270C1500008D77AE /* Resources */,
 				138397932EB1475F00F55D72 /* CopyFiles */,
+				13E1B0012F33000000BUNDLE /* Fix UniFFI Bundle IDs */,
 			);
 			buildRules = (
 			);
@@ -315,7 +316,7 @@
 				BB53D9E72952C958007D9952 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */,
 				138397902EB1407500F55D72 /* XCLocalSwiftPackageReference "../packages/indy-besu" */,
-				136525772EEC40BA00B70F5D /* XCLocalSwiftPackageReference "../packages/anoncreds" */,
+				136525772EEC40BA00B70F5D /* XCRemoteSwiftPackageReference "aries-uniffi-wrappers" */,
 			);
 			productRefGroup = BB5C467C270C1500008D77AE /* Products */;
 			projectDirPath = "";
@@ -347,6 +348,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		13E1B0012F33000000BUNDLE /* Fix UniFFI Bundle IDs */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Fix UniFFI Bundle IDs";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\nfix_bundle_id() {\n  framework_name=\"$1\"\n  bundle_id=\"$2\"\n  plist=\"${FRAMEWORKS_DIR}/${framework_name}.framework/Info.plist\"\n\n  if [ -f \"${plist}\" ]; then\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleIdentifier ${bundle_id}\" \"${plist}\"\n\n    if [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" ] && [ \"${CODE_SIGNING_ALLOWED:-YES}\" != \"NO\" ]; then\n      /usr/bin/codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --preserve-metadata=entitlements \"${FRAMEWORKS_DIR}/${framework_name}.framework\"\n    fi\n  fi\n}\n\nfix_bundle_id \"anoncreds_uniffiFFI\" \"org.hyperledger.anoncreds-uniffi\"\nfix_bundle_id \"askar_uniffiFFI\" \"org.hyperledger.askar-uniffi\"\nfix_bundle_id \"indy_vdr_uniffiFFI\" \"org.hyperledger.indy-vdr-uniffi\"\nfix_bundle_id \"indy_besu_vdrFFI\" \"org.hyperledger.indy-besu-vdr\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BB5C4677270C1500008D77AE /* Sources */ = {
@@ -614,21 +637,25 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ..;
-		};
-		136525772EEC40BA00B70F5D /* XCLocalSwiftPackageReference "../packages/anoncreds" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../packages/anoncreds;
-		};
 		138397902EB1407500F55D72 /* XCLocalSwiftPackageReference "../packages/indy-besu" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../packages/indy-besu";
 		};
+		BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		136525772EEC40BA00B70F5D /* XCRemoteSwiftPackageReference "aries-uniffi-wrappers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LF-Decentralized-Trust-labs/aries-uniffi-wrappers.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.3.1;
+			};
+		};
 		BB53D9E72952C958007D9952 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/twostraws/CodeScanner";
@@ -642,10 +669,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		136525782EEC40BA00B70F5D /* Anoncreds */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 136525772EEC40BA00B70F5D /* XCRemoteSwiftPackageReference "aries-uniffi-wrappers" */;
 			productName = Anoncreds;
 		};
 		138397912EB1407500F55D72 /* IndyBesu */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 138397902EB1407500F55D72 /* XCLocalSwiftPackageReference "../packages/indy-besu" */;
 			productName = IndyBesu;
 		};
 		BB06E2FE2AFA12B800C4A04A /* AriesFramework */ = {

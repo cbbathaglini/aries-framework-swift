@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "aries-uniffi-wrappers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LF-Decentralized-Trust-labs/aries-uniffi-wrappers.git",
+      "state" : {
+        "revision" : "c4d4eea1abf17ac66a90ba2216801c23ecaad53c",
+        "version" : "0.3.1"
+      }
+    },
+    {
       "identity" : "base58swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/keefertaylor/Base58Swift",

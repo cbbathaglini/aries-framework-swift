@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import anoncreds_uniffi
+import Anoncreds
 
 class W3cUtils {
     static let VERSION_1_1 = "1.1"
@@ -27,7 +27,7 @@ class W3cUtils {
         return true
     }
     
-    static func getCredentialUniffiByW3cCredentialRecord(_ credentialRecord: W3cCredentialRecord) throws -> anoncreds_uniffi.Credential {
+    static func getCredentialUniffiByW3cCredentialRecord(_ credentialRecord: W3cCredentialRecord) throws -> Anoncreds.Credential {
         
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes]
@@ -46,6 +46,6 @@ class W3cUtils {
             let range = NSRange(jsonStr.startIndex..., in: jsonStr)
             jsonStr = regex.stringByReplacingMatches(in: jsonStr, options: [], range: range, withTemplate: "\"credentialSubject\": $1")
         }
-        return try anoncreds_uniffi.CredentialConversions().credentialFromW3cJson(w3cCredentialJson: jsonStr)
+        return try CredentialConversions().credentialFromW3cJson(w3cCredentialJson: jsonStr)
     }
 }

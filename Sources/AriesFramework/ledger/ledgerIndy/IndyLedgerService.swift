@@ -1,8 +1,8 @@
 import Foundation
 import os
-import indy_vdr_uniffi
+import IndyVdr
+import Anoncreds
 import indy_besu_vdr_uniffi
-import anoncreds_uniffi
 
 public class IndyLedgerService: LedgerService {
     let agent: Agent
@@ -246,7 +246,7 @@ public class IndyLedgerService: LedgerService {
             throw AriesFrameworkError.frameworkError("No revocation registry found for credential definition id: \(credDefId)")
         }
 
-        let currentStatusList = try anoncreds_uniffi.RevocationStatusList(json: revocationRecord.revocStatusList)
+        let currentStatusList = try Anoncreds.RevocationStatusList(json: revocationRecord.revocStatusList)
         let revokedStatusList = try issuer.updateRevocationStatusList(
             credDef: try CredentialDefinition(json: credentialDefinitionRecord.credDef),
             timestamp: UInt64(Date().timeIntervalSince1970),

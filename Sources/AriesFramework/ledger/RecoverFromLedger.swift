@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import anoncreds_uniffi
+import Anoncreds
 
 class RecoverFromLedger {
 

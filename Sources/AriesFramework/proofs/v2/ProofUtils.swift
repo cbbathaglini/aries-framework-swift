@@ -7,8 +7,8 @@
 
 import Foundation
 import AnyCodable
-import anoncreds_uniffi
 import os.log
+import Anoncreds
 
 public struct ProofUtils {
     let logger = Logger(subsystem: "AriesFramework", category: "ProofUtils")

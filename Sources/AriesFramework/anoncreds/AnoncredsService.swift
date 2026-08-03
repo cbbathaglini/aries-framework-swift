@@ -1,6 +1,7 @@
 import Foundation
 import os
-import anoncreds_uniffi
+import Anoncreds
+
 
 public struct AnoncredsService {
     let agent: Agent
@@ -13,7 +14,7 @@ public struct AnoncredsService {
 
     public func createLinkSecret() async throws -> String {
         let linkSecretId = UUID().uuidString
-        let linkSecret = try anoncreds_uniffi.createLinkSecret()
+        let linkSecret = try Anoncreds.createLinkSecret()
         try await agent.wallet.session!.update(operation: .insert, category: secretCategory, name: linkSecretId, value: linkSecret.data(using: .utf8)!, tags: nil, expiryMs: nil)
 
         return linkSecretId

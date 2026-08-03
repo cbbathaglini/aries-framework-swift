@@ -1,8 +1,8 @@
 
 import Foundation
-import anoncreds_uniffi
 import CollectionConcurrencyKit
 import os
+import Anoncreds
 
 enum RequestReferentType: String {
     case Attribute = "attribute"
@@ -46,8 +46,8 @@ public class RevocationService {
         return String(data: revocationStatesJson, encoding: .utf8)!
     }
 
-    public func getRevocationStatusLists(proof: PartialProof, revocationRegistryDefinitions: [String: RevocationRegistryDefinition]) async throws -> [anoncreds_uniffi.RevocationStatusList] {
-        var revocationStatusLists = [anoncreds_uniffi.RevocationStatusList]()
+    public func getRevocationStatusLists(proof: PartialProof, revocationRegistryDefinitions: [String: RevocationRegistryDefinition]) async throws -> [Anoncreds.RevocationStatusList] {
+        var revocationStatusLists = [Anoncreds.RevocationStatusList]()
         try await proof.identifiers.concurrentForEach { [self] (identifier) in
             if let revocationRegistryId = identifier.revocationRegistryId,
                let timestamp = identifier.timestamp {
@@ -63,7 +63,7 @@ public class RevocationService {
                     revRegDefId: revocationRegistryId,
                     revocationList: [],
                     timestamp: timestamp)
-                revocationStatusLists.append(try anoncreds_uniffi.RevocationStatusList(json: revocationStatusList.toString()))
+                revocationStatusLists.append(try Anoncreds.RevocationStatusList(json: revocationStatusList.toString()))
             }
         }
         return revocationStatusLists
@@ -85,7 +85,7 @@ public class RevocationService {
         return (revoked, deltaTimestamp)
     }
 
-    public func createRevocationState(credential: anoncreds_uniffi.Credential, timestamp: Int) async throws -> anoncreds_uniffi.CredentialRevocationState {
+    public func createRevocationState(credential: Anoncreds.Credential, timestamp: Int) async throws -> Anoncreds.CredentialRevocationState {
         
         guard let credentialRevocationId = credential.revRegIndex(),
               let revocationRegistryId = credential.revRegId() else {
@@ -98,7 +98,7 @@ public class RevocationService {
 
         let revocationState = try Prover().createRevocationState(
             revRegDef: revocationRegistryDefinition,
-            revRegDelta: anoncreds_uniffi.RevocationRegistryDelta(json: revocationRegistryDelta),
+            revRegDelta: Anoncreds.RevocationRegistryDelta(json: revocationRegistryDelta),
             timestamp: UInt64(deltaTimestamp),
             revRegIdx: UInt32(credentialRevocationId),
             tailsPath: tailsFile.path)
@@ -133,7 +133,7 @@ public class RevocationService {
 
                 let revocationState = try Prover().createRevocationState(
                     revRegDef: revocationRegistryDefinition,
-                    revRegDelta: anoncreds_uniffi.RevocationRegistryDelta(json: revocationRegistryDelta),
+                    revRegDelta: Anoncreds.RevocationRegistryDelta(json: revocationRegistryDelta),
                     timestamp: UInt64(deltaTimestamp),
                     revRegIdx: UInt32(credentialRevocationId)!,
                     tailsPath: tailsFile.path)

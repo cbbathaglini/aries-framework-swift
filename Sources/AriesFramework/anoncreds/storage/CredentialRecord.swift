@@ -1,7 +1,7 @@
 
 import Foundation
-import anoncreds_uniffi
 import AnyCodable
+import Anoncreds
 
 public struct CredentialRecord: BaseRecord {
     public var id: String
@@ -38,7 +38,7 @@ extension CredentialRecord: Codable {
         credentialRevocationId: String? = nil,
         revocationRegistryId: String? = nil,
         linkSecretId: String,
-        credential: anoncreds_uniffi.Credential,
+        credential: Anoncreds.Credential,
         schemaId: String,
         schemaName: String,
         schemaVersion: String,

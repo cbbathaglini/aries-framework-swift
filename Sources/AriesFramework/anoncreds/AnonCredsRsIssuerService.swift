@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import anoncreds_uniffi
+import Anoncreds
 
 public class AnonCredsRsIssuerService: AnonCredsIssuerService {
     public let agent: Agent

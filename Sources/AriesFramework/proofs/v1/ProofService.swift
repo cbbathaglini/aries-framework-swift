@@ -1,8 +1,8 @@
 
 import Foundation
-import anoncreds_uniffi
 import os
 import CollectionConcurrencyKit
+import Anoncreds
 
 public class ProofService {
     let agent: Agent
@@ -431,7 +431,7 @@ public class ProofService {
 
         try await credentialIds.concurrentForEach { [self] (credId) in
             let credentialRecord = try await agent.credentialRepository.getByCredentialId(credId)
-            let credential = try anoncreds_uniffi.Credential(json: credentialRecord.credential)
+            let credential = try Anoncreds.Credential(json: credentialRecord.credential)
             schemaIds.insert(credential.schemaId())
             credentialDefinitionIds.insert(credential.credDefId())
 

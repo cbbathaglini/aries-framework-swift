@@ -1,6 +1,6 @@
 import Foundation
-import askar_uniffi
 import os
+import Askar
 
 public class Agent {
     let logger = Logger(subsystem: "AriesFramework", category: "Agent")
@@ -166,7 +166,7 @@ public class Agent {
     public func initialize() async throws {
         if ProcessInfo.processInfo.environment["RUST_LOG"] != nil {
             logDebug("RUST_LOG is set. Setting default logger to debug.")
-            try? askar_uniffi.setDefaultLogger()
+            try? Askar.setDefaultLogger()
         }
 
         try await wallet.initialize()

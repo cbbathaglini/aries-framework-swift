@@ -1,9 +1,9 @@
 
 import Foundation
 import AnyCodable
-import anoncreds_uniffi
 import os
 import CollectionConcurrencyKit
+import Anoncreds
 
 public class ProofServiceV2 {
     let logger = Logger(subsystem: "AriesFramework", category: "ProofServiceV2")

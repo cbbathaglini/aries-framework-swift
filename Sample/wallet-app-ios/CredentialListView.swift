@@ -5,7 +5,7 @@
 
 import SwiftUI
 import AriesFramework
-import anoncreds_uniffi
+import Anoncreds
 
 class CredentialList: ObservableObject {
     @Published var list: [CredentialInfo] = []

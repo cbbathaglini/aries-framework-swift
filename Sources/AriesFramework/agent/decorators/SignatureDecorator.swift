@@ -1,8 +1,9 @@
 
 import Foundation
 import os
-import askar_uniffi
 import Base58Swift
+import Anoncreds
+import Askar
 
 public struct SignatureDecorator {
     var signatureType: String
