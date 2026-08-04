@@ -40,7 +40,7 @@ class WalletOpener : ObservableObject {
         
         var invitationUrl = ProcessInfo.processInfo.environment["MEDIATOR_URL"] ?? AppConfig.string("MEDIATOR_URL")
 
-        guard !invitationUrl.isEmpty, URL(string: invitationUrl) != nil else {
+        if invitationUrl.isEmpty || URL(string: invitationUrl) == nil {
             print("⚠️ MEDIATOR_URL is not configured, mediator connection will be skipped")
             invitationUrl = ""
         }
