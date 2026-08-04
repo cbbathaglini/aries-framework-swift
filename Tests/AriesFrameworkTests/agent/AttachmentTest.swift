@@ -22,7 +22,7 @@ class AttachmentTest: XCTestCase {
         decoder.dateDecodingStrategy = .iso8601
         let attachment = try! decoder.decode(Attachment.self, from: json.data(using: .utf8)!)
         XCTAssertEqual(attachment.id, "ceffce22-6471-43e4-8945-b604091981c9")
-        XCTAssertEqual(attachment.description, "A small picture of a cat")
+        XCTAssertEqual(attachment.desc, "A small picture of a cat")
         XCTAssertEqual(attachment.filename, "cat.png")
         XCTAssertEqual(attachment.mimetype, "text/plain")
         XCTAssertEqual(attachment.lastModified, Date(timeIntervalSinceReferenceDate: 0))
@@ -34,7 +34,7 @@ class AttachmentTest: XCTestCase {
         let encoded = try! encoder.encode(attachment)
         let decoded = try! decoder.decode(Attachment.self, from: encoded)
         XCTAssertEqual(attachment.id, decoded.id)
-        XCTAssertEqual(attachment.description, decoded.description)
+        XCTAssertEqual(attachment.desc, decoded.desc)
         XCTAssertEqual(attachment.filename, decoded.filename)
         XCTAssertEqual(attachment.mimetype, decoded.mimetype)
         XCTAssertEqual(attachment.lastModified, decoded.lastModified)

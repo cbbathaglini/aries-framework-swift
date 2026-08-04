@@ -1,6 +1,5 @@
 import XCTest
 @testable import AriesFramework
-import Anoncreds
 
 final class LedgerServiceTest: XCTestCase {
     var agent: Agent!
@@ -23,8 +22,16 @@ final class LedgerServiceTest: XCTestCase {
         print("credential definition id: \(credDefId)")
 
         let credDefJson = try await agent.ledgerService.getCredentialDefinition(id: credDefId)
-        let credDef = try CredentialDefinition(json: credDefJson)
-        print("schema id: \(credDef.schemaId())")
-        print("cred def id: \(credDef.credDefId())")
+        let credDef = try JSONSerialization.jsonObject(with: credDefJson.data(using: .utf8)!) as! [String: Any]
+        guard let schemaId = credDef["schemaId"] as? String else {
+            XCTFail("cred def does not contain schemaId")
+            return
+        }
+        guard let issuerId = credDef["issuerId"] as? String else {
+            XCTFail("cred def does not contain issuerId")
+            return
+        }
+        print("schema id: \(schemaId)")
+        print("issuer id: \(issuerId)")
     }
 }

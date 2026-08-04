@@ -28,8 +28,8 @@ class DidCommMessageRepositoryTest: XCTestCase {
         try await super.tearDown()
     }
 
-    func getRecord() -> DidCommMessageRecord {
-        return DidCommMessageRecord(
+    func getRecord() throws -> DidCommMessageRecord {
+        return try DidCommMessageRecord(
             message: invitation,
             role: .Receiver,
             associatedRecordId: "04a2c382-999e-4de9-a1d2-9dec0b2fa5e4"
@@ -37,7 +37,7 @@ class DidCommMessageRepositoryTest: XCTestCase {
     }
 
     func testGetAgentMessage() async throws {
-        let record = getRecord()
+        let record = try getRecord()
         try await repository.saveAgentMessage(role: .Receiver, agentMessage: invitation, associatedRecordId: record.associatedRecordId!)
 
         let message = try await repository.getAgentMessage(associatedRecordId: record.associatedRecordId!, messageType: ConnectionInvitationMessage.type)
@@ -49,7 +49,7 @@ class DidCommMessageRepositoryTest: XCTestCase {
     }
 
     func testFindAgentMessage() async throws {
-        let record = getRecord()
+        let record = try getRecord()
         try await repository.saveAgentMessage(role: .Receiver, agentMessage: invitation, associatedRecordId: record.associatedRecordId!)
 
         let message = try await repository.findAgentMessage(associatedRecordId: record.associatedRecordId!, messageType: ConnectionInvitationMessage.type)!
@@ -64,7 +64,7 @@ class DidCommMessageRepositoryTest: XCTestCase {
     }
 
     func testSaveAgentMessage() async throws {
-        let record = getRecord()
+        let record = try getRecord()
         try await repository.saveAgentMessage(role: .Receiver, agentMessage: invitation, associatedRecordId: record.associatedRecordId!)
 
         let message = try await repository.getAgentMessage(associatedRecordId: record.associatedRecordId!, messageType: ConnectionInvitationMessage.type)
@@ -89,9 +89,9 @@ class DidCommMessageRepositoryTest: XCTestCase {
         XCTAssertEqual(decodedUpdate.label, invitationUpdate.label)
 
         var type = ConnectionInvitationMessage.type
-        if self.agent.agentConfig.useLegacyDidSovPrefix {
-            type = Dispatcher.replaceNewDidCommPrefixWithLegacyDidSov(messageType: type)
-        }
+//        if self.agent.agentConfig.useLegacyDidSovPrefix {
+//            type = Dispatcher.replaceNewDidCommPrefixWithLegacyDidSov(messageType: type)
+//        }
         let updatedRecord = try await repository.findSingleByQuery("""
             {"associatedRecordId": "\(record.associatedRecordId!)",
             "messageType": "\(type)"}

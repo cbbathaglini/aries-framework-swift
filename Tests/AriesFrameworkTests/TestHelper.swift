@@ -170,7 +170,7 @@ class TestHelper {
     }
 
     static func prepareForIssuance(_ agent: Agent, _ attributes: [String]) async throws -> String {
-        logger.debug("Preparing for issuance")
+        logDebug("Preparing for issuance")
         guard let didInfo = agent.wallet.publicDid else {
             throw AriesFrameworkError.frameworkError("Agent has no public DID.")
         }
@@ -178,7 +178,7 @@ class TestHelper {
             schemaTemplate: SchemaTemplate(name: "schema-\(UUID().uuidString)", version: "1.0", attributes: attributes))
         try await Task.sleep(nanoseconds: UInt64(0.1 * SECOND))
         let (schema, seqNo) = try await agent.ledgerService.getSchema(schemaId: schemaId)
-        logger.debug("Registering credential definition")
+        logDebug("Registering credential definition")
         let credDefId = try await agent.ledgerService.registerCredentialDefinition(did: didInfo,
             credentialDefinitionTemplate: CredentialDefinitionTemplate(schema: schema, tag: "default", supportRevocation: false, seqNo: seqNo))
 
@@ -186,7 +186,7 @@ class TestHelper {
     }
 
     static func makeConnection(_ agentA: Agent, _ agentB: Agent, waitFor: Double = 0.1) async throws -> (ConnectionRecord, ConnectionRecord) {
-        logger.debug("Making connection")
+        logDebug("Making connection")
         let message = try await agentA.connections.createConnection()
         // swiftlint:disable:next force_cast
         let invitation = message.payload as! ConnectionInvitationMessage

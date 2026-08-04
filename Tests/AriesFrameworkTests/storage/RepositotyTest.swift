@@ -22,7 +22,7 @@ class RepositotyTest: XCTestCase {
     }
 
     func insertRecord(id: String? = nil, tags: Tags? = nil) async -> TestRecord {
-        let record = TestRecord(id: id, tags: tags ?? ["myTag": "foobar"], foo: "bar")
+        let record = TestRecord(id: id, tags: tags ?? ["myTag": "foobar"], foo: "bar", metadata: [:])
         try? await repository.save(record)
         return record
     }
