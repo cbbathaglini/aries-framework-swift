@@ -229,6 +229,19 @@ class CredentialHandler: ObservableObject, AgentDelegate {
         notificationHandler.addNotification(title: "Message received", message: record.content)
     }
 
+    // MARK: - CONNECTIONS
+    func onConnectionStateChanged(connectionRecord: ConnectionRecord) {
+        print("🔗 Connection state changed: \(connectionRecord.state.rawValue)")
+
+        guard connectionRecord.state == .Complete else { return }
+
+        notificationHandler.addNotification(
+            title: "New active connection",
+            message: "Connected with \(connectionRecord.theirLabel ?? "unknown agent")",
+            type: .connection
+        )
+    }
+
     // MARK: - ACCEPT CREDENTIAL
     func getCredential(version: String) {
         Task {

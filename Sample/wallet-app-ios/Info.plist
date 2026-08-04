@@ -33,8 +33,6 @@
 	</array>
 	<key>MEDIATOR_URL</key>
 	<string></string>
-	<key>CHAIN_ID</key>
-	<string>$(CHAIN_ID)</string>
 	<key>CACHE_DEFAULT_TTL_DAYS</key>
 	<string>$(CACHE_DEFAULT_TTL_DAYS)</string>
 	<key>CACHE_SCHEMA_TTL_DAYS</key>

@@ -38,10 +38,11 @@ class WalletOpener : ObservableObject {
 //            fatalError("MEDIATOR_URL not founded in Info.plist")
 //        }
         
-        let invitationUrl = AppConfig.string("MEDIATOR_URL")
-        
-        guard URL(string: invitationUrl) != nil else {
-            fatalError("MEDIATOR_URL is not a valid URL: \(invitationUrl)")
+        var invitationUrl = ProcessInfo.processInfo.environment["MEDIATOR_URL"] ?? AppConfig.string("MEDIATOR_URL")
+
+        guard !invitationUrl.isEmpty, URL(string: invitationUrl) != nil else {
+            print("⚠️ MEDIATOR_URL is not configured, mediator connection will be skipped")
+            invitationUrl = ""
         }
         
         let besuLedgerConfig = BesuLedgerConfig(

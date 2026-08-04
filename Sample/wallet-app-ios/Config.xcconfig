@@ -5,10 +5,7 @@
 //  Created by Carine Bertagnolli Bathaglini on 12/10/25.
 //
 
-MEDIATOR_URL=""
-CHAIN_ID=1337
-
-CREDDEF_TTL_MAP="DID,7;" // did,max number of days in cache
+CREDDEF_TTL_MAP="SOME_DID,7;" // did,max number of days in cache
 CACHE_DEFAULT_TTL_DAYS = 1
 CACHE_SCHEMA_TTL_DAYS = 30
 CACHE_REVREG_TTL_DAYS = 30
