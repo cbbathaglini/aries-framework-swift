@@ -84,8 +84,6 @@ class ProofHandler: ObservableObject {
             throw CredoError("Unable to convert requestMessage to UTF-8 string")
         }
 
-        print("📦 Aries requestMessage:\n\(jsonString)")
-
         let qrImage = generateQRCode(from: jsonString)
         return (anonCredsProofRequest, qrImage)
     }
@@ -116,29 +114,6 @@ class ProofHandler: ObservableObject {
         return AnonCredsNonRevokedInterval(from: 0, to: to)
     }
     
-    //function to just print with details
-//    private func printAll() async {
-//        let allVerifierRecords = await agent!.verifierRepository.getAll()
-//
-//        print("📦 \(allVerifierRecords.count) registros encontrados no VerifierRepository:")
-//        for (index, record) in allVerifierRecords.enumerated() {
-//            print("─────────────────────────────")
-//            print("📘 Registro #\(index + 1)")
-//            print("🆔 ID: \(record.id)")
-//            print("📅 Criado em: \(record.createdAt)")
-//            if let updatedAt = record.updatedAt {
-//                print("🕒 Atualizado em: \(updatedAt)")
-//            }
-//            
-//            if let proof = record.proofRequest {
-//                print("🔍 Proof request name: \(proof.name)")
-//                print("🔢 Nonce: \(proof.nonce)")
-//            } else {
-//                print("⚠️ Nenhuma proof request associada.")
-//            }
-//        }
-//    }
-   
     private func buildRequestedAttributes(from proofRequest: [String: Any]) throws -> [String: AnonCredsRequestedAttribute] {
         guard let attributesList = proofRequest["attributes"] as? [[String: Any]] else {
             throw NSError(domain: "ProofHandler", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid attributes list"])

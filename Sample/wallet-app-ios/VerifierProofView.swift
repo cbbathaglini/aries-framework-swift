@@ -131,7 +131,7 @@ struct VerifierProofView: View {
                                             .scaledToFit()
                                             .frame(width: 240, height: 240)
                                             .padding(12)
-                                            .background(Color.white) // FÁCIL, EFICIENTE, PERFEITO
+                                            .background(Color.white)
                                             .cornerRadius(12)
                                             .shadow(radius: 4)
                                     }
@@ -275,11 +275,11 @@ struct VerifierProofView: View {
             let minifiedData = try encoder.encode(presentation)
 
             let jsonString = String(data: minifiedData, encoding: .utf8)!
-            print("TAMANHO JSON:", jsonString.count)
+            print("Presentation JSON size: \(jsonString.count) bytes")
 
             qrCodes = generateMultiQR(from: jsonString)
 
-            print("TOTAL QRs:", qrCodes.count)
+            print("Total generated QR codes: \(qrCodes.count)")
             statusMessage = "✅ Presentation successfully created!"
 
         } catch {

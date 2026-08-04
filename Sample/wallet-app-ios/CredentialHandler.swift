@@ -234,31 +234,8 @@ class CredentialHandler: ObservableObject, AgentDelegate {
         Task {
             do {
                 await MainActor.run { self.menu = .loading }
-
-                if version == "1.0" {
-                    _ = try await agent!.credentials.acceptOffer(
-                        options: AcceptOfferOptions(
-                            credentialRecordId: credentialRecordId,
-                            autoAcceptCredential: .always
-                        )
-                    )
-                } else if version == "2.0" {
-                    try await Task.sleep(nanoseconds: 300_000_000)
-
-                    guard let record = try? await agent?.credentialExchangeRepository.getById(credentialRecordId) else {
-                        throw NSError(domain: "CredentialHandler", code: 404, userInfo: [NSLocalizedDescriptionKey: "Record not found"])
-                    }
-
-                    _ = try await agent!.credentialsV2.acceptOffer(
-                        options: AcceptCredentialOfferOptionsV2(
-                            credentialExchangeRecord: record,
-                            autoAcceptCredential: .always
-                        )
-                    )
-                }
-
+                try await acceptCredentialOffer(version: version)
                 await MainActor.run { self.menu = nil }
-
             } catch {
                 await MainActor.run {
                     self.menu = nil
@@ -272,44 +249,62 @@ class CredentialHandler: ObservableObject, AgentDelegate {
         }
     }
 
-    // MARK: - SEND PROOF
-    func sendProof(version: String, proofRecordId: String, chosenCredentialId: String? = nil) {
-        menu = .loading
+    private func acceptCredentialOffer(version: String) async throws {
+        if version == "1.0" {
+            _ = try await agent!.credentials.acceptOffer(
+                options: AcceptOfferOptions(
+                    credentialRecordId: credentialRecordId,
+                    autoAcceptCredential: .always
+                )
+            )
+        } else if version == "2.0" {
+            try await Task.sleep(nanoseconds: 300_000_000)
 
-        Task {
-            do {
-                // Timeout of 10 seconds
-                try await withThrowingTaskGroup(of: Void.self) { group in
-
-                    group.addTask {
-                        if version == "1.0" {
-                            try await self.proofV1(proofRecordId: proofRecordId)
-                        } else {
-                            try await self.proofV2(proofRecordId: proofRecordId, chosenCredentialId: chosenCredentialId)
-                        }
-                    }
-
-                    group.addTask {
-                        try await Task.sleep(nanoseconds: 10_000_000_000)
-                        throw NSError(domain: "Timeout", code: 408, userInfo: [NSLocalizedDescriptionKey: "Proof processing timed out"])
-                    }
-
-                    try await group.next()
-                    group.cancelAll()
-                }
-
-                await MainActor.run { self.menu = nil }
-
-            } catch {
-                await MainActor.run {
-                    self.menu = nil
-                    self.notificationHandler.addNotification(
-                        title: "❌ Error sending proof",
-                        message: error.localizedDescription,
-                        type: .error
-                    )
-                }
+            guard let record = try? await agent?.credentialExchangeRepository.getById(credentialRecordId) else {
+                throw NSError(domain: "CredentialHandler", code: 404, userInfo: [NSLocalizedDescriptionKey: "Record not found"])
             }
+
+            _ = try await agent!.credentialsV2.acceptOffer(
+                options: AcceptCredentialOfferOptionsV2(
+                    credentialExchangeRecord: record,
+                    autoAcceptCredential: .always
+                )
+            )
+        }
+    }
+
+    // MARK: - SEND PROOF
+    func sendProof(version: String, proofRecordId: String, chosenCredentialId: String? = nil) async throws {
+        do {
+            // Timeout of 10 seconds
+            try await withThrowingTaskGroup(of: Void.self) { group in
+
+                group.addTask {
+                    if version == "1.0" {
+                        try await self.proofV1(proofRecordId: proofRecordId)
+                    } else {
+                        try await self.proofV2(proofRecordId: proofRecordId, chosenCredentialId: chosenCredentialId)
+                    }
+                }
+
+                group.addTask {
+                    try await Task.sleep(nanoseconds: 10_000_000_000)
+                    throw NSError(domain: "Timeout", code: 408, userInfo: [NSLocalizedDescriptionKey: "Proof processing timed out"])
+                }
+
+                try await group.next()
+                group.cancelAll()
+            }
+
+        } catch {
+            await MainActor.run {
+                self.notificationHandler.addNotification(
+                    title: "❌ Error sending proof",
+                    message: error.localizedDescription,
+                    type: .error
+                )
+            }
+            throw error
         }
     }
 

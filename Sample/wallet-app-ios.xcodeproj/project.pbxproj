@@ -53,6 +53,7 @@
 		BB5C4686270C1506008D77AE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB5C4685270C1506008D77AE /* Preview Assets.xcassets */; };
 		BB5C468D270C390E008D77AE /* CredentialListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C468C270C390E008D77AE /* CredentialListView.swift */; };
 		BB5C468F270C4181008D77AE /* CredentialDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C468E270C4181008D77AE /* CredentialDetailView.swift */; };
+		13B1A0012F99000000000002 /* CredentialDetailLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B1A0012F99000000000001 /* CredentialDetailLoaderView.swift */; };
 		BB8C9BE8272FFAAE005D9284 /* CredentialHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8C9BE7272FFAAE005D9284 /* CredentialHandler.swift */; };
 		BB90F26728F92DA20066AE87 /* bcovrin-genesis.txn in Resources */ = {isa = PBXBuildFile; fileRef = BB90F26528F92D990066AE87 /* bcovrin-genesis.txn */; };
 		BB90F26828F92DA20066AE87 /* local-genesis.txn in Resources */ = {isa = PBXBuildFile; fileRef = BB90F26628F92DA10066AE87 /* local-genesis.txn */; };
@@ -121,6 +122,7 @@
 		BB5C4685270C1506008D77AE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		BB5C468C270C390E008D77AE /* CredentialListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialListView.swift; sourceTree = "<group>"; };
 		BB5C468E270C4181008D77AE /* CredentialDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDetailView.swift; sourceTree = "<group>"; };
+		13B1A0012F99000000000001 /* CredentialDetailLoaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDetailLoaderView.swift; sourceTree = "<group>"; };
 		BB8C9BE7272FFAAE005D9284 /* CredentialHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialHandler.swift; sourceTree = "<group>"; };
 		BB90F26528F92D990066AE87 /* bcovrin-genesis.txn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bcovrin-genesis.txn"; sourceTree = "<group>"; };
 		BB90F26628F92DA10066AE87 /* local-genesis.txn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "local-genesis.txn"; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				13986DD22E998C3A006F8407 /* ConnectionHandler.swift */,
 				13C2A0CA2E9BFBE300305366 /* ConnectionDetailView.swift */,
 				BB5C468E270C4181008D77AE /* CredentialDetailView.swift */,
+				13B1A0012F99000000000001 /* CredentialDetailLoaderView.swift */,
 				BB5C468C270C390E008D77AE /* CredentialListView.swift */,
 				BB8C9BE7272FFAAE005D9284 /* CredentialHandler.swift */,
 				13D0C10B2E9EB0920061F685 /* NotificationsView.swift */,
@@ -400,6 +403,7 @@
 				13D0C10C2E9EB0930061F685 /* NotificationsView.swift in Sources */,
 				13A19B3A2EBD227300AEA41F /* ReceivedPresentationDetailView.swift in Sources */,
 				BB5C468F270C4181008D77AE /* CredentialDetailView.swift in Sources */,
+				13B1A0012F99000000000002 /* CredentialDetailLoaderView.swift in Sources */,
 				BB8C9BE8272FFAAE005D9284 /* CredentialHandler.swift in Sources */,
 				1332E3462F3223D80040A9DF /* AppConfig.swift in Sources */,
 				BBB509D628ED680700A6405A /* WalletOpener.swift in Sources */,

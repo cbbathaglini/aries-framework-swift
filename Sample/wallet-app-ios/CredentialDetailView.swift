@@ -12,7 +12,17 @@ struct CredentialDetailView: View {
     var body: some View {
         List {
             Section(header: Text("Credential Information")) {
-                
+
+                if let state = credential.state {
+                    HStack {
+                        Text("Status")
+                            .fontWeight(.semibold)
+                        Spacer()
+                        Text(state.rawValue)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
                 if let copiedText = copiedText {
                     Text(copiedText)
                         .font(.caption)
@@ -118,15 +128,21 @@ struct CredentialDetailView: View {
 
         
             Section(header: Text("Attributes")) {
-                ForEach(credential.attrs.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(key)
-                            .font(.headline)
-                        Text(value)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                if credential.attrs.isEmpty {
+                    Text("No attribute values are available yet. Accept the credential to view them.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(credential.attrs.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(key)
+                                .font(.headline)
+                            Text(value)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
             }
             

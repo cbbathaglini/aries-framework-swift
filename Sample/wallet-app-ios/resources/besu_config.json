@@ -1,9 +1,9 @@
 {
   "networks": [
     {
-      "networkName": "serpro",
-      "chainId": 1337,
-      "nodeAddress": "http://idd.serpro.gov.br/besu",
+      "networkName": "des",
+      "chainId": 19642026,
+      "nodeAddress": "https://idd.serpro.gov.br/besu_hom",
       "contracts": {
         "ethereumDidRegistry": {
           "specPath": "/abi/EthereumExtDidRegistry.json",

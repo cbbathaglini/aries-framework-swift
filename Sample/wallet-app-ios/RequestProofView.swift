@@ -438,34 +438,17 @@ struct RequestProofView: View {
                 
                 let hasInterval = (proof.nonRevoked?.from != nil) || (proof.nonRevoked?.to != nil)
                 
-                if hasInterval{
-                    let intervalFrom: UInt64 = proof.nonRevoked?.from ?? 0
-                    let intervalTo: UInt64   = proof.nonRevoked?.to   ?? UInt64.max
-                    
-                    if record.revocationNotification?.revocationDate == nil {
-                        print("No revocation — valid credential")
-                    } else {
-                        let revocationDate = record.revocationNotification!.revocationDate
-                        let realTimestampUnix = Int64(revocationDate.timeIntervalSince1970)
-                        
-                        //data revoga = 13:42
-                        // interval = 13:44
-                        
-                        let wasRevokedWithinInterval =
-                            realTimestampUnix <= intervalTo
+                if hasInterval {
+                    let intervalTo: UInt64 = proof.nonRevoked?.to ?? UInt64.max
 
-                        if wasRevokedWithinInterval {
-                            print("❌ Credential revoked within interval — ignoring")
+                    if let revocationDate = record.revocationNotification?.revocationDate {
+                        let realTimestampUnix = Int64(revocationDate.timeIntervalSince1970)
+                        if realTimestampUnix <= intervalTo {
                             continue
                         }
-
-                        print("✅ Credential valid — revoked outside interval or never revoked")
                     }
-                }
-                
-                else if !hasInterval {
+                } else if !hasInterval {
                     if record.state == .Revoked {
-                        print("❌ Credential revoked — ignoring (no interval defined)")
                         continue
                     }
                 }
@@ -541,11 +524,10 @@ struct RequestProofView: View {
 
         do {
             print("📤 Sending proof with credential: \(selectedCredentialId)")
-            await CredentialHandler.shared.sendProof(version: "2.0", proofRecordId: proofRecordId!, chosenCredentialId: selectedCredentialId)
+            try await CredentialHandler.shared.sendProof(version: "2.0", proofRecordId: proofRecordId!, chosenCredentialId: selectedCredentialId)
 
             await MainActor.run {
                 isSendingProof = false
-                proofState = ProofState.Done
             }
         } catch {
             await MainActor.run {

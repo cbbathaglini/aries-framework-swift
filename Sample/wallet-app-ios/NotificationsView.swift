@@ -9,7 +9,7 @@ struct NotificationsView: View {
     @State private var selectedProof: String?
 
     @State private var showCredentialDetail = false
-    @State private var selectedCredential: CredentialInfo?
+    @State private var selectedCredentialId: String?
 
     
     var body: some View {
@@ -111,8 +111,8 @@ struct NotificationsView: View {
                 }
             }
             .sheet(isPresented: $showCredentialDetail) {
-                if let credential = selectedCredential {
-                    CredentialDetailView(credential: credential)
+                if let credentialId = selectedCredentialId {
+                    CredentialDetailLoaderView(credentialId: credentialId)
                 } else {
                     Text("Loading credential details...")
                 }
@@ -187,6 +187,15 @@ struct NotificationsView: View {
         
             if !notification.isRead {
                 HStack {
+                    Button {
+                        Task { await openCredentialDetail(notification: notification) }
+                    } label: {
+                        Image(systemName: "eye.fill")
+                            .frame(width: 20)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.blue)
+
                     Button("Accept") {
                         credentialHandler.getCredential(version: "2.0")
                         markAsRead(notification)
@@ -335,36 +344,9 @@ struct NotificationsView: View {
                 return
             }
 
-            do {
-                if let record = try await agent?.credentialExchangeRepository.getById(credentialId) {
-                    let attributesDict = Dictionary(
-                        uniqueKeysWithValues: (record.credentialAttributes ?? []).map { ($0.name, $0.value) }
-                    )
-
-                    let recordTypes = record.credentials.map { $0.credentialRecordType }
-
-                    let credentialInfo = CredentialInfo(
-                        id: record.id,
-                        attrs: attributesDict,
-                        schema_id: record.schemaId,
-                        type: recordTypes,
-                        credentialDefinitionId: record.credentialDefinitionId ?? "not informed",
-                        revRegId: record.revRegId ?? "not revokable",
-                        createdAt: record.createdAt,
-                        isRevoked: record.state == .Revoked
-                    )
-
-                    await MainActor.run {
-                        selectedCredential = credentialInfo
-                        showCredentialDetail = true
-                        markAsRead(notification)
-                    }
-
-                } else {
-                    print("❌ Credential not found for id: \(credentialId)")
-                }
-            } catch {
-                print("❌ Error: seeing credential -> \(error)")
+            await MainActor.run {
+                selectedCredentialId = credentialId
+                showCredentialDetail = true
             }
         }
     

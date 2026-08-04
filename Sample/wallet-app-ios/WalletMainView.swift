@@ -15,11 +15,13 @@ enum MainMenu: Identifiable {
 struct WalletMainView: View {
     let onLogout: () -> Void
     @State private var invitation: String = ""
+    @State private var isConnecting = false
+    @State private var connectionMessage: String? = nil
     @StateObject private var credentialHandler = CredentialHandler.shared
     @ObservedObject private var notificationHandler = NotificationHandler.shared
     @StateObject private var connectionHandler = ConnectionHandler.shared
     @StateObject private var appState = AppState.shared
-    
+
     @State private var isLoggingOut = false
     @State private var isResetting = false
     @State private var showResetConfirm = false
@@ -27,128 +29,142 @@ struct WalletMainView: View {
 
     var body: some View {
         TabView {
-            NavigationView {
-                ScrollView {
-                    VStack(spacing: 24) {
-                        
-                        headerSection
-                        quickActionsSection
-                        walletSections
-                        offlineSection
-                        invitationSection
-                    }
-                    .padding()
+            homeTab
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
                 }
-                .navigationTitle("Wallet App")
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        Button("Reset") {
-                            showResetConfirm = true
-                        }
-                        .disabled(isResetting || isLoggingOut)
-
-                        Button("Logout") {
-                            onLogout()
-                        }
-                        .disabled(isResetting || isLoggingOut)
-                    }
-                }
-                .alert("Reset wallet?", isPresented: $showResetConfirm) {
-                    Button("Cancel", role: .cancel) {}
-
-                    Button("Reset", role: .destructive) {
-                        Task { await performReset() }
-                    }
-                } message: {
-                    Text("This will permanently remove all locally stored wallet data (Askar) and reset connections, credentials, and proof records. Wallet initialization will be required again.")
-                }
-                .alert("Failed to reset wallet", isPresented: Binding(
-                    get: { resetErrorMessage != nil },
-                    set: { if !$0 { resetErrorMessage = nil } }
-                )) {
-                    Button("OK", role: .cancel) { resetErrorMessage = nil }
-                } message: {
-                    Text(resetErrorMessage ?? "")
-                }
-            }
-            .sheet(item: $credentialHandler.menu) { item in
-                switch item {
-                case .qrcode:
-                    CodeScannerView(codeTypes: [.qr], completion: QRCodeHandler().handleResult)
-                case .list:
-                    CredentialListView()
-                case .request:
-                    RequestProofViewConnectionLess()
-                case .loading:
-                    ProgressView("Processing ...")
-                        .padding()
-                }
-            }
-            .tabItem {
-                Label("Home", systemImage: "house.fill")
-            }
 
             NotificationsView()
                 .tabItem {
                     Label("Notifications", systemImage: "bell.fill")
                 }
                 .badge(notificationHandler.unreadCount)
+
+            settingsTab
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
         }
     }
-    
-    @MainActor
-   private func performReset() async {
-       guard !isResetting else { return }
-       isResetting = true
-       defer { isResetting = false }
 
-       do {
-        
-           guard let agent = agent else {
-               throw NSError(domain: "WalletApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Agent não disponível no AppState"])
-           }
+    // MARK: - Home Tab
+    private var homeTab: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 24) {
+                    headerSection
+                    quickActionsSection
+                    walletSections
+                    invitationSection
+                }
+                .padding()
+                .autocorrectionDisabled()
+            }
+            .navigationTitle("Wallet")
+        }
+        .sheet(item: $credentialHandler.menu) { item in
+            switch item {
+            case .qrcode:
+                CodeScannerView(codeTypes: [.qr], completion: QRCodeHandler().handleResult)
+            case .list:
+                CredentialListView()
+            case .request:
+                RequestProofViewConnectionLess()
+            case .loading:
+                ProgressView("Processing...")
+                    .padding()
+            }
+        }
+    }
 
-           try await agent.reset()
-           clearInMemoryState()
+    // MARK: - Settings Tab
+    private var settingsTab: some View {
+        NavigationView {
+            List {
+                Section("Wallet") {
+                    actionRow(
+                        icon: "arrow.counterclockwise.circle.fill",
+                        color: .orange,
+                        title: "Reset Wallet",
+                        subtitle: "Delete all local data, connections and proof records"
+                    ) {
+                        showResetConfirm = true
+                    }
 
-           withAnimation {
-               onLogout()
-           }
-       } catch {
-           resetErrorMessage = "\(error)"
-       }
-   }
-    
-    @MainActor
-       private func clearInMemoryState() {
-           invitation = ""
-           notificationHandler.unreadCount = 0
-           notificationHandler.clearAllNotifications()
-       }
+                    actionRow(
+                        icon: "rectangle.portrait.and.arrow.right",
+                        color: .red,
+                        title: "Logout",
+                        subtitle: "Close the wallet and end the session"
+                    ) {
+                        onLogout()
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Settings")
+            .overlay(alignment: .bottom) {
+                if isLoggingOut || isResetting {
+                    ProgressView("Please wait...")
+                        .padding()
+                        .background(.thinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.bottom, 20)
+                }
+            }
+            .alert("Reset wallet?", isPresented: $showResetConfirm) {
+                Button("Cancel", role: .cancel) {}
 
+                Button("Reset", role: .destructive) {
+                    Task { await performReset() }
+                }
+            } message: {
+                Text("This will permanently remove all locally stored wallet data and reset connections, credentials, and proof records.")
+            }
+            .alert("Failed to reset wallet", isPresented: Binding(
+                get: { resetErrorMessage != nil },
+                set: { if !$0 { resetErrorMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { resetErrorMessage = nil }
+            } message: {
+                Text(resetErrorMessage ?? "")
+            }
+        }
+    }
 
     // MARK: - Header Section
     private var headerSection: some View {
-        VStack(spacing: 4) {
-            Text("Welcome to your Digital Wallet")
-                .font(.title2)
-                .fontWeight(.semibold)
-            Text("Manage credentials, connections and proofs easily")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+        HStack(spacing: 14) {
+            Image(systemName: "wallet.pass.fill")
+                .font(.system(size: 34))
+                .foregroundColor(.white)
+                .frame(width: 56, height: 56)
+                .background(LinearGradient(colors: [Color.blue, Color.blue.opacity(0.7)],
+                                           startPoint: .topLeading,
+                                           endPoint: .bottomTrailing))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Your Digital Wallet")
+                    .font(.headline)
+                Text("Credentials, connections and proofs in one place")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer()
         }
-        .frame(maxWidth: .infinity)
         .padding()
-        .background(Color.blue.opacity(0.1))
-        .cornerRadius(12)
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: - Quick Actions
     private var quickActionsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Quick Actions")
                 .font(.headline)
-            
+
             HStack(spacing: 16) {
                 actionCard(
                     title: "Connect",
@@ -171,7 +187,7 @@ struct WalletMainView: View {
 
     // MARK: - Wallet Sections
     private var walletSections: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Manage Wallet")
                 .font(.headline)
 
@@ -185,48 +201,41 @@ struct WalletMainView: View {
                 NavigationLink(destination: InvitationView()) {
                     navigationRow(icon: "envelope.open.fill", title: "Generate Invitation", subtitle: "Create invitations for new agents")
                 }
-                
-            }
-        }
-    }
-
-    // MARK: - Offline Features
-    private var offlineSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Offline Proofs")
-                .font(.headline)
-            
-            VStack(spacing: 12) {
-                Button("(Verifier) Request Proof") {
-                    credentialHandler.menu = .request
-                }
-                .buttonStyle(.borderedProminent)
-                
-                NavigationLink("(Holder) Scan Proof", destination: VerifierProofView())
-                NavigationLink("(Verifier) Receive Presentation", destination: ReceivingPresentationView())
-                NavigationLink("(Holder) Presentation List", destination: PresentationListView())
-                NavigationLink("(Verifier) Received Presentations", destination: ReceivedPresentationListView())
             }
         }
     }
 
     // MARK: - Invitation Input
     private var invitationSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Connect via Invitation URL")
                 .font(.headline)
+
             HStack {
                 TextField("Paste invitation URL", text: $invitation)
                     .textFieldStyle(.roundedBorder)
-                Button("Clear") { invitation = "" }
-                    .buttonStyle(.bordered)
-                Button("Connect") {
-                    QRCodeHandler().receiveInvitation(url: invitation)
+                    .submitLabel(.go)
+                    .onSubmit { connectToInvitation() }
+
+                Button(action: connectToInvitation) {
+                    if isConnecting {
+                        ProgressView()
+                            .tint(.white)
+                            .frame(width: 20, height: 20)
+                    } else {
+                        Text("Connect")
+                    }
                 }
                 .buttonStyle(.borderedProminent)
+                .disabled(isConnecting || invitation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+
+            if let message = connectionMessage {
+                Text(message)
+                    .font(.caption)
+                    .foregroundColor(message.hasPrefix("✅") ? .green : .red)
             }
         }
-        .padding(.top, 16)
     }
 
     // MARK: - Components
@@ -271,26 +280,80 @@ struct WalletMainView: View {
         .padding(.vertical, 6)
     }
 
-    // MARK: - Logout Logic
-    private func logout() async {
-        guard !isLoggingOut else { return }
-        isLoggingOut = true
+    private func actionRow(icon: String, color: Color, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 22))
+                    .foregroundColor(.white)
+                    .frame(width: 36, height: 36)
+                    .background(color)
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+            }
+            .padding(.vertical, 4)
+        }
+    }
+
+    // MARK: - Actions
+    private func connectToInvitation() {
+        let url = invitation.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !url.isEmpty, !isConnecting else { return }
+
+        isConnecting = true
+        connectionMessage = nil
+
+        Task {
+            do {
+                try await QRCodeHandler().receiveInvitationAsync(url: url)
+                await MainActor.run {
+                    connectionMessage = "✅ Invitation received"
+                    invitation = ""
+                    isConnecting = false
+                }
+            } catch {
+                await MainActor.run {
+                    connectionMessage = "❌ Could not connect: \(error.localizedDescription)"
+                    isConnecting = false
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func performReset() async {
+        guard !isResetting else { return }
+        isResetting = true
+        defer { isResetting = false }
 
         do {
-            try await agent?.shutdown()
+            guard let agent = agent else {
+                throw NSError(domain: "WalletApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Agent not available"])
+            }
 
-//            connectionHandler.connections = []
-//            credentialHandler.credentials = []
-
+            try await agent.reset()
+            clearInMemoryState()
+            onLogout()
         } catch {
-            print("❌ Logout failed: \(error)")
+            resetErrorMessage = "\(error)"
         }
+    }
 
-        withAnimation {
-            appState.isWalletActive = false
-        }
-        
-        isLoggingOut = false
+    @MainActor
+    private func clearInMemoryState() {
+        invitation = ""
+        connectionMessage = nil
+        notificationHandler.unreadCount = 0
+        notificationHandler.clearAllNotifications()
     }
 }
 

@@ -15,22 +15,18 @@ class QRCodeHandler {
     
     public func receiveInvitation(url: String) {
         logger.info("receiveInvitation init \(url)")
-        
+
         Task {
             do {
-                let (_, connection) = try await agent!.oob.receiveInvitationFromUrl(url)
-                logger.info("Connected with \(connection?.theirLabel ?? "unknown agent")")
-                
+                let connection = try await receiveInvitationAsync(url: url)
                 await MainActor.run {
                     notificationHandler.addNotification(
                         title: "Connection established",
                         message: "Connected with \(connection?.theirLabel ?? "Unknown agent")"
                     )
                 }
-
             } catch {
                 logger.error("Error in receiveInvitation \(error.localizedDescription)")
-                
                 await MainActor.run {
                     notificationHandler.addNotification(
                         title: "Connection failed",
@@ -39,6 +35,15 @@ class QRCodeHandler {
                 }
             }
         }
+    }
+
+    /// Connects to an invitation URL and returns the resulting connection record.
+    /// Throws if the invitation cannot be processed.
+    func receiveInvitationAsync(url: String) async throws -> ConnectionRecord? {
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        let (_, connection) = try await agent!.oob.receiveInvitationFromUrl(trimmed)
+        logger.info("Connected with \(connection?.theirLabel ?? "unknown agent")")
+        return connection
     }
 
     @MainActor

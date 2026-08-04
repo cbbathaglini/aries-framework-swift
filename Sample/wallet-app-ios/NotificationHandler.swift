@@ -51,7 +51,7 @@ class NotificationHandler: ObservableObject {
     static let shared = NotificationHandler()
         
     @Published var notifications: [NotificationItem] = [] {
-        didSet { saveNotifications() } // sempre que muda, salva
+        didSet { saveNotifications() }
     }
     @Published var unreadCount: Int = 0
     

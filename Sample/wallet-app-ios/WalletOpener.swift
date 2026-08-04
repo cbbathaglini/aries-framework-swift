@@ -18,7 +18,6 @@ class WalletOpener : ObservableObject {
 
     func openWallet(walletState: WalletState) async {
         
-        print("opening wallet method")
         let userDefaults = UserDefaults.standard
         var key = userDefaults.value(forKey:"walletKey") as? String
         if (key == nil) {
@@ -40,7 +39,6 @@ class WalletOpener : ObservableObject {
 //        }
         
         let invitationUrl = AppConfig.string("MEDIATOR_URL")
-        print("MEDIATOR_URL =", invitationUrl)
         
         guard URL(string: invitationUrl) != nil else {
             fatalError("MEDIATOR_URL is not a valid URL: \(invitationUrl)")
@@ -55,12 +53,8 @@ class WalletOpener : ObservableObject {
         var deviceId: String = "HolderSampleApp"
         if let idfv = await UIDevice.current.identifierForVendor?.uuidString {
             deviceId = "HolderDevice_\(idfv)"
-            print("identifierForVendor: \(idfv)")
-        } else {
-            print("⚠️ Unable to obtain identifierForVendor")
         }
     
-        print("agent label: \(deviceId)")
         let config = AgentConfig(walletKey: key!,
                                  genesisPath: genesisPath!,
                                  mediatorConnectionsInvite: invitationUrl,
@@ -72,20 +66,15 @@ class WalletOpener : ObservableObject {
                                  useBesuLedger: true,
                                  besuLedgerConfig: besuLedgerConfig,
         )
-        print("Config agent: \(config.label) -> complete: \(config)")
 
         do {
             agent = Agent(agentConfig: config, agentDelegate: await CredentialHandler.shared)
             try await agent!.initialize()
-            print("Updating cache")
-            await CacheOperations.updateCache(agent: agent!) // optional
-            print("Cache updated")
+            await CacheOperations.updateCache(agent: agent!)
+            print("✅ Wallet initialized successfully")
         } catch {
-            print("Cannot initialize agent: \(error)")
+            print("❌ Cannot initialize agent: \(error)")
         }
-
-        
-        print("Wallet opened!")
         DispatchQueue.main.async {
             withAnimation { walletState.walletOpened = true }
         }

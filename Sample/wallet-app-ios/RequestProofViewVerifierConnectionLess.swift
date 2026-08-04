@@ -312,7 +312,7 @@ struct RequestProofViewConnectionLess: View {
     }
     
     func toGMTTimestamp(_ date: Date) -> Int {
-        let utc = TimeZone(secondsFromGMT: 0)!   // força GMT/UTC
+        let utc = TimeZone(secondsFromGMT: 0)!
         var calendar = Calendar.current
         calendar.timeZone = utc
         
