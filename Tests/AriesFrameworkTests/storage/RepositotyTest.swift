@@ -1,7 +1,7 @@
 
 import XCTest
 @testable import AriesFramework
-import askar_uniffi
+import Askar
 
 class RepositotyTest: XCTestCase {
     var agent: Agent!

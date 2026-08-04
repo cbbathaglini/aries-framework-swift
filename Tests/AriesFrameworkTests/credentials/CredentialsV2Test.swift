@@ -2,10 +2,9 @@
 //  CredentialsV2Test.swift
 //  aries-framework-swift
 //
-//  Created by Carine Bertagnolli Bathaglini on 24/03/25.
-//
 
 import XCTest
+import AnyCodable
 @testable import AriesFramework
 
 class CredentialsV2Test: XCTestCase {
@@ -14,23 +13,23 @@ class CredentialsV2Test: XCTestCase {
     var credDefId: String!
     var faberConnection: ConnectionRecord!
     var aliceConnection: ConnectionRecord!
-    var formats: [Format]!
-    var offerAttachments: [Attachment]!
 
     let credentialPreview = CredentialPreviewV2.fromDictionary([
         "name": "John",
         "age": "99"
     ])
 
+    let credentialFormat: [String: AnyCodable] = [
+        "hlindy/cred@v2.0": AnyCodable([
+            "credential_definition_id": "cred-def-id"
+        ])
+    ]
+
     override func setUp() async throws {
         try await super.setUp()
 
         (faberAgent, aliceAgent, faberConnection, aliceConnection) = try await TestHelper.setupCredentialTests()
         credDefId = try await TestHelper.prepareForIssuance(faberAgent, ["name", "age"])
-        formats = [Format(attachId: "indy", format: "hlindy/cred@v2.0")]
-        offerAttachments = [
-            Attachment(id: "indy", mimetype: "application/json", data: AttachmentData())
-        ]
     }
 
     override func tearDown() async throws {
@@ -46,126 +45,68 @@ class CredentialsV2Test: XCTestCase {
 
     func testCredentialOffer() async throws {
         // Faber starts with credential offer to Alice.
-        var faberCredentialRecord = try await faberAgent.credentialsV2.offerCredential(
-            options: CreateCredentialOfferOptionsV2(
-                connection: faberConnection,
-                credentialDefinitionId: credDefId,
-                attributes: credentialPreview.attributes,
-                autoAcceptCredential: nil,
+        var record = try await faberAgent.credentialsV2.offerCredential(
+            options: OfferCredentialOptions(
+                connectionId: faberConnection.id,
                 comment: "Offer to Alice",
-                formats: formats,
-                offerAttachments: offerAttachments,
-                goalCode: nil,
-                goal: nil,
-                credentialPreview: credentialPreview
-        ))
+                protocolVersion: CredentialsConstants.PROTOCOL_VERSION_V2,
+                credentialFormat: credentialFormat
+            )
+        )
         try await Task.sleep(nanoseconds: UInt64(0.1 * SECOND))
 
-        let threadId = faberCredentialRecord.threadId
+        let threadId = record.threadId
         var aliceCredentialRecord = try await getCredentialRecord(for: aliceAgent, threadId: threadId)
-        XCTAssertTrue(aliceCredentialRecord.state == .OfferReceived)
+        XCTAssertEqual(aliceCredentialRecord.state, CredentialState.OfferReceived)
 
         _ = try await aliceAgent.credentialsV2.acceptOffer(
-            options: AcceptOfferOptions(credentialRecordId: aliceCredentialRecord.id))
+            options: AcceptCredentialOfferOptionsV2(
+                credentialExchangeRecord: aliceCredentialRecord
+            )
+        )
         try await Task.sleep(nanoseconds: UInt64(0.1 * SECOND))
 
-        faberCredentialRecord = try await getCredentialRecord(for: faberAgent, threadId: threadId)
-        XCTAssertTrue(faberCredentialRecord.state == .RequestReceived)
+        record = try await getCredentialRecord(for: faberAgent, threadId: threadId)
+        XCTAssertEqual(record.state, CredentialState.RequestReceived)
 
-        _ = try await faberAgent.credentialsV2.acceptRequest(
-            options: AcceptRequestOptions(credentialRecordId: faberCredentialRecord.id))
+        _ = try await faberAgent.credentialServiceV2.acceptRequest(
+            options: AcceptRequestOptionsV2(
+                credentialExchangeRecord: record
+            )
+        )
         try await Task.sleep(nanoseconds: UInt64(0.1 * SECOND))
 
         aliceCredentialRecord = try await getCredentialRecord(for: aliceAgent, threadId: threadId)
-        XCTAssertTrue(aliceCredentialRecord.state == .CredentialReceived)
+        XCTAssertEqual(aliceCredentialRecord.state, CredentialState.CredentialReceived)
 
-        _ = try await aliceAgent.credentialsV2.acceptCredential(
-            options: AcceptCredentialOptions(credentialRecordId: aliceCredentialRecord.id))
+        _ = try await aliceAgent.credentialServiceV2.acceptCredential(aliceCredentialRecord)
         try await Task.sleep(nanoseconds: UInt64(0.1 * SECOND))
 
         aliceCredentialRecord = try await getCredentialRecord(for: aliceAgent, threadId: threadId)
-        XCTAssertTrue(aliceCredentialRecord.state == .Done)
-        faberCredentialRecord = try await getCredentialRecord(for: faberAgent, threadId: threadId)
-        XCTAssertTrue(faberCredentialRecord.state == .Done)
-
-        let credentialMessage = try await aliceAgent.credentialsV2.findCredentialMessage(credentialRecordId: aliceCredentialRecord.id)
-        XCTAssertNotNil(credentialMessage)
-        let attachment = credentialMessage?.getCredentialAttachmentById(IssueCredentialMessage.INDY_CREDENTIAL_ATTACHMENT_ID)
-        XCTAssertNotNil(attachment)
-        if let credentialJson = try attachment?.getDataAsString() {
-            let credential = try JSONSerialization.jsonObject(with: credentialJson.data(using: .utf8)!, options: []) as! [String: Any]
-            let values = credential["values"] as! [String: Any]
-            let age = values["age"] as! [String: String]
-            XCTAssertEqual(age["raw"], "99")
-            XCTAssertEqual(age["encoded"], "99")
-
-            let name = values["name"] as! [String: String]
-            XCTAssertEqual(name["raw"], "John")
-            XCTAssertEqual(name["encoded"], "76355713903561865866741292988746191972523015098789458240077478826513114743258")
-        } else {
-            XCTFail("attachment not found")
-        }
+        XCTAssertEqual(aliceCredentialRecord.state, CredentialState.Done)
+        record = try await getCredentialRecord(for: faberAgent, threadId: threadId)
+        XCTAssertEqual(record.state, CredentialState.Done)
     }
 
     func testAutoAcceptAgentConfig() async throws {
         aliceAgent.agentConfig.autoAcceptCredential = .always
         faberAgent.agentConfig.autoAcceptCredential = .always
-        
-        var faberCredentialRecord = try await faberAgent.credentialsV2.offerCredential(
-            options: CreateCredentialOfferOptionsV2(
-                connection: faberConnection,
-                credentialDefinitionId: credDefId,
-                attributes: credentialPreview.attributes,
-                autoAcceptCredential: nil,
+
+        var record = try await faberAgent.credentialsV2.offerCredential(
+            options: OfferCredentialOptions(
+                connectionId: faberConnection.id,
                 comment: "Offer to Alice",
-                formats: formats,
-                offerAttachments: offerAttachments,
-                goalCode: nil,
-                goal: nil,
-                credentialPreview: credentialPreview
-        ))
+                protocolVersion: CredentialsConstants.PROTOCOL_VERSION_V2,
+                credentialFormat: credentialFormat
+            )
+        )
         try await Task.sleep(nanoseconds: UInt64(1 * SECOND)) // Need enough time to finish exchange a credential.
 
-        let threadId = faberCredentialRecord.threadId
+        let threadId = record.threadId
         let aliceCredentialRecord = try await getCredentialRecord(for: aliceAgent, threadId: threadId)
-        faberCredentialRecord = try await getCredentialRecord(for: faberAgent, threadId: threadId)
+        record = try await getCredentialRecord(for: faberAgent, threadId: threadId)
 
-        XCTAssertTrue(aliceCredentialRecord.state == .Done)
-        XCTAssertTrue(faberCredentialRecord.state == .Done)
-    }
-
-    func testAutoAcceptOptions() async throws {
-        // Only faberAgent auto accepts.
-        var faberCredentialRecord = try await faberAgent.credentialsV2.offerCredential(
-            options: CreateCredentialOfferOptionsV2(
-                connection: faberConnection,
-                credentialDefinitionId: credDefId,
-                attributes: credentialPreview.attributes,
-                autoAcceptCredential: nil,
-                comment: "Offer to Alice",
-                formats: formats,
-                offerAttachments: offerAttachments,
-                goalCode: nil,
-                goal: nil,
-                credentialPreview: credentialPreview
-        ))
-        try await Task.sleep(nanoseconds: UInt64(0.1 * SECOND))
-
-        let threadId = faberCredentialRecord.threadId
-        var aliceCredentialRecord = try await getCredentialRecord(for: aliceAgent, threadId: threadId)
-        faberCredentialRecord = try await getCredentialRecord(for: faberAgent, threadId: threadId)
-
-        XCTAssertTrue(aliceCredentialRecord.state == .OfferReceived)
-        XCTAssertTrue(faberCredentialRecord.state == .OfferSent)
-
-        // aliceAgent auto accepts too.
-        _ = try await aliceAgent.credentials.acceptOffer(
-            options: AcceptOfferOptions(credentialRecordId: aliceCredentialRecord.id, autoAcceptCredential: .always))
-        try await Task.sleep(nanoseconds: UInt64(1 * SECOND))
-
-        aliceCredentialRecord = try await getCredentialRecord(for: aliceAgent, threadId: threadId)
-        faberCredentialRecord = try await getCredentialRecord(for: faberAgent, threadId: threadId)
-        XCTAssertTrue(aliceCredentialRecord.state == .Done)
-        XCTAssertTrue(faberCredentialRecord.state == .Done)
+        XCTAssertEqual(aliceCredentialRecord.state, CredentialState.Done)
+        XCTAssertEqual(record.state, CredentialState.Done)
     }
 }

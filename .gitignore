@@ -5,6 +5,11 @@
 ## User settings
 xcuserdata/
 .DS_Store
+.idea/
+
+## Locally generated Indy Besu binaries
+packages/indy-besu/
+packages.zip
 
 ## Obj-C/Swift specific
 *.hmap

@@ -80,8 +80,8 @@ class CredentialValuesTest: XCTestCase {
 
     func testConvertAttributes() async throws {
         let attributes = [
-            CredentialPreviewAttribute(name: "address2", value: "101 Wilson Lane"),
-            CredentialPreviewAttribute(name: "zip", value: "87121")
+            CredentialPreviewAttribute(name: "address2", mimeType: "text/plain", value: "101 Wilson Lane"),
+            CredentialPreviewAttribute(name: "zip", mimeType: "text/plain", value: "87121")
         ]
         let values = try CredentialValues.convertAttributesToValues(attributes: attributes)
         let credValues = try JSONSerialization.jsonObject(with: values.data(using: .utf8)!, options: []) as! [String: Any]

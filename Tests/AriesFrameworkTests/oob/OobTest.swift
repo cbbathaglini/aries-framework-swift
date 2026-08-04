@@ -71,7 +71,7 @@ class OobTest: XCTestCase {
         let outOfBandRecord = try await faberAgent.oob.createInvitation(config: config)
         let invitation = outOfBandRecord.outOfBandInvitation
 
-        XCTAssertTrue(invitation.handshakeProtocols!.contains(.Connections))
+        XCTAssertTrue(invitation.handshakeProtocols!.contains(.DidExchange11))
         XCTAssertEqual(try invitation.getRequests().count, 1)
     }
 

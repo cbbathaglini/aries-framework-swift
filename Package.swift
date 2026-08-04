@@ -55,7 +55,8 @@ let package = Package(
     
         .testTarget(
             name: "AriesFrameworkTests",
-            dependencies: ["AriesFramework", "Criollo"],
+            dependencies: ["AriesFramework", "Criollo",
+                .product(name: "Askar", package: "aries-uniffi-wrappers")],
             resources: [
                 .copy("resources/local-genesis.txn"),
                 .copy("resources/bcovrin-genesis.txn")
