@@ -5,8 +5,13 @@
 
 import SwiftUI
 
+
 @main
 struct wallet_app_iosApp: App {
+    init() {
+    
+    }
+
     var body: some Scene {
         WindowGroup {
             OpenWalletView()

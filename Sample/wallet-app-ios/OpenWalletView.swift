@@ -11,21 +11,38 @@ struct OpenWalletView: View {
 
     var body: some View {
         VStack {
-            if walletState.walletOpened {
-                WalletMainView()
-            } else {
-                Text("Opening a wallet...")
-                ProgressView()
+            if walletState.loggedOut {
+                LoggedOutView {
+                    Task {
+                        walletState.loggedOut = false
+                        await walletOpener.openWallet(walletState: walletState)
+                    }
+                }
+            }
+            else if walletState.walletOpened {
+                WalletMainView(onLogout: handleLogout)
+            }
+            else {
+                VStack {
+                    Text("Opening your wallet...")
+                    ProgressView().padding(.top)
+                }
             }
         }
         .task {
-            await walletOpener.openWallet(walletState: walletState)
+            if !walletState.walletOpened && !walletState.loggedOut {
+                await walletOpener.openWallet(walletState: walletState)
+            }
         }
     }
-}
 
-struct OpenWalletView_Previews: PreviewProvider {
-    static var previews: some View {
-        OpenWalletView()
+    private func handleLogout() {
+        Task {
+            try? await agent?.shutdown()
+            await MainActor.run {
+                walletState.walletOpened = false
+                walletState.loggedOut = true
+            }
+        }
     }
 }

@@ -3,10 +3,48 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		13006EDA2EA0648200E50A48 /* RequestProofViewVerifierConnectionLess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13006ED92EA0648100E50A48 /* RequestProofViewVerifierConnectionLess.swift */; };
+		1332E3462F3223D80040A9DF /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1332E3452F3223D60040A9DF /* AppConfig.swift */; };
+		1353DCF02D88B80100EB616A /* genesiscpqd.txn in Resources */ = {isa = PBXBuildFile; fileRef = 1353DCEF2D88B80100EB616A /* genesiscpqd.txn */; };
+		136525792EEC40BA00B70F5D /* Anoncreds in Frameworks */ = {isa = PBXBuildFile; productRef = 136525782EEC40BA00B70F5D /* Anoncreds */; };
+		138277F42EA24C2E00D895FB /* BluetoothView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138277F32EA24C2200D895FB /* BluetoothView.swift */; };
+		138277F62EA24CCA00D895FB /* BluetoothHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138277F52EA24CC600D895FB /* BluetoothHandler.swift */; };
+		138277F82EA2504200D895FB /* PresentationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138277F72EA2504000D895FB /* PresentationListView.swift */; };
+		138277FA2EA250AC00D895FB /* PresentationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138277F92EA250AB00D895FB /* PresentationHandler.swift */; };
+		138277FC2EA2514900D895FB /* PresentationDetailViewOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138277FB2EA2514800D895FB /* PresentationDetailViewOld.swift */; };
+		138277FE2EA2904C00D895FB /* ReceivingPresentationViewOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138277FD2EA2904C00D895FB /* ReceivingPresentationViewOld.swift */; };
+		1383978B2EB0F87D00F55D72 /* besu_config.json in Resources */ = {isa = PBXBuildFile; fileRef = 1383978A2EB0F87600F55D72 /* besu_config.json */; };
+		138397922EB1407500F55D72 /* IndyBesu in Frameworks */ = {isa = PBXBuildFile; productRef = 138397912EB1407500F55D72 /* IndyBesu */; };
+		13890DB52EA0838000A8A50F /* VerifierProofView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13890DB42EA0837800A8A50F /* VerifierProofView.swift */; };
+		13986DD12E9983EB006F8407 /* ConnectionsHistoricalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13986DD02E9983EB006F8407 /* ConnectionsHistoricalView.swift */; };
+		13986DD32E998C42006F8407 /* ConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13986DD22E998C3A006F8407 /* ConnectionHandler.swift */; };
+		13986DD52E99901E006F8407 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13986DD42E99901C006F8407 /* AppState.swift */; };
+		139DA0722E8EAAB000D98AF1 /* CredentialDefinitionRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 139DA06C2E8EAAB000D98AF1 /* CredentialDefinitionRegistry.json */; };
+		139DA0732E8EAAB000D98AF1 /* EthereumExtDidRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 139DA06D2E8EAAB000D98AF1 /* EthereumExtDidRegistry.json */; };
+		139DA0742E8EAAB000D98AF1 /* RevocationRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 139DA06F2E8EAAB000D98AF1 /* RevocationRegistry.json */; };
+		139DA0752E8EAAB000D98AF1 /* SchemaRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 139DA0702E8EAAB000D98AF1 /* SchemaRegistry.json */; };
+		139DA0762E8EAAB000D98AF1 /* IndyDidRegistry.json in Resources */ = {isa = PBXBuildFile; fileRef = 139DA06E2E8EAAB000D98AF1 /* IndyDidRegistry.json */; };
+		13A19B382EBD225A00AEA41F /* ReceivedPresentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A19B372EBD221F00AEA41F /* ReceivedPresentationView.swift */; };
+		13A19B3A2EBD227300AEA41F /* ReceivedPresentationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A19B392EBD227200AEA41F /* ReceivedPresentationDetailView.swift */; };
+		13A19B3D2EBD290300AEA41F /* VerifierHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A19B3C2EBD290200AEA41F /* VerifierHandler.swift */; };
+		13A1F5D12E9BE798002C7F6E /* InvitationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A1F5D02E9BE794002C7F6E /* InvitationView.swift */; };
+		13A1F5D32E9BE7BC002C7F6E /* InvitationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A1F5D22E9BE7B9002C7F6E /* InvitationHandler.swift */; };
+		13A1F5D52E9BEB33002C7F6E /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 13A1F5D42E9BEB26002C7F6E /* Config.xcconfig */; };
+		13C2A0CB2E9BFBEB00305366 /* ConnectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C2A0CA2E9BFBE300305366 /* ConnectionDetailView.swift */; };
+		13C2A0CD2E9BFDA000305366 /* ProofHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C2A0CC2E9BFD9A00305366 /* ProofHandler.swift */; };
+		13CA144B2ECDDA6B008EC778 /* PresentationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13CA144A2ECDDA66008EC778 /* PresentationDetailView.swift */; };
+		13CA144D2ECDDE1F008EC778 /* ReceivingPresentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13CA144C2ECDDE1E008EC778 /* ReceivingPresentationView.swift */; };
+		13D0C10C2E9EB0930061F685 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D0C10B2E9EB0920061F685 /* NotificationsView.swift */; };
+		13D0C1102E9EB2400061F685 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D0C10F2E9EB23C0061F685 /* NotificationHandler.swift */; };
+		13D0C1122E9ED1A40061F685 /* RequestProofView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D0C1112E9ED19B0061F685 /* RequestProofView.swift */; };
+		13D1C1302E9D5DF6006F96F9 /* ProofListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D1C12F2E9D5DF3006F96F9 /* ProofListView.swift */; };
+		13D1C1322E9D5E9B006F96F9 /* ProofDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D1C1312E9D5E9A006F96F9 /* ProofDetailView.swift */; };
+		13DAEF342EC4B70F007E2DA7 /* ProofDetailLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13DAEF332EC4B70D007E2DA7 /* ProofDetailLoaderView.swift */; };
+		13F71D852EC5FA8C00ABFCDD /* LoggedOutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13F71D842EC5FA8A00ABFCDD /* LoggedOutView.swift */; };
 		BB06E2FF2AFA12B800C4A04A /* AriesFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BB06E2FE2AFA12B800C4A04A /* AriesFramework */; };
 		BB53D9E92952C958007D9952 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = BB53D9E82952C958007D9952 /* CodeScanner */; };
 		BB5C467F270C1501008D77AE /* wallet_app_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C467E270C1501008D77AE /* wallet_app_iosApp.swift */; };
@@ -15,16 +53,67 @@
 		BB5C4686270C1506008D77AE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB5C4685270C1506008D77AE /* Preview Assets.xcassets */; };
 		BB5C468D270C390E008D77AE /* CredentialListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C468C270C390E008D77AE /* CredentialListView.swift */; };
 		BB5C468F270C4181008D77AE /* CredentialDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C468E270C4181008D77AE /* CredentialDetailView.swift */; };
+		13B1A0012F99000000000002 /* CredentialDetailLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B1A0012F99000000000001 /* CredentialDetailLoaderView.swift */; };
 		BB8C9BE8272FFAAE005D9284 /* CredentialHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8C9BE7272FFAAE005D9284 /* CredentialHandler.swift */; };
 		BB90F26728F92DA20066AE87 /* bcovrin-genesis.txn in Resources */ = {isa = PBXBuildFile; fileRef = BB90F26528F92D990066AE87 /* bcovrin-genesis.txn */; };
 		BB90F26828F92DA20066AE87 /* local-genesis.txn in Resources */ = {isa = PBXBuildFile; fileRef = BB90F26628F92DA10066AE87 /* local-genesis.txn */; };
 		BBB509D628ED680700A6405A /* WalletOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB509D528ED680700A6405A /* WalletOpener.swift */; };
 		BBB509D828ED682000A6405A /* OpenWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB509D728ED681F00A6405A /* OpenWalletView.swift */; };
-		BBB9FD232C2D4F1B008FD38D /* RequestProofView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB9FD222C2D4F1B008FD38D /* RequestProofView.swift */; };
+		BBB9FD232C2D4F1B008FD38D /* RequestProofViewComunity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB9FD222C2D4F1B008FD38D /* RequestProofViewComunity.swift */; };
 		BBD7B25127181C4300C3FB6C /* QRCodeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD7B25027181C4300C3FB6C /* QRCodeHandler.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		138397932EB1475F00F55D72 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		13006ED92EA0648100E50A48 /* RequestProofViewVerifierConnectionLess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProofViewVerifierConnectionLess.swift; sourceTree = "<group>"; };
+		13023ED82E9BF23C003FE97C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1332E3452F3223D60040A9DF /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		1353DCEF2D88B80100EB616A /* genesiscpqd.txn */ = {isa = PBXFileReference; lastKnownFileType = text; path = genesiscpqd.txn; sourceTree = "<group>"; };
+		138277F32EA24C2200D895FB /* BluetoothView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothView.swift; sourceTree = "<group>"; };
+		138277F52EA24CC600D895FB /* BluetoothHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothHandler.swift; sourceTree = "<group>"; };
+		138277F72EA2504000D895FB /* PresentationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationListView.swift; sourceTree = "<group>"; };
+		138277F92EA250AB00D895FB /* PresentationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationHandler.swift; sourceTree = "<group>"; };
+		138277FB2EA2514800D895FB /* PresentationDetailViewOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationDetailViewOld.swift; sourceTree = "<group>"; };
+		138277FD2EA2904C00D895FB /* ReceivingPresentationViewOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivingPresentationViewOld.swift; sourceTree = "<group>"; };
+		1383978A2EB0F87600F55D72 /* besu_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = besu_config.json; sourceTree = "<group>"; };
+		138397942EB147B200F55D72 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Package.swift; path = "../packages/indy-besu/Package.swift"; sourceTree = "<group>"; };
+		13890DB42EA0837800A8A50F /* VerifierProofView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifierProofView.swift; sourceTree = "<group>"; };
+		13986DD02E9983EB006F8407 /* ConnectionsHistoricalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsHistoricalView.swift; sourceTree = "<group>"; };
+		13986DD22E998C3A006F8407 /* ConnectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionHandler.swift; sourceTree = "<group>"; };
+		13986DD42E99901C006F8407 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		139DA06C2E8EAAB000D98AF1 /* CredentialDefinitionRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CredentialDefinitionRegistry.json; sourceTree = "<group>"; };
+		139DA06D2E8EAAB000D98AF1 /* EthereumExtDidRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = EthereumExtDidRegistry.json; sourceTree = "<group>"; };
+		139DA06E2E8EAAB000D98AF1 /* IndyDidRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = IndyDidRegistry.json; sourceTree = "<group>"; };
+		139DA06F2E8EAAB000D98AF1 /* RevocationRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RevocationRegistry.json; sourceTree = "<group>"; };
+		139DA0702E8EAAB000D98AF1 /* SchemaRegistry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SchemaRegistry.json; sourceTree = "<group>"; };
+		13A19B372EBD221F00AEA41F /* ReceivedPresentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivedPresentationView.swift; sourceTree = "<group>"; };
+		13A19B392EBD227200AEA41F /* ReceivedPresentationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivedPresentationDetailView.swift; sourceTree = "<group>"; };
+		13A19B3C2EBD290200AEA41F /* VerifierHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifierHandler.swift; sourceTree = "<group>"; };
+		13A1F5D02E9BE794002C7F6E /* InvitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationView.swift; sourceTree = "<group>"; };
+		13A1F5D22E9BE7B9002C7F6E /* InvitationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationHandler.swift; sourceTree = "<group>"; };
+		13A1F5D42E9BEB26002C7F6E /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		13C2A0CA2E9BFBE300305366 /* ConnectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDetailView.swift; sourceTree = "<group>"; };
+		13C2A0CC2E9BFD9A00305366 /* ProofHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofHandler.swift; sourceTree = "<group>"; };
+		13CA144A2ECDDA66008EC778 /* PresentationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationDetailView.swift; sourceTree = "<group>"; };
+		13CA144C2ECDDE1E008EC778 /* ReceivingPresentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivingPresentationView.swift; sourceTree = "<group>"; };
+		13D0C10B2E9EB0920061F685 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
+		13D0C10F2E9EB23C0061F685 /* NotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandler.swift; sourceTree = "<group>"; };
+		13D0C1112E9ED19B0061F685 /* RequestProofView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProofView.swift; sourceTree = "<group>"; };
+		13D1C12F2E9D5DF3006F96F9 /* ProofListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofListView.swift; sourceTree = "<group>"; };
+		13D1C1312E9D5E9A006F96F9 /* ProofDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofDetailView.swift; sourceTree = "<group>"; };
+		13DAEF332EC4B70D007E2DA7 /* ProofDetailLoaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofDetailLoaderView.swift; sourceTree = "<group>"; };
+		13F71D842EC5FA8A00ABFCDD /* LoggedOutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedOutView.swift; sourceTree = "<group>"; };
 		BB06E2FC2AFA129700C4A04A /* aries-framework-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "aries-framework-swift"; path = ..; sourceTree = "<group>"; };
 		BB5C467B270C1500008D77AE /* wallet-app-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "wallet-app-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB5C467E270C1501008D77AE /* wallet_app_iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wallet_app_iosApp.swift; sourceTree = "<group>"; };
@@ -33,12 +122,13 @@
 		BB5C4685270C1506008D77AE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		BB5C468C270C390E008D77AE /* CredentialListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialListView.swift; sourceTree = "<group>"; };
 		BB5C468E270C4181008D77AE /* CredentialDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDetailView.swift; sourceTree = "<group>"; };
+		13B1A0012F99000000000001 /* CredentialDetailLoaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDetailLoaderView.swift; sourceTree = "<group>"; };
 		BB8C9BE7272FFAAE005D9284 /* CredentialHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialHandler.swift; sourceTree = "<group>"; };
 		BB90F26528F92D990066AE87 /* bcovrin-genesis.txn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "bcovrin-genesis.txn"; sourceTree = "<group>"; };
 		BB90F26628F92DA10066AE87 /* local-genesis.txn */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "local-genesis.txn"; sourceTree = "<group>"; };
 		BBB509D528ED680700A6405A /* WalletOpener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletOpener.swift; sourceTree = "<group>"; };
 		BBB509D728ED681F00A6405A /* OpenWalletView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenWalletView.swift; sourceTree = "<group>"; };
-		BBB9FD222C2D4F1B008FD38D /* RequestProofView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProofView.swift; sourceTree = "<group>"; };
+		BBB9FD222C2D4F1B008FD38D /* RequestProofViewComunity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProofViewComunity.swift; sourceTree = "<group>"; };
 		BBD7B25027181C4300C3FB6C /* QRCodeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,6 +138,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB06E2FF2AFA12B800C4A04A /* AriesFramework in Frameworks */,
+				138397922EB1407500F55D72 /* IndyBesu in Frameworks */,
+				136525792EEC40BA00B70F5D /* Anoncreds in Frameworks */,
 				BB53D9E92952C958007D9952 /* CodeScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -55,6 +147,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		139DA0712E8EAAB000D98AF1 /* abi */ = {
+			isa = PBXGroup;
+			children = (
+				139DA06C2E8EAAB000D98AF1 /* CredentialDefinitionRegistry.json */,
+				139DA06D2E8EAAB000D98AF1 /* EthereumExtDidRegistry.json */,
+				139DA06E2E8EAAB000D98AF1 /* IndyDidRegistry.json */,
+				139DA06F2E8EAAB000D98AF1 /* RevocationRegistry.json */,
+				139DA0702E8EAAB000D98AF1 /* SchemaRegistry.json */,
+			);
+			path = abi;
+			sourceTree = "<group>";
+		};
 		BB06E2FB2AFA129700C4A04A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -73,6 +177,7 @@
 		BB5C4672270C1500008D77AE = {
 			isa = PBXGroup;
 			children = (
+				138397942EB147B200F55D72 /* Package.swift */,
 				BB06E2FB2AFA129700C4A04A /* Packages */,
 				BB5C467D270C1500008D77AE /* wallet-app-ios */,
 				BB5C467C270C1500008D77AE /* Products */,
@@ -91,16 +196,47 @@
 		BB5C467D270C1500008D77AE /* wallet-app-ios */ = {
 			isa = PBXGroup;
 			children = (
+				1332E3452F3223D60040A9DF /* AppConfig.swift */,
+				13F71D842EC5FA8A00ABFCDD /* LoggedOutView.swift */,
+				13DAEF332EC4B70D007E2DA7 /* ProofDetailLoaderView.swift */,
+				13023ED82E9BF23C003FE97C /* Info.plist */,
 				BB90F26428F92C520066AE87 /* resources */,
 				BB5C467E270C1501008D77AE /* wallet_app_iosApp.swift */,
-				BB5C4680270C1501008D77AE /* WalletMainView.swift */,
-				BBB509D528ED680700A6405A /* WalletOpener.swift */,
-				BBB509D728ED681F00A6405A /* OpenWalletView.swift */,
-				BBB9FD222C2D4F1B008FD38D /* RequestProofView.swift */,
-				BB5C468C270C390E008D77AE /* CredentialListView.swift */,
+				13006ED92EA0648100E50A48 /* RequestProofViewVerifierConnectionLess.swift */,
+				13D1C1312E9D5E9A006F96F9 /* ProofDetailView.swift */,
+				13D1C12F2E9D5DF3006F96F9 /* ProofListView.swift */,
+				13D0C1112E9ED19B0061F685 /* RequestProofView.swift */,
+				13890DB42EA0837800A8A50F /* VerifierProofView.swift */,
+				138277F32EA24C2200D895FB /* BluetoothView.swift */,
+				138277F52EA24CC600D895FB /* BluetoothHandler.swift */,
+				138277F92EA250AB00D895FB /* PresentationHandler.swift */,
+				138277F72EA2504000D895FB /* PresentationListView.swift */,
+				13CA144A2ECDDA66008EC778 /* PresentationDetailView.swift */,
+				138277FB2EA2514800D895FB /* PresentationDetailViewOld.swift */,
+				13CA144C2ECDDE1E008EC778 /* ReceivingPresentationView.swift */,
+				138277FD2EA2904C00D895FB /* ReceivingPresentationViewOld.swift */,
+				13C2A0CC2E9BFD9A00305366 /* ProofHandler.swift */,
+				13A19B3C2EBD290200AEA41F /* VerifierHandler.swift */,
+				13A19B372EBD221F00AEA41F /* ReceivedPresentationView.swift */,
+				13A19B392EBD227200AEA41F /* ReceivedPresentationDetailView.swift */,
+				13A1F5D02E9BE794002C7F6E /* InvitationView.swift */,
+				13A1F5D22E9BE7B9002C7F6E /* InvitationHandler.swift */,
+				13986DD02E9983EB006F8407 /* ConnectionsHistoricalView.swift */,
+				13986DD22E998C3A006F8407 /* ConnectionHandler.swift */,
+				13C2A0CA2E9BFBE300305366 /* ConnectionDetailView.swift */,
 				BB5C468E270C4181008D77AE /* CredentialDetailView.swift */,
-				BBD7B25027181C4300C3FB6C /* QRCodeHandler.swift */,
+				13B1A0012F99000000000001 /* CredentialDetailLoaderView.swift */,
+				BB5C468C270C390E008D77AE /* CredentialListView.swift */,
 				BB8C9BE7272FFAAE005D9284 /* CredentialHandler.swift */,
+				13D0C10B2E9EB0920061F685 /* NotificationsView.swift */,
+				13D0C10F2E9EB23C0061F685 /* NotificationHandler.swift */,
+				BB5C4680270C1501008D77AE /* WalletMainView.swift */,
+				BBB509D728ED681F00A6405A /* OpenWalletView.swift */,
+				BBB9FD222C2D4F1B008FD38D /* RequestProofViewComunity.swift */,
+				BBD7B25027181C4300C3FB6C /* QRCodeHandler.swift */,
+				13986DD42E99901C006F8407 /* AppState.swift */,
+				BBB509D528ED680700A6405A /* WalletOpener.swift */,
+				13A1F5D42E9BEB26002C7F6E /* Config.xcconfig */,
 				BB5C4682270C1506008D77AE /* Assets.xcassets */,
 				BB5C4684270C1506008D77AE /* Preview Content */,
 			);
@@ -118,8 +254,11 @@
 		BB90F26428F92C520066AE87 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				1383978A2EB0F87600F55D72 /* besu_config.json */,
 				BB90F26528F92D990066AE87 /* bcovrin-genesis.txn */,
 				BB90F26628F92DA10066AE87 /* local-genesis.txn */,
+				1353DCEF2D88B80100EB616A /* genesiscpqd.txn */,
+				139DA0712E8EAAB000D98AF1 /* abi */,
 			);
 			path = resources;
 			sourceTree = "<group>";
@@ -134,6 +273,8 @@
 				BB5C4677270C1500008D77AE /* Sources */,
 				BB5C4678270C1500008D77AE /* Frameworks */,
 				BB5C4679270C1500008D77AE /* Resources */,
+				138397932EB1475F00F55D72 /* CopyFiles */,
+				13E1B0012F33000000BUNDLE /* Fix UniFFI Bundle IDs */,
 			);
 			buildRules = (
 			);
@@ -143,6 +284,8 @@
 			packageProductDependencies = (
 				BB53D9E82952C958007D9952 /* CodeScanner */,
 				BB06E2FE2AFA12B800C4A04A /* AriesFramework */,
+				138397912EB1407500F55D72 /* IndyBesu */,
+				136525782EEC40BA00B70F5D /* Anoncreds */,
 			);
 			productName = "wallet-app-ios";
 			productReference = BB5C467B270C1500008D77AE /* wallet-app-ios.app */;
@@ -174,6 +317,9 @@
 			mainGroup = BB5C4672270C1500008D77AE;
 			packageReferences = (
 				BB53D9E72952C958007D9952 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+				BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */,
+				138397902EB1407500F55D72 /* XCLocalSwiftPackageReference "../packages/indy-besu" */,
+				136525772EEC40BA00B70F5D /* XCRemoteSwiftPackageReference "aries-uniffi-wrappers" */,
 			);
 			productRefGroup = BB5C467C270C1500008D77AE /* Products */;
 			projectDirPath = "";
@@ -189,7 +335,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1383978B2EB0F87D00F55D72 /* besu_config.json in Resources */,
+				1353DCF02D88B80100EB616A /* genesiscpqd.txn in Resources */,
 				BB5C4686270C1506008D77AE /* Preview Assets.xcassets in Resources */,
+				139DA0722E8EAAB000D98AF1 /* CredentialDefinitionRegistry.json in Resources */,
+				13A1F5D52E9BEB33002C7F6E /* Config.xcconfig in Resources */,
+				139DA0732E8EAAB000D98AF1 /* EthereumExtDidRegistry.json in Resources */,
+				139DA0742E8EAAB000D98AF1 /* RevocationRegistry.json in Resources */,
+				139DA0752E8EAAB000D98AF1 /* SchemaRegistry.json in Resources */,
+				139DA0762E8EAAB000D98AF1 /* IndyDidRegistry.json in Resources */,
 				BB90F26728F92DA20066AE87 /* bcovrin-genesis.txn in Resources */,
 				BB5C4683270C1506008D77AE /* Assets.xcassets in Resources */,
 				BB90F26828F92DA20066AE87 /* local-genesis.txn in Resources */,
@@ -198,20 +352,71 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		13E1B0012F33000000BUNDLE /* Fix UniFFI Bundle IDs */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Fix UniFFI Bundle IDs";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nFRAMEWORKS_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\nfix_bundle_id() {\n  framework_name=\"$1\"\n  bundle_id=\"$2\"\n  plist=\"${FRAMEWORKS_DIR}/${framework_name}.framework/Info.plist\"\n\n  if [ -f \"${plist}\" ]; then\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleIdentifier ${bundle_id}\" \"${plist}\"\n\n    if [ -n \"${EXPANDED_CODE_SIGN_IDENTITY:-}\" ] && [ \"${CODE_SIGNING_ALLOWED:-YES}\" != \"NO\" ]; then\n      /usr/bin/codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --preserve-metadata=entitlements \"${FRAMEWORKS_DIR}/${framework_name}.framework\"\n    fi\n  fi\n}\n\nfix_bundle_id \"anoncreds_uniffiFFI\" \"org.hyperledger.anoncreds-uniffi\"\nfix_bundle_id \"askar_uniffiFFI\" \"org.hyperledger.askar-uniffi\"\nfix_bundle_id \"indy_vdr_uniffiFFI\" \"org.hyperledger.indy-vdr-uniffi\"\nfix_bundle_id \"indy_besu_vdrFFI\" \"org.hyperledger.indy-besu-vdr\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		BB5C4677270C1500008D77AE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13D1C1322E9D5E9B006F96F9 /* ProofDetailView.swift in Sources */,
+				138277FA2EA250AC00D895FB /* PresentationHandler.swift in Sources */,
+				13006EDA2EA0648200E50A48 /* RequestProofViewVerifierConnectionLess.swift in Sources */,
+				138277FE2EA2904C00D895FB /* ReceivingPresentationViewOld.swift in Sources */,
+				13D1C1302E9D5DF6006F96F9 /* ProofListView.swift in Sources */,
+				13A19B3D2EBD290300AEA41F /* VerifierHandler.swift in Sources */,
+				13F71D852EC5FA8C00ABFCDD /* LoggedOutView.swift in Sources */,
+				13D0C1102E9EB2400061F685 /* NotificationHandler.swift in Sources */,
 				BBB509D828ED682000A6405A /* OpenWalletView.swift in Sources */,
+				13CA144D2ECDDE1F008EC778 /* ReceivingPresentationView.swift in Sources */,
+				13C2A0CD2E9BFDA000305366 /* ProofHandler.swift in Sources */,
 				BBD7B25127181C4300C3FB6C /* QRCodeHandler.swift in Sources */,
-				BBB9FD232C2D4F1B008FD38D /* RequestProofView.swift in Sources */,
+				13CA144B2ECDDA6B008EC778 /* PresentationDetailView.swift in Sources */,
+				138277F82EA2504200D895FB /* PresentationListView.swift in Sources */,
+				BBB9FD232C2D4F1B008FD38D /* RequestProofViewComunity.swift in Sources */,
+				13986DD52E99901E006F8407 /* AppState.swift in Sources */,
+				13C2A0CB2E9BFBEB00305366 /* ConnectionDetailView.swift in Sources */,
+				13DAEF342EC4B70F007E2DA7 /* ProofDetailLoaderView.swift in Sources */,
+				13890DB52EA0838000A8A50F /* VerifierProofView.swift in Sources */,
 				BB5C468D270C390E008D77AE /* CredentialListView.swift in Sources */,
 				BB5C4681270C1501008D77AE /* WalletMainView.swift in Sources */,
+				13D0C10C2E9EB0930061F685 /* NotificationsView.swift in Sources */,
+				13A19B3A2EBD227300AEA41F /* ReceivedPresentationDetailView.swift in Sources */,
 				BB5C468F270C4181008D77AE /* CredentialDetailView.swift in Sources */,
+				13B1A0012F99000000000002 /* CredentialDetailLoaderView.swift in Sources */,
 				BB8C9BE8272FFAAE005D9284 /* CredentialHandler.swift in Sources */,
+				1332E3462F3223D80040A9DF /* AppConfig.swift in Sources */,
 				BBB509D628ED680700A6405A /* WalletOpener.swift in Sources */,
+				138277FC2EA2514900D895FB /* PresentationDetailViewOld.swift in Sources */,
+				13A19B382EBD225A00AEA41F /* ReceivedPresentationView.swift in Sources */,
+				13A1F5D12E9BE798002C7F6E /* InvitationView.swift in Sources */,
+				13986DD12E9983EB006F8407 /* ConnectionsHistoricalView.swift in Sources */,
+				13A1F5D32E9BE7BC002C7F6E /* InvitationHandler.swift in Sources */,
+				13986DD32E998C42006F8407 /* ConnectionHandler.swift in Sources */,
 				BB5C467F270C1501008D77AE /* wallet_app_iosApp.swift in Sources */,
+				13D0C1122E9ED1A40061F685 /* RequestProofView.swift in Sources */,
+				138277F42EA24C2E00D895FB /* BluetoothView.swift in Sources */,
+				138277F62EA24CCA00D895FB /* BluetoothHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +425,7 @@
 /* Begin XCBuildConfiguration section */
 		BB5C4687270C1506008D77AE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 13A1F5D42E9BEB26002C7F6E /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -272,6 +478,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				NEW_SETTING = "";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -327,6 +534,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				NEW_SETTING = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -336,6 +544,7 @@
 		};
 		BB5C468A270C1506008D77AE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 13A1F5D42E9BEB26002C7F6E /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -343,10 +552,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"wallet-app-ios/Preview Content\"";
-				DEVELOPMENT_TEAM = RAZ4DT76QQ;
+				DEVELOPMENT_TEAM = BZA995XLF9;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "wallet-app-ios/Info.plist";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Need bluetooth for proof exchange";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Use camera to scan QR Code";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -361,7 +571,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.hyperledger.aries.demo.wallet-app-ios2";
+				PRODUCT_BUNDLE_IDENTIFIER = br.gov.exemplo.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -379,10 +589,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"wallet-app-ios/Preview Content\"";
-				DEVELOPMENT_TEAM = RAZ4DT76QQ;
+				DEVELOPMENT_TEAM = BZA995XLF9;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "wallet-app-ios/Info.plist";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Need bluetooth for proof exchange";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Use camera to scan QR Code";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -397,7 +608,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.hyperledger.aries.demo.wallet-app-ios2";
+				PRODUCT_BUNDLE_IDENTIFIER = br.gov.exemplo.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -429,7 +640,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		138397902EB1407500F55D72 /* XCLocalSwiftPackageReference "../packages/indy-besu" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../packages/indy-besu";
+		};
+		BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
+		136525772EEC40BA00B70F5D /* XCRemoteSwiftPackageReference "aries-uniffi-wrappers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LF-Decentralized-Trust-labs/aries-uniffi-wrappers.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.3.1;
+			};
+		};
 		BB53D9E72952C958007D9952 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/twostraws/CodeScanner";
@@ -441,8 +671,19 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		136525782EEC40BA00B70F5D /* Anoncreds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 136525772EEC40BA00B70F5D /* XCRemoteSwiftPackageReference "aries-uniffi-wrappers" */;
+			productName = Anoncreds;
+		};
+		138397912EB1407500F55D72 /* IndyBesu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 138397902EB1407500F55D72 /* XCLocalSwiftPackageReference "../packages/indy-besu" */;
+			productName = IndyBesu;
+		};
 		BB06E2FE2AFA12B800C4A04A /* AriesFramework */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = BB06E3002AFA12B800C4A04A /* XCLocalSwiftPackageReference ".." */;
 			productName = AriesFramework;
 		};
 		BB53D9E82952C958007D9952 /* CodeScanner */ = {

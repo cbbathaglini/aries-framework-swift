@@ -1,0 +1,37 @@
+{
+  "networks": [
+    {
+      "networkName": "network1",
+      "chainId": 1,
+      "nodeAddress": "https://xxxxx.com",
+      "contracts": {
+        "ethereumDidRegistry": {
+          "specPath": "/abi/EthereumExtDidRegistry.json",
+          "address": "xxxxx"
+        },
+        "indyDidRegistry": {
+          "specPath": "/abi/IndyDidRegistry.json",
+          "address": "xxxxx"
+        },
+        //....
+        
+      }
+    },
+    {
+      "networkName": "network2",
+      "chainId": 2,
+      "nodeAddress": "https://yyyy.com",
+      "contracts": {
+        "ethereumDidRegistry": {
+          "specPath": "/abi/EthereumExtDidRegistry.json",
+          "address": "yyyyy"
+        },
+        "indyDidRegistry": {
+          "specPath": "/abi/IndyDidRegistry.json",
+          "address": "yyyyy"
+        }
+        //...
+      }
+    }
+  ]
+}

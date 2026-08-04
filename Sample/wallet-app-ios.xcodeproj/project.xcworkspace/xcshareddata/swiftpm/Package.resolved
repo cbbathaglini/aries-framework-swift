@@ -1,12 +1,21 @@
 {
   "pins" : [
     {
+      "identity" : "anycodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Flight-School/AnyCodable",
+      "state" : {
+        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
+        "version" : "0.6.7"
+      }
+    },
+    {
       "identity" : "aries-uniffi-wrappers",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/hyperledger/aries-uniffi-wrappers",
+      "location" : "https://github.com/LF-Decentralized-Trust-labs/aries-uniffi-wrappers.git",
       "state" : {
-        "revision" : "01def706b44a4095032cd42f0480a5bdfb809961",
-        "version" : "0.2.1"
+        "revision" : "c4d4eea1abf17ac66a90ba2216801c23ecaad53c",
+        "version" : "0.3.1"
       }
     },
     {
@@ -50,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/twostraws/CodeScanner",
       "state" : {
-        "revision" : "bf5d7087015620b250ee6c865b3c9039fc159d1a",
-        "version" : "2.3.3"
+        "revision" : "5e886430238944c7200fc9e10dbf2d9550dba865",
+        "version" : "2.5.2"
       }
     },
     {
@@ -86,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/beatt83/didcore-swift.git",
       "state" : {
-        "revision" : "2503b1690e11b16a0cdc8f492e370bbd9dcbe08b",
-        "version" : "2.0.0"
+        "revision" : "c754409ff0a732870133ad77d313c1c79e4d29f2",
+        "version" : "2.0.2"
       }
     },
     {
@@ -95,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/beatt83/peerdid-swift",
       "state" : {
-        "revision" : "4e82ff42aa2b53b2d361f482b607763d79ccfdbb",
-        "version" : "3.0.0"
+        "revision" : "22bc7cfdf5cd5c5f846c641ba403822117829c82",
+        "version" : "3.0.3"
       }
     },
     {
@@ -127,12 +136,30 @@
       }
     },
     {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "b601256eab081c0f92f059e12818ac1d4f178ff7",
+        "version" : "1.3.0"
+      }
+    },
+    {
       "identity" : "swift-bases",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-libp2p/swift-bases.git",
       "state" : {
-        "revision" : "3cf27cf95d70248b0a1d99eee06cdf8b235241a8",
-        "version" : "0.0.3"
+        "revision" : "b5fb3260b0a2020d17700fbf496e4f9bba5e673e",
+        "version" : "0.0.4"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "7b847a3b7008b2dc2f47ca3110d8c782fb2e5c7e",
+        "version" : "1.3.0"
       }
     },
     {
@@ -140,8 +167,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-libp2p/swift-multibase.git",
       "state" : {
-        "revision" : "45f3cf2844477b9d211e1d3e793d0853134fd942",
-        "version" : "0.0.2"
+        "revision" : "41f436aa7389481bc01ee0cd032b422acd1ffd16",
+        "version" : "0.0.3"
+      }
+    },
+    {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "6e02c7a2467cf22526ac54521d4230d8c5890e62",
+        "version" : "2.90.0"
       }
     },
     {
@@ -149,8 +185,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics.git",
       "state" : {
-        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
-        "version" : "1.0.2"
+        "revision" : "bbadd4b853a33fd78c4ae977d17bb2af15eb3f2a",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system.git",
+      "state" : {
+        "revision" : "395a77f0aa927f0ff73941d7ac35f2b46d47c9db",
+        "version" : "1.6.3"
       }
     }
   ],
