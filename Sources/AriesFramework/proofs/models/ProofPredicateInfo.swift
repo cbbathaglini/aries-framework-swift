@@ -1,19 +1,20 @@
 
 import Foundation
 
-public enum PredicateType: String, Codable {
-    case LessThan = "<"
-    case LessThanOrEqualTo = "<="
-    case GreaterThan = ">"
-    case GreaterThanOrEqualTo = ">="
-}
-
 public struct ProofPredicateInfo {
     public let name: String
     public let nonRevoked: RevocationInterval?
     public let predicateType: PredicateType
     public let predicateValue: Int
     public let restrictions: [AttributeFilter]?
+    
+    public init(name: String, nonRevoked: RevocationInterval?, predicateType: PredicateType, predicateValue: Int, restrictions: [AttributeFilter]?) {
+        self.name = name
+        self.nonRevoked = nonRevoked
+        self.predicateType = predicateType
+        self.predicateValue = predicateValue
+        self.restrictions = restrictions
+    }
 }
 
 extension ProofPredicateInfo: Codable {

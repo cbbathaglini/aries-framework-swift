@@ -1,8 +1,8 @@
 
 import Foundation
-import Anoncreds
 import CollectionConcurrencyKit
 import os
+import Anoncreds
 
 enum RequestReferentType: String {
     case Attribute = "attribute"
@@ -56,6 +56,7 @@ public class RevocationService {
                 }
                 let (revocationRegistryJson, _) = try await agent.ledgerService.getRevocationRegistry(id: revocationRegistryId, timestamp: timestamp)
                 let revocationRegistry = try JSONDecoder().decode(RevocationRegistryDelta.self, from: revocationRegistryJson.data(using: .utf8)!)
+                
                 let revocationStatusList = RevocationStatusList(
                     issuerId: revocationRegistryDefinition.issuerId(),
                     currentAccumulator: revocationRegistry.accum,
@@ -67,6 +68,7 @@ public class RevocationService {
         }
         return revocationStatusLists
     }
+    
 
     public func getRevocationStatus(
         credentialRevocationId: String,
@@ -83,7 +85,8 @@ public class RevocationService {
         return (revoked, deltaTimestamp)
     }
 
-    public func createRevocationState(credential: Credential, timestamp: Int) async throws -> CredentialRevocationState {
+    public func createRevocationState(credential: Anoncreds.Credential, timestamp: Int) async throws -> Anoncreds.CredentialRevocationState {
+        
         guard let credentialRevocationId = credential.revRegIndex(),
               let revocationRegistryId = credential.revRegId() else {
             throw AriesFrameworkError.frameworkError("Credential does not have revocation information.")
@@ -159,7 +162,7 @@ public class RevocationService {
     }
 
     func downloadTails(revocationRegistryDefinition: RevocationRegistryDefinition) throws -> URL {
-        logger.debug("Downloading tails file for revocation registry definition: \(revocationRegistryDefinition.revRegId())")
+        logDebug("Downloading tails file for revocation registry definition: \(revocationRegistryDefinition.revRegId())")
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let tailsFolderPath = documentsDirectory.appendingPathComponent("tails")
         if !FileManager.default.fileExists(atPath: tailsFolderPath.path) {
@@ -175,11 +178,39 @@ public class RevocationService {
             guard let url = url else {
                 throw AriesFrameworkError.frameworkError("Invalid tailsLocation: \(tailsLocation)")
             }
-            logger.debug("Downloading tails file from: \(url)")
+            logDebug("Downloading tails file from: \(url)")
             let tailsData = try Data(contentsOf: url)
             try tailsData.write(to: URL(fileURLWithPath: tailsFilePath.path))
         }
 
         return tailsFilePath
+    }
+    
+    func getRevocationStatusAnonCreds(
+        credentialRevocationId: String,
+        revocationRegistryId: String,
+        revocationInterval: AnonCredsNonRevokedInterval
+    ) async throws -> (Bool, Int) {
+        var from = revocationInterval.from
+        var to = revocationInterval.to
+        let toInt: Int = to != nil ? Int(to!) : Int(Date().timeIntervalSince1970)
+
+
+        let (revocationRegistryDeltaJson, deltaTimestamp) = try await agent.ledgerService.getRevocationRegistryDelta(
+            id: revocationRegistryId,
+            to: Int(toInt),
+            from: Int(0)
+        )
+
+        let decoder = JSONDecoder()
+        let revocationRegistryDelta = try decoder.decode(RevocationRegistryDelta.self, from: Data(revocationRegistryDeltaJson.utf8))
+
+        guard let credentialRevocationIdInt = Int(credentialRevocationId) else {
+            throw CredoError("Invalid credentialRevocationId: \(credentialRevocationId)")
+        }
+
+        let revoked = revocationRegistryDelta.revoked?.contains(credentialRevocationIdInt) ?? false
+
+        return (revoked, Int(deltaTimestamp))
     }
 }

@@ -54,11 +54,13 @@ public class DIDParser {
     }
 
     public static func ConvertVerkeyToDidKey(verkey: String) throws -> String {
-        guard var bytes = Base58.base58Decode(verkey) else {
+        var bytes = try Base58.decode(verkey)
+        guard !bytes.isEmpty else {
             throw AriesFrameworkError.frameworkError("Invalid base58 encoded verkey: \(verkey)")
         }
+        
         bytes = MULTICODEC_PREFIX_ED25519 + bytes
-        let base58PublicKey = Base58.base58Encode(bytes)
+        let base58PublicKey = Base58.encode(bytes)
         return "\(DIDKEY_PREFIX):\(BASE58_PREFIX)\(base58PublicKey)"
     }
 
@@ -74,8 +76,9 @@ public class DIDParser {
 
     public static func ConvertFingerprintToVerkey(fingerprint: String) throws -> String {
         let base58PublicKey = fingerprint.dropFirst(1)
-        guard let bytes = Base58.base58Decode(String(base58PublicKey)) else {
-            throw AriesFrameworkError.frameworkError("Invalid base58 encoded fingerprint: \(fingerprint)")
+        let bytes = try Base58.decode(String(base58PublicKey))
+        guard !bytes.isEmpty else {
+            throw AriesFrameworkError.frameworkError("Decoded fingerprint is empty: \(fingerprint)")
         }
 
         let codec = bytes.prefix(2)
@@ -84,7 +87,7 @@ public class DIDParser {
         }
 
         let verkey = bytes.dropFirst(2)
-        return Base58.base58Encode(Array(verkey))
+        return Base58.encode(Array(verkey))
     }
 
     public static func ConvertDIDToVerkey(did: String) throws -> String {

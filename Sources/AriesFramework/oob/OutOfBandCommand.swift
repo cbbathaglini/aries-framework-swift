@@ -115,7 +115,7 @@ public class OutOfBandCommand {
 
         try await self.agent.outOfBandRepository.save(outOfBandRecord)
         agent.agentDelegate?.onOutOfBandStateChanged(outOfBandRecord: outOfBandRecord)
-        logger.debug("OutOfBandInvitation created with id: \(outOfBandInvitation.id)")
+        logDebug("OutOfBandInvitation created with id: \(outOfBandInvitation.id)")
 
         return outOfBandRecord
     }
@@ -131,6 +131,7 @@ public class OutOfBandCommand {
      - Returns: out-of-band record and connection record if one has been created.
     */
     public func receiveInvitationFromUrl(_ url: String, config: ReceiveOutOfBandInvitationConfig? = nil) async throws -> (OutOfBandRecord?, ConnectionRecord?) {
+        logDebug(" url of invitation: \(url)")
         let (outOfBandInvitation, invitation) = try await parseInvitationShortUrl(url)
         if invitation != nil {
             let connection = try await self.agent.connections.receiveInvitation(invitation!,
@@ -250,10 +251,10 @@ public class OutOfBandCommand {
         var connectionRecord: ConnectionRecord?
         if existingConnection != nil && config?.reuseConnection ?? true {
             if messages.count > 0 {
-                logger.debug("Skip handshake and reuse existing connection \(existingConnection!.id)")
+                logDebug("Skip handshake and reuse existing connection \(existingConnection!.id)")
                 connectionRecord = existingConnection
             } else {
-                logger.debug("Start handshake to reuse connection.")
+                logDebug("Start handshake to reuse connection.")
                 let isHandshakeReuseSuccessful = try await handleHandshakeReuse(outOfBandRecord: outOfBandRecord, connectionRecord: existingConnection!)
                 if isHandshakeReuseSuccessful {
                     connectionRecord = existingConnection
@@ -265,7 +266,8 @@ public class OutOfBandCommand {
 
         let handshakeProtocol = try selectHandshakeProtocol(handshakeProtocols)
         if connectionRecord == nil {
-            logger.debug("Creating new connection.")
+            print("ERIQUE \(handshakeProtocol)")
+            logDebug("Creating new connection.")
             connectionRecord = try await agent.connections.acceptOutOfBandInvitation(
                 outOfBandRecord: outOfBandRecord,
                 handshakeProtocol: handshakeProtocol,
@@ -343,7 +345,8 @@ public class OutOfBandCommand {
     }
 
     private func getSupportedHandshakeProtocols() -> [HandshakeProtocol] {
-        return [.Connections, .DidExchange11]
+        //return [.Connections, .DidExchange11]
+        return [.DidExchange11]
     }
 
     private func assertHandshakeProtocols(_ handshakeProtocols: [HandshakeProtocol]) throws {
@@ -366,6 +369,8 @@ public class OutOfBandCommand {
         if handshakeProtocols.isEmpty {
             return nil
         }
+        print("ERIQUE")
+        print(handshakeProtocols)
         let supportedProtocols = getSupportedHandshakeProtocols()
         if handshakeProtocols.contains(agent.agentConfig.preferredHandshakeProtocol) &&
             supportedProtocols.contains(agent.agentConfig.preferredHandshakeProtocol) {

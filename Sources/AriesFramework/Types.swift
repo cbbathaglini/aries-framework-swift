@@ -13,6 +13,13 @@ public extension Tags {
         // swiftlint:disable:next force_try
         return String(data: try! JSONEncoder().encode(self), encoding: .utf8) ?? "{}"
     }
+    
+    func toJsonString() throws -> String {
+       let encoder = JSONEncoder()
+       encoder.outputFormatting = .prettyPrinted // opcional
+       let data = try encoder.encode(self)
+       return String(data: data, encoding: .utf8)!
+   }
 }
 
 public extension String {
@@ -32,6 +39,18 @@ public extension String {
             .replacingOccurrences(of: "/", with: "_")
             .replacingOccurrences(of: "=", with: "")
         return base64url
+    }
+    
+    static func fromDate(_ date: Date?) -> String? {
+        return date == nil ? nil : "\(date!)"
+    }
+    
+    static func fromDate(_ date: FlexibleDate) -> String? {
+        return "\(date.date)"
+    }
+    
+    static func toStringList(_ objs: [Any]) -> [String] {
+        return objs.map { "\($0)" }
     }
 }
 
@@ -62,8 +81,15 @@ public struct OutboundPackage: Codable {
 }
 
 public struct OutboundMessage {
-    var payload: AgentMessage
-    var connection: ConnectionRecord
+    
+    public var payload: AgentMessage
+    public var connection: ConnectionRecord
+    
+    public init(payload: AgentMessage, connection: ConnectionRecord) {
+        self.payload = payload
+        self.connection = connection
+    }
+    
 }
 
 public struct EncryptedMessage: Codable {

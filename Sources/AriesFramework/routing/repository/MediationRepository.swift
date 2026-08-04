@@ -1,12 +1,14 @@
 
 import Foundation
 
-class MediationRepository: Repository<MediationRecord> {
+public class MediationRepository: Repository<MediationRecord> {
     func getByConnectionId(_ connectionId: String) async throws -> MediationRecord {
-        return try await getSingleByQuery("{\"connectionId\": \"\(connectionId)\"}")
+        let query = "{\"connectionId\": \"\(connectionId)\"}"
+        return try await getSingleByQuery(query)
     }
 
     func getDefault() async throws -> MediationRecord? {
-        return try await findSingleByQuery("{}")
+        let query = "{}"
+        return try await findSingleByQuery(query)
     }
 }

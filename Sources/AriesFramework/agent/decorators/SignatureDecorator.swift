@@ -1,8 +1,9 @@
 
 import Foundation
 import os
-import Askar
 import Base58Swift
+import Anoncreds
+import Askar
 
 public struct SignatureDecorator {
     var signatureType: String
@@ -31,16 +32,19 @@ extension SignatureDecorator: Codable {
             throw AriesFrameworkError.frameworkError("Invalid signature")
         }
 
-        guard let singerBytes = Base58.base58Decode(signer) else {
+        let signerBytes: [UInt8]
+        do {
+            signerBytes = try Base58.decode(signer)
+        } catch {
             throw AriesFrameworkError.frameworkError("Invalid signer: \(signer)")
         }
-        let signKey = try LocalKeyFactory().fromPublicBytes(alg: .ed25519, bytes: Data(singerBytes))
+        
+        let signKey = try LocalKeyFactory().fromPublicBytes(alg: .ed25519, bytes: Data(signerBytes))
         let isValid = try signKey.verifySignature(message: signedData, signature: signature, sigType: nil)
         if !isValid {
             throw AriesFrameworkError.frameworkError("Signature verification failed")
         }
 
-        // first 8 bytes are for 64 bit integer from unix epoch
         signedData = signedData.subdata(in: 8..<signedData.count)
         return signedData
     }

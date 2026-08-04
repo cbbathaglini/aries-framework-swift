@@ -40,7 +40,7 @@ struct RevRegDefValues: Decodable {
 struct RevRegDefPublicKeys: Decodable {
     let accumKey: AccumKey
 }
-struct AccumKey: Decodable {
+struct AccumKey: Codable {
     let z: String
 }
 

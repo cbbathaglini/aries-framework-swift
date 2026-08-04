@@ -20,7 +20,7 @@ public class WsOutboundTransport: OutboundTransport {
         await semaphore.wait()
         defer { semaphore.signal() }
 
-        logger.debug("Sending outbound message to endpoint \(package.endpoint)")
+        logDebug("Sending outbound message to endpoint \(package.endpoint)")
         if socket == nil || endpoint != package.endpoint {
             socket = try await createSocket(endpoint: package.endpoint)
         }
@@ -84,7 +84,7 @@ public class WsOutboundTransport: OutboundTransport {
                     let encryptedMessage = try JSONDecoder().decode(EncryptedMessage.self, from: text.data(using: .utf8)!)
                     try await agent.receiveMessage(encryptedMessage)
                 case .close(code: let code, reason: _, wasClean: _):
-                    logger.debug("Socket close: \(code.rawValue)")
+                    logDebug("Socket close: \(code.rawValue)")
                     if code != .applicationCode(CLOSE_BY_CLIENT) {
                         socket = nil
                     }

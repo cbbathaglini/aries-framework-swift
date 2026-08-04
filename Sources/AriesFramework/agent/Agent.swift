@@ -1,7 +1,6 @@
-
 import Foundation
-import Askar
 import os
+import Askar
 
 public class Agent {
     let logger = Logger(subsystem: "AriesFramework", category: "Agent")
@@ -14,7 +13,7 @@ public class Agent {
     public var didExchangeService: DidExchangeService!
     public var peerDIDService: PeerDIDService!
     public var jwsService: JwsService!
-    var messageSender: MessageSender!
+    public var messageSender: MessageSender!
     var messageReceiver: MessageReceiver!
     public var dispatcher: Dispatcher!
     public var connections: ConnectionCommand!
@@ -30,10 +29,43 @@ public class Agent {
     public var revocationService: RevocationService!
     public var credentialService: CredentialService!
     public var credentials: CredentialsCommand!
+    public var credentialServiceV2: CredentialServiceV2!
+    public var credentialsV2: CredentialsCommandV2!
     public var credentialRepository: CredentialRepository!
     public var proofRepository: ProofRepository!
     public var proofService: ProofService!
     public var proofs: ProofCommand!
+    
+    public var revocationNotificationService: RevocationNotificationService!
+    public var revocationNotificationServiceV2: RevocationNotificationServiceV2!
+    
+    public var anoncredsModulesConfig: AnonCredsModuleConfig!
+    public var anonCredsRegistryService: AnonCredsRegistryService!
+    
+    /** credential v2 **/
+    public var anonCredsIssuerService: AnonCredsRsIssuerService!
+    public var anonCredsHolderService: AnonCredsRsHolderService!
+    public var anonCredsCredentialRepository: AnonCredsCredentialRepository!
+    public var anonCredsCredentialDefinitionRepository: AnonCredsCredentialDefinitionRepository!
+    public var anonCredsLinkSecretRepository: AnonCredsLinkSecretRepository!
+    public var anonCredsKeyCorrectnessProofRepository: AnonCredsKeyCorrectnessProofRepository!
+    public var w3cCredentialRepository: W3cCredentialRepository!
+    public var anonCredsRevocationRegistryDefinitionPrivateRepository: AnonCredsRevocationRegistryDefinitionPrivateRepository!
+    
+    public var basicMessages: BasicMessageCommand!
+    public var basicMessageRepository: BasicMessageRepository!
+    public var w3cCredentialsModuleConfig : W3cCredentialsModuleConfig!
+    public var w3cCredentialService : W3cCredentialService!
+    public var w3cJsonLdCredentialService : W3cJsonLdCredentialService!
+    
+    public var historyRepository : HistoryRepository!
+    
+    /** proof v2 **/
+    public var proofServiceV2 : ProofServiceV2!
+    public var proofCommandV2 : ProofCommandV2!
+    public var anoncredsVerifierService: AnonCredsVerifierService!
+    public var verifierRepository: VerifierRepository!
+
 
     public var wallet: Wallet!
     private var _isInitialized = false
@@ -49,6 +81,7 @@ public class Agent {
         self.agentDelegate = agentDelegate
 
         self.wallet = Wallet(agent: self)
+        self.historyRepository = HistoryRepository(agent: self)
         self.connectionRepository = ConnectionRepository(agent: self)
         self.connectionService = ConnectionService(agent: self)
         self.didExchangeService = DidExchangeService(agent: self)
@@ -64,18 +97,66 @@ public class Agent {
         self.oob = OutOfBandCommand(agent: self, dispatcher: self.dispatcher)
         self.credentialExchangeRepository = CredentialExchangeRepository(agent: self)
         self.didCommMessageRepository = DidCommMessageRepository(agent: self)
-        self.ledgerService = IndyLedgerService(agent: self)
+        self.ledgerService = initializeLedgerService()
         self.credentialDefinitionRepository = CredentialDefinitionRepository(agent: self)
         self.revocationRegistryRepository = RevocationRegistryRepository(agent: self)
         self.anoncredsService = AnoncredsService(agent: self)
         self.revocationService = RevocationService(agent: self)
         self.credentialService = CredentialService(agent: self)
+        self.credentialServiceV2 = CredentialServiceV2(agent: self)
         self.credentials = CredentialsCommand(agent: self, dispatcher: self.dispatcher)
+        self.credentialsV2 = CredentialsCommandV2(agent: self, dispatcher: self.dispatcher)
         self.credentialRepository = CredentialRepository(agent: self)
         self.proofRepository = ProofRepository(agent: self)
         self.proofService = ProofService(agent: self)
         self.proofs = ProofCommand(agent: self, dispatcher: self.dispatcher)
         self.bleInboundTransport = BleInboundTransport(agent: self)
+        self.revocationNotificationService = RevocationNotificationService(agent: self, dispatcher: self.dispatcher)
+        self.revocationNotificationServiceV2 = RevocationNotificationServiceV2(agent: self, dispatcher: self.dispatcher)
+        self.basicMessages = BasicMessageCommand(agent: self, dispatcher: self.dispatcher)
+        self.basicMessageRepository = BasicMessageRepository(agent: self)
+        
+        self.anonCredsKeyCorrectnessProofRepository = AnonCredsKeyCorrectnessProofRepository(agent: self)
+        self.anonCredsRevocationRegistryDefinitionPrivateRepository = AnonCredsRevocationRegistryDefinitionPrivateRepository(agent: self)
+        self.anonCredsCredentialDefinitionRepository = AnonCredsCredentialDefinitionRepository(agent: self)
+        self.anonCredsLinkSecretRepository = AnonCredsLinkSecretRepository(agent: self)
+        self.anonCredsCredentialRepository = AnonCredsCredentialRepository(agent: self)
+        self.w3cCredentialRepository = W3cCredentialRepository(agent: self)
+        self.anonCredsIssuerService = AnonCredsRsIssuerService(agent: self)
+        self.anonCredsHolderService = AnonCredsRsHolderService(agent: self)
+    
+        self.anoncredsModulesConfig = AnonCredsModuleConfig(
+            agent: self,
+            options: AnonCredsModuleConfigOptions(
+                registries: [EthrAnonCredsRegistry()] as [AnonCredsRegistry]
+            )
+        )
+        
+        self.anonCredsRegistryService = AnonCredsRegistryService(agent: self)
+        self.w3cCredentialsModuleConfig = W3cCredentialsModuleConfig()
+        self.w3cJsonLdCredentialService = W3cJsonLdCredentialService(
+            agent: self,
+            config: w3cCredentialsModuleConfig,
+            context: agentDelegate)
+        
+        self.w3cCredentialService = W3cCredentialService(
+            w3cCredentialRepository: w3cCredentialRepository,
+            w3cJsonLdCredentialService: w3cJsonLdCredentialService
+        )
+        
+
+        self.proofServiceV2 = ProofServiceV2(agent: self)
+        self.proofCommandV2 = ProofCommandV2(agent: self, dispatcher: dispatcher)
+        
+        self.anoncredsVerifierService = AnonCredsRsVerifierService(agent: self)
+        self.verifierRepository = VerifierRepository(agent: self)
+    }
+    
+    private func initializeLedgerService() -> LedgerService {
+        if(agentConfig.useBesuLedger && agentConfig.besuLedgerConfig != nil) {
+            return BesuLedgerService(agent: self)
+        }
+        return IndyLedgerService(agent: self)
     }
 
     /**
@@ -84,7 +165,7 @@ public class Agent {
     */
     public func initialize() async throws {
         if ProcessInfo.processInfo.environment["RUST_LOG"] != nil {
-            logger.debug("RUST_LOG is set. Setting default logger to debug.")
+            logDebug("RUST_LOG is set. Setting default logger to debug.")
             try? Askar.setDefaultLogger()
         }
 
@@ -94,7 +175,7 @@ public class Agent {
             try await wallet.initPublicDid(seed: publicDidSeed)
         }
 
-        if agentConfig.useLedgerService {
+        if agentConfig.useLedgerService  || agentConfig.useBesuLedger {
             try await ledgerService.initialize()
         }
 

@@ -3,6 +3,7 @@ import Foundation
 import os
 import Askar
 
+
 struct WalletRecord: Codable {
     let id: String
     let type: String
@@ -77,7 +78,7 @@ public class Repository<T: BaseRecord & Codable> {
             let records = try await scan.fetchAll()
             return try records.map { try recordToInstance(record: $0) }
         } catch {
-            logger.debug("Query \(query) failed with error: \(error)")
+            logDebug("Query \(query) failed with error: \(error)")
             return []
         }
     }

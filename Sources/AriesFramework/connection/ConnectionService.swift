@@ -195,6 +195,7 @@ public class ConnectionService {
         assert(connectionRecord.state == ConnectionState.Invited)
         assert(connectionRecord.role == ConnectionRole.Invitee)
 
+        // RFC 160
         let connectionRequest = ConnectionRequestMessage(
             id: connectionId,
             label: label ?? agent.agentConfig.label,
@@ -443,6 +444,16 @@ public class ConnectionService {
             {"verkey": "\(recipientKey)", "theirKey": "\(senderKey)"}
             """)
     }
+    
+    /**
+    * Retrieve a connection record by id.
+    *
+    * @param id
+    * @return the connection record.
+    */
+    public func getById(id: String) async throws -> ConnectionRecord {
+        return try await connectionRepository.getById(id)
+    }
 
     func waitForConnection() async throws -> Bool {
         return try await connectionWaiter.wait()
@@ -450,5 +461,20 @@ public class ConnectionService {
 
     private func finishConnectionWaiter() {
         connectionWaiter.finish()
+    }
+    
+    func matchIncomingMessageToRequestMessageInOutOfBandExchange(
+        messageContext: InboundMessageContext,
+        expectedConnectionId: String? = nil
+    ) async throws {
+        let actualConnectionId = messageContext.connection?.id
+
+        if let expectedConnectionId = expectedConnectionId,
+           actualConnectionId != expectedConnectionId {
+            throw CredoError(
+                "Expecting incoming message to have connection \(expectedConnectionId), but incoming connection is \(actualConnectionId ?? "undefined")"
+            )
+        }
+
     }
 }

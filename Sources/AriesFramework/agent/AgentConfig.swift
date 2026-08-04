@@ -1,5 +1,5 @@
-
 import Foundation
+import indy_besu_vdrFFI
 
 let DID_COMM_TRANSPORT_QUEUE = "didcomm:transport/queue"
 
@@ -18,11 +18,15 @@ public struct AgentConfig: Codable {
         autoAcceptCredential: AutoAcceptCredential = .always,
         autoAcceptProof: AutoAcceptProof = .always,
         ignoreRevocationCheck: Bool = false,
-        useLedgerService: Bool = true,
-        useLegacyDidSovPrefix: Bool = true,
-        preferredHandshakeProtocol: HandshakeProtocol = .Connections,
+        useLedgerService: Bool = false,
+        useLegacyDidSovPrefix: Bool = false,
+        preferredHandshakeProtocol: HandshakeProtocol = .DidExchange10,
         publicDidSeed: String? = nil,
-        agentEndpoints: [String]? = nil) {
+        agentEndpoints: [String]? = nil,
+        useBesuLedger: Bool = true,
+        besuLedgerConfig: BesuLedgerConfig? = nil,
+        cacheConfigFile: String? = nil
+    ) {
 
         self.walletId = walletId
         self.walletKey = walletKey
@@ -42,6 +46,9 @@ public struct AgentConfig: Codable {
         self.preferredHandshakeProtocol = preferredHandshakeProtocol
         self.publicDidSeed = publicDidSeed
         self.agentEndpoints = agentEndpoints
+        self.useBesuLedger = useBesuLedger
+        self.besuLedgerConfig = besuLedgerConfig
+        self.cacheConfigFile = cacheConfigFile
     }
 
     // Mandatory fields
@@ -93,4 +100,22 @@ public struct AgentConfig: Codable {
     public var endpoints: [String] {
         return agentEndpoints ?? [DID_COMM_TRANSPORT_QUEUE]
     }
+
+    public var useBesuLedger: Bool = false
+    public var besuLedgerConfig: BesuLedgerConfig? = nil
+    public var cacheConfigFile: String? = nil
 }
+
+public struct BesuLedgerConfig: Codable {
+    let configFile: String
+    let multiledger: Bool
+    
+    public init(configFile: String,
+                multiledger: Bool = false) {
+        self.configFile = configFile
+        self.multiledger = multiledger
+    }
+
+}
+
+

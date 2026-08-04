@@ -4,6 +4,7 @@ import os
 import DIDCore
 import PeerDID
 import Base58Swift
+//import AnyCodable
 
 public class PeerDIDService {
     let agent: Agent
@@ -24,45 +25,53 @@ public class PeerDIDService {
      - Returns: the Peer DID.
     */
     public func createPeerDID(verkey: String, useLegacyService: Bool = true) async throws -> String {
-        logger.debug("Creating Peer DID for verkey: \(verkey)")
-        let verkeyData = Data(Base58.base58Decode(verkey)!)
+        logDebug("Creating Peer DID for verkey: \(verkey)")
+
+        let verkeyData = try Data(Base58.decode(verkey))
         let (endpoints, routingKeys) = try await agent.mediationRecipient.getRoutingInfo()
+
         let didRoutingKeys = try routingKeys.map { rawKey in
             let key = try DIDParser.ConvertVerkeyToDidKey(verkey: rawKey)
             return try "\(key)#\(DIDParser.getMethodId(did: key))"
         }
+
         let authKey = try PeerDIDVerificationMaterial(
             format: .base58,
             key: verkeyData,
-            type: .authentication(.ed25519VerificationKey2020))
+            type: .authentication(.ed25519VerificationKey2020)
+        )
+
         let agreementKey = try PeerDIDVerificationMaterial(
             format: .base58,
             key: verkeyData,
-            type: .agreement(.x25519KeyAgreementKey2019))
+            type: .agreement(.x25519KeyAgreementKey2019)
+        )
+
         var service: AnyCodable!
-        if useLegacyService {
-            service = [
-                "id": "#service-1",
-                "type": "did-communication",
-                "serviceEndpoint": endpoints[0],
-                "routingKeys": didRoutingKeys,
-                "recipientKeys": ["#key-2"]   // peerdid-swift encodes key-agreement key first.
-            ]
-        } else {
-            service = [
-                "id": "#service-1",
-                "type": "DIDCommMessaging",
-                "serviceEndpoint": [
-                    "uri": endpoints[0],
-                    "routingKeys": didRoutingKeys
+            if useLegacyService {
+                service = [
+                    "id": "#service-1",
+                    "type": "did-communication",
+                    "serviceEndpoint": endpoints[0],
+                    "routingKeys": didRoutingKeys,
+                    "recipientKeys": ["#key-2"]   // peerdid-swift encodes key-agreement key first.
                 ]
-            ]
-        }
-        return try PeerDIDHelper.createAlgo2(
-            authenticationKeys: [authKey],
-            agreementKeys: [agreementKey],
-            services: [service])
-            .string
+            } else {
+                service = [
+                    "id": "#service-1",
+                    "type": "DIDCommMessaging",
+                    "serviceEndpoint": [
+                        "uri": endpoints[0],
+                        "routingKeys": didRoutingKeys
+                    ]
+                ]
+            }
+            return try PeerDIDHelper.createAlgo2(
+                authenticationKeys: [authKey],
+                agreementKeys: [agreementKey],
+                services: [service])
+                .string
+
     }
 
     /**
@@ -73,7 +82,7 @@ public class PeerDIDService {
      - Returns: the parsed DID Document.
     */
     public func parsePeerDID(_ did: String) throws -> DidDoc {
-        logger.debug("Parsing Peer DID: \(did)")
+        logDebug("Parsing Peer DID: \(did)")
         let didDocument = try PeerDIDHelper.resolve(peerDIDStr: did)
         return try DidDoc(from: didDocument)
     }

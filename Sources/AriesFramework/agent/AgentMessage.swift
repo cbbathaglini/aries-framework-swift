@@ -2,10 +2,10 @@
 import Foundation
 
 public class AgentMessage: Codable {
-    var id: String
-    var type: String
-    var thread: ThreadDecorator?
-    var transport: TransportDecorator?
+    public var id: String
+    public var type: String
+    public var thread: ThreadDecorator?
+    public var transport: TransportDecorator?
 
     var threadId: String {
         return thread?.threadId ?? id
@@ -20,6 +20,10 @@ public class AgentMessage: Codable {
         self.type = type
     }
 
+    public func setThread(threadId: String, parentThreadId: String? = nil) {
+        self.thread = ThreadDecorator(threadId: threadId, parentThreadId: parentThreadId)
+    }
+    
     public func createOutboundMessage(connection: ConnectionRecord) -> OutboundMessage {
         return OutboundMessage(payload: self, connection: connection)
     }
@@ -28,11 +32,12 @@ public class AgentMessage: Codable {
         return true
     }
 
+
     public static func generateId() -> String {
         return UUID().uuidString
     }
 
-    public func toJsonString() -> String {
+    open func toJsonString() throws -> String {
         let encoder = JSONEncoder()
         // swiftlint:disable:next force_try
         let data = try! encoder.encode(self)

@@ -1,5 +1,6 @@
 
 import Foundation
+import AnyCodable
 
 public enum MediationState: String, Codable {
     case Requested
@@ -12,13 +13,14 @@ public enum MediationRole: String, Codable {
     case Recipient = "RECIPIENT"
 }
 
-public struct MediationRecord: BaseRecord {
+public class MediationRecord: Codable, BaseRecord {
     public static var type = "MediationRecord"
 
     public var id: String
     public var createdAt: Date
     public var updatedAt: Date?
     public var tags: Tags?
+    public var metadata: [String : AnyCodable] = [:]
 
     public var state: MediationState
     public var role: MediationRole
@@ -28,14 +30,14 @@ public struct MediationRecord: BaseRecord {
     public var recipientKeys: [String]
     public var routingKeys: [String]
     public var invitationUrl: String
-}
 
-extension MediationRecord: Codable {
+
     enum CodingKeys: String, CodingKey {
-        case id, createdAt, updatedAt, state, role, connectionId, threadId, endpoint, recipientKeys, routingKeys, invitationUrl
+        case id, createdAt, updatedAt, tags, metadata
+        case state, role, connectionId, threadId, endpoint, recipientKeys, routingKeys, invitationUrl
     }
 
-    public init(
+    init(
         tags: Tags? = nil,
         state: MediationState,
         role: MediationRole,

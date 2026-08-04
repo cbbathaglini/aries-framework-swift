@@ -39,11 +39,45 @@ public enum OutOfBandDidCommService: Codable {
 }
 
 public struct OutOfBandDidDocumentService: Codable {
-    var id: String
-    var type: String = OutOfBandDidDocumentService.type
-    var serviceEndpoint: String
-    var recipientKeys: [String]
-    var routingKeys: [String]?
-    var accept: [String]?
-    public static var type = "did-communication"
+    public static let typeConst = "did-communication"
+
+    public var id: String
+    public var type: String = OutOfBandDidDocumentService.typeConst
+    public var serviceEndpoint: String
+    public var recipientKeys: [String]
+    public var routingKeys: [String]?
+    public var accept: [String]?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, type, serviceEndpoint, recipientKeys, routingKeys, accept
+    }
+
+    public init(
+        id: String,
+        serviceEndpoint: String,
+        recipientKeys: [String],
+        routingKeys: [String]? = nil,
+        accept: [String]? = nil,
+        type: String = OutOfBandDidDocumentService.typeConst
+    ) {
+        self.id = id
+        self.type = type
+        self.serviceEndpoint = serviceEndpoint
+        self.recipientKeys = recipientKeys
+        self.routingKeys = routingKeys
+        self.accept = accept
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+
+        id = try c.decode(String.self, forKey: .id)
+        serviceEndpoint = try c.decode(String.self, forKey: .serviceEndpoint)
+        recipientKeys = try c.decode([String].self, forKey: .recipientKeys)
+        routingKeys = try c.decodeIfPresent([String].self, forKey: .routingKeys)
+        accept = try c.decodeIfPresent([String].self, forKey: .accept)
+
+        // ✅ aqui está o fix:
+        type = try c.decodeIfPresent(String.self, forKey: .type) ?? Self.typeConst
+    }
 }

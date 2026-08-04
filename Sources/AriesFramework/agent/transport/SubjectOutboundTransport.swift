@@ -11,7 +11,7 @@ class SubjectOutboundTransport: OutboundTransport {
     }
 
     public func sendPackage(_ package: OutboundPackage) async throws {
-        logger.debug("Sending outbound message to subject \(self.subject.agentConfig.label)")
+        logDebug("Sending outbound message to subject \(self.subject.agentConfig.label)")
         try await subject.receiveMessage(package.payload)
     }
 }

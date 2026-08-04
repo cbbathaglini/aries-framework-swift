@@ -32,7 +32,9 @@ public class DidExchangeService {
         assert(connectionRecord.role == ConnectionRole.Invitee)
 
         let peerDid = try await agent.peerDIDService.createPeerDID(verkey: connectionRecord.verkey)
-        logger.debug("Created peer DID for a RequestMessage: \(peerDid)")
+        logDebug("Created peer DID for a RequestMessage: \(peerDid)")
+        
+        //RFC 23
         let message = DidExchangeRequestMessage(label: label ?? agent.agentConfig.label, did: peerDid)
 
         if autoAcceptConnection != nil {

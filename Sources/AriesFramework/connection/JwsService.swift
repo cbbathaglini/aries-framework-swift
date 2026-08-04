@@ -55,7 +55,7 @@ public class JwsService {
      - Returns: A tuple containing the validity of the JWS and the signer's verkey.
     */
     public func verifyJws(jws: Jws, payload: Data) throws -> (isValid: Bool, signer: String) {
-        logger.debug("Verifying JWS...")
+        logDebug("Verifying JWS...")
         var firstSig: JwsGeneralFormat!
         switch jws {
         case let .flattened(list):
@@ -74,10 +74,10 @@ public class JwsService {
         }
         let jwkData = try JSONSerialization.data(withJSONObject: jwk)
         let jwkString = String(data: jwkData, encoding: .utf8)!
-        logger.debug("jwk: \(jwkString)")
+        logDebug("jwk: \(jwkString)")
         let key = try agent.wallet.keyFactory.fromJwk(jwk: jwkString)
         let publicBytes = try key.toPublicBytes()
-        let signer = Base58.base58Encode([UInt8](publicBytes))
+        let signer = Base58.encode([UInt8](publicBytes))
 
         let base64Payload = payload.base64EncodedString().base64ToBase64url()
         let message = "\(firstSig.protected).\(base64Payload)".data(using: .utf8)!

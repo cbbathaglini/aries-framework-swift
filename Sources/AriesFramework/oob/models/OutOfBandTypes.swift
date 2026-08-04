@@ -32,6 +32,19 @@ public struct CreateOutOfBandInvitationConfig {
         self.autoAcceptConnection = autoAcceptConnection
         self.routing = routing
     }
+    
+    public init(label: String, handshake: Bool) {
+            self.label = label
+            self.alias = nil
+            self.imageUrl = nil
+            self.goalCode = nil
+            self.goal = nil
+            self.handshake = handshake
+            self.messages = nil
+            self.multiUseInvitation = nil
+            self.autoAcceptConnection = nil
+            self.routing = nil
+        }
 
     public var label: String?
     public var alias: String?

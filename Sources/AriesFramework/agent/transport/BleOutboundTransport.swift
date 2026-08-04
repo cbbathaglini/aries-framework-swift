@@ -16,7 +16,7 @@ public class BleOutboundTransport: OutboundTransport {
     }
 
     public func sendPackage(_ package: OutboundPackage) async throws {
-        logger.debug("Sending outbound message to endpoint \(package.endpoint)")
+        logDebug("Sending outbound message to endpoint \(package.endpoint)")
         let uuid = try uuidFromUrl(package.endpoint)
         let characteristic = try Characteristic(uuid: uuid)
         let service = try Service(uuid: uuid, characteristics: [characteristic])

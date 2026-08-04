@@ -14,33 +14,47 @@ public class Dispatcher {
 
     public func registerHandler(handler: MessageHandler) {
         handlers[handler.messageType] = handler
-        handlers[Dispatcher.replaceNewDidCommPrefixWithLegacyDidSov(messageType: handler.messageType)] = handler
+        //handlers[Dispatcher.replaceNewDidCommPrefixWithLegacyDidSov(messageType: handler.messageType)] = handler << DEPRECATED
     }
 
     private func registerProblemReportHandlers() {
+        registerHandler(handler: ProblemReportHandler(agent: agent, messageType: PresentationProblemReportMessageV2.type))
         registerHandler(handler: ProblemReportHandler(agent: agent, messageType: PresentationProblemReportMessage.type))
         registerHandler(handler: ProblemReportHandler(agent: agent, messageType: CredentialProblemReportMessage.type))
         registerHandler(handler: ProblemReportHandler(agent: agent, messageType: MediationProblemReportMessage.type))
     }
 
     func dispatch(messageContext: InboundMessageContext) async throws {
-        logger.debug("Dispatching message of type: \(messageContext.message.type)")
+        logDebug("Dispatching message of type: \(messageContext.message.type)")
         guard let handler = handlers[messageContext.message.type] else {
             throw AriesFrameworkError.frameworkError("No handler for message type: \(messageContext.message.type)")
         }
+        
+        //printDispatcherMessages(messageContext: messageContext)
 
         do {
             if let outboundMessage = try await handler.handle(messageContext: messageContext) {
-                logger.debug("Finishing dispatch with message of type: \(outboundMessage.payload.type)")
+                logDebug("Finishing dispatch with message of type: \(outboundMessage.payload.type)")
                 Task {
                     try await agent.messageSender.send(message: outboundMessage)
                 }
             } else {
-                logger.debug("Finishing dispatch without response")
+                logDebug("Finishing dispatch without response")
             }
         } catch {
-            logger.error("Failed to dispatch message of type: \(messageContext.message.type)")
+            logger.error("Failed to dispatch message of type: \(messageContext.message.type) ERROR: \(error.localizedDescription)")
             throw error
+        }
+    }
+    
+    private func printDispatcherMessages(messageContext: InboundMessageContext) {
+        print("message: \(String(describing: messageContext.message))")
+        print("plaintextMessage: \(messageContext.plaintextMessage)")
+        print("type of message: \(messageContext.message.type)")
+
+        print("all handlers available -->")
+        for (key, value) in handlers {
+            print("Type = \(key), Handler = \(String(describing: value))")
         }
     }
 
@@ -52,7 +66,7 @@ public class Dispatcher {
         return handlers[message.type] != nil
     }
 
-    static func replaceNewDidCommPrefixWithLegacyDidSov(messageType: String) -> String {
+    static func replaceNewDidCommPrefixWithLegacyDidSov(messageType: String) -> String { //DEPRECATED
         let didSovPrefix = "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec"
         let didCommPrefix = "https://didcomm.org"
 

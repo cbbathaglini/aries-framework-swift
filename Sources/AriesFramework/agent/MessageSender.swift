@@ -37,9 +37,9 @@ public class MessageSender {
 
     func decorateMessage(_ message: OutboundMessage) -> AgentMessage {
         let agentMessage = message.payload
-        if agent.agentConfig.useLegacyDidSovPrefix {
-            agentMessage.replaceNewDidCommPrefixWithLegacyDidSov()
-        }
+//        if agent.agentConfig.useLegacyDidSovPrefix {
+//            agentMessage.replaceNewDidCommPrefixWithLegacyDidSov()
+//        }
 
         if agentMessage.transport == nil {
             agentMessage.transport = TransportDecorator(returnRoute: "all")
@@ -71,9 +71,9 @@ public class MessageSender {
             if endpointPrefix != nil && !service.serviceEndpoint.hasPrefix(endpointPrefix!) {
                 continue
             }
-            logger.debug("Send outbound message of type \(agentMessage.type) to endpoint \(service.serviceEndpoint)")
+            logDebug("Send outbound message of type \(agentMessage.type) to endpoint \(service.serviceEndpoint)")
             if endpointPrefix == nil && outboundTransportForEndpoint(service.serviceEndpoint) == nil {
-                logger.debug("Endpoint is not supported")
+                logDebug("Endpoint is not supported")
                 continue
             }
             do {
@@ -83,7 +83,7 @@ public class MessageSender {
                     connectionId: message.connection.id)
                 return
             } catch {
-                logger.debug("Sending outbound message to service \(service.serviceEndpoint) failed with the following error: \(error.localizedDescription)")
+                logDebug("Sending outbound message to service \(service.serviceEndpoint) failed with the following error: \(error.localizedDescription)")
             }
         }
 
@@ -116,7 +116,10 @@ public class MessageSender {
             recipientKeys: service.recipientKeys,
             routingKeys: service.routingKeys ?? [],
             senderKey: senderKey)
-
+        
+        if message.type.contains("present-proof/2.0/presentation") {
+            print("here::: \(message)")
+        }
         let outboundPackage = try await packMessage(message, keys: keys, endpoint: service.serviceEndpoint, connectionId: connectionId)
         guard let outboundTransport = outboundTransportForEndpoint(service.serviceEndpoint) else {
             throw AriesFrameworkError.frameworkError("No outbound transport found for endpoint \(service.serviceEndpoint)")
@@ -130,9 +133,9 @@ public class MessageSender {
         var recipientKeys = keys.recipientKeys
         for routingKey in keys.routingKeys {
             let forwardMessage = ForwardMessage(to: recipientKeys[0], message: encryptedMessage)
-            if agent.agentConfig.useLegacyDidSovPrefix {
-                forwardMessage.replaceNewDidCommPrefixWithLegacyDidSov()
-            }
+//            if agent.agentConfig.useLegacyDidSovPrefix {
+//                forwardMessage.replaceNewDidCommPrefixWithLegacyDidSov()
+//            }
             recipientKeys = [routingKey]
             encryptedMessage = try await agent.wallet.pack(message: forwardMessage, recipientKeys: recipientKeys, senderVerkey: keys.senderKey)
         }

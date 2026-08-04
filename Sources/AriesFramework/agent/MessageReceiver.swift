@@ -13,7 +13,9 @@ public class MessageReceiver {
     func receiveMessage(_ encryptedMessage: EncryptedMessage) async throws {
         do {
             let decryptedMessage = try await agent.wallet.unpack(encryptedMessage: encryptedMessage)
+            print("decrypted message: \(decryptedMessage)")
             let message = try MessageReceiver.decodeAgentMessage(plaintextMessage: decryptedMessage.plaintextMessage)
+            print("message: \(message)")
             let connection = try await findConnection(decryptedMessage: decryptedMessage, message: message)
             let messageContext = InboundMessageContext(message: message,
                                                        plaintextMessage: decryptedMessage.plaintextMessage,
@@ -22,7 +24,7 @@ public class MessageReceiver {
                                                        recipientVerkey: decryptedMessage.recipientKey)
             try await agent.dispatcher.dispatch(messageContext: messageContext)
         } catch {
-            logger.error("failed to receive encrypted message: \(error)")
+            logger.error("failed to receive encrypted message: \(error.localizedDescription)")
         }
     }
 

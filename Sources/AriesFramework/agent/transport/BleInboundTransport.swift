@@ -33,7 +33,7 @@ public class BleInboundTransport: InboundTransport {
         if error != nil {
             throw AriesFrameworkError.frameworkError("BLE advertisement failed: \(error!)")
         }
-        logger.debug("BLE advertisement started!")
+        logDebug("BLE advertisement started!")
 
         advertisement.writeRequestCallback = { [weak self] characteristic, data in
             guard let data = data else { return }
@@ -56,7 +56,7 @@ public class BleInboundTransport: InboundTransport {
     public func stop() async throws {
         uuid = ""
         advertisement.stopAdvertising()
-        logger.debug("BLE advertisement stoped")
+        logDebug("BLE advertisement stoped")
     }
 
     public func endpoint(domain: String = "aries/endpoint") throws -> String {

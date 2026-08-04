@@ -2,11 +2,11 @@
 import Foundation
 
 public struct RsaSig2018: Codable, PublicKey {
-    var id: String
-    var controller: String
-    var type: String = "RsaVerificationKey2018"
-    var publicKeyPem: String
-    var value: String? {
+    public var id: String
+    public var controller: String
+    public var type: String = "RsaVerificationKey2018"
+    public var publicKeyPem: String
+    public var value: String? {
         return publicKeyPem
     }
 

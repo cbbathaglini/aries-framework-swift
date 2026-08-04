@@ -16,4 +16,15 @@ extension RequestedPredicate: Codable {
     mutating func setCredentialInfo(_ credentialInfo: IndyCredentialInfo) {
         self.credentialInfo = credentialInfo
     }
+    
+    public func toMap() -> [String: Any?] {
+        return [
+            "credentialId": self.credentialId,
+            "schemaId": self.credentialInfo?.schemaId,
+            "credentialDefinitionId": self.credentialInfo?.credentialDefinitionId,
+            "attributes": self.credentialInfo?.attributes,
+            "revoked": self.revoked,
+            "predicateError": ""
+        ]
+    }
 }

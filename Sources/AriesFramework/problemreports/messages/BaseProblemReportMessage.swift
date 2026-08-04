@@ -3,6 +3,11 @@ import Foundation
 public struct DescriptionOptions: Codable {
     let en: String
     let code: String
+    
+    public init(en: String, code: String) {
+        self.en = en
+        self.code = code
+    }
 }
 
 public struct FixHintOptions: Codable {

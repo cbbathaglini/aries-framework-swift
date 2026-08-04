@@ -99,4 +99,14 @@ public enum DidDocService: Codable {
             try didCommV2.encode(to: encoder)
         }
     }
+    
+    static func toList(_ services: [DidDocService]) -> [[String: Any?]] {
+        return services.map { toMap($0) }
+    }
+    
+    static func toMap(_ didDocService: DidDocService) -> [String: Any?] {
+        return [
+            "id": "" // self.id
+        ]
+    }
 }

@@ -14,7 +14,7 @@ class ProblemReportHandler: MessageHandler {
 
     func handle(messageContext: InboundMessageContext) async throws -> OutboundMessage? {
         let message = try JSONDecoder().decode(BaseProblemReportMessage.self, from: Data(messageContext.plaintextMessage.utf8))
-        logger.debug("Received problem report: \(message.description.en)")
+        logDebug("Received problem report: \(message.description.en)")
         agent.agentDelegate?.onProblemReportReceived(message: message)
         return nil
     }

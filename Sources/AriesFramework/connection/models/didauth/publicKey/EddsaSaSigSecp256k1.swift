@@ -2,11 +2,11 @@
 import Foundation
 
 public struct EddsaSaSigSecp256k1: Codable, PublicKey {
-    var id: String
-    var controller: String
-    var type: String = "Secp256k1VerificationKey2018"
-    var publicKeyHex: String
-    var value: String? {
+    public var id: String
+    public var controller: String
+    public var type: String = "Secp256k1VerificationKey2018"
+    public var publicKeyHex: String
+    public var value: String? {
         return publicKeyHex
     }
 

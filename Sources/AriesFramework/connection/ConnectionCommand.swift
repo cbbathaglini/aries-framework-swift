@@ -67,7 +67,7 @@ public class ConnectionCommand {
         autoAcceptConnection: Bool? = nil,
         alias: String? = nil) async throws -> ConnectionRecord {
 
-        logger.debug("Receive connection invitation")
+        logDebug("Receive connection invitation")
         var connection = try await agent.connectionService.processInvitation(invitation,
             outOfBandInvitation: outOfBandInvitation,
             routing: agent.mediationRecipient.getRouting(),
@@ -109,7 +109,7 @@ public class ConnectionCommand {
      - Returns: new connection record.
     */
     public func acceptInvitation(connectionId: String, autoAcceptConnection: Bool?) async throws -> ConnectionRecord {
-        logger.debug("Accept connection invitation")
+        logDebug("Accept connection invitation")
         let message = try await agent.connectionService.createRequest(connectionId: connectionId, autoAcceptConnection: autoAcceptConnection)
         try await agent.messageSender.send(message: message)
         return message.connection
@@ -135,6 +135,7 @@ public class ConnectionCommand {
                 label: config?.label,
                 imageUrl: config?.imageUrl,
                 autoAcceptConnection: config?.autoAcceptConnection)
+
         case .DidExchange10, .DidExchange11:
             message = try await agent.didExchangeService.createRequest(connectionId: connection.id,
                 label: config?.label,

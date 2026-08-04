@@ -2,6 +2,7 @@ import Foundation
 import os
 import Anoncreds
 
+
 public struct AnoncredsService {
     let agent: Agent
     let logger = Logger(subsystem: "AriesFramework", category: "AnoncredsService")
@@ -52,7 +53,7 @@ public struct AnoncredsService {
         return credentials.map { credentialRecord -> IndyCredentialInfo in
             return IndyCredentialInfo(
                 referent: credentialRecord.credentialId,
-                attributes: [:], // We don't use attrs.
+                attributes: credentialRecord.parseCredential(credentialJson: credentialRecord.credential),
                 schemaId: credentialRecord.schemaId,
                 credentialDefinitionId: credentialRecord.credentialDefinitionId,
                 revocationRegistryId: credentialRecord.revocationRegistryId,

@@ -3,10 +3,10 @@ import Foundation
 
 public class OutOfBandInvitation: AgentMessage {
     public static var type: String = "https://didcomm.org/out-of-band/1.1/invitation"
-    var label: String
-    var goalCode: String?
-    var goal: String?
-    var accept: [String]?
+    public var label: String
+    public var goalCode: String?
+    public var goal: String?
+    public var accept: [String]?
     var handshakeProtocols: [HandshakeProtocol]?
     var requests: [Attachment]?
     var services: [OutOfBandDidCommService]
@@ -88,7 +88,8 @@ public class OutOfBandInvitation: AgentMessage {
            let message = String(data: data, encoding: .utf8) {
             var replaced = replaceLegacyDidSovWithNewDidCommPrefix(message: message)
             replaced = try serializeJsonAttatchments(message: replaced)
-            return try JSONDecoder().decode(OutOfBandInvitation.self, from: replaced.data(using: .utf8)!)
+            var returnval = try JSONDecoder().decode(OutOfBandInvitation.self, from: replaced.data(using: .utf8)!)
+            return returnval
         } else {
             throw AriesFrameworkError.frameworkError("InvitationUrl is invalid. It needs to contain one, and only one, of the following parameters; `oob`")
         }
@@ -163,5 +164,21 @@ public class OutOfBandInvitation: AgentMessage {
         } else {
             throw AriesFrameworkError.frameworkError("Failed to convert invitation message data to string.")
         }
+    }
+    
+    public func toMap() -> [String: Any?] {
+        // @TODO
+        return [
+            "id": self.id,
+            "label": self.label,
+            "goalCode": self.goalCode,
+            "goal": self.goal,
+            "accept": self.accept,
+//            "type": self.type,
+//            "handshakeProtocols": self.handshakeProtocols
+//            "requests": self.requests
+//            "services": self.services
+            "imageUrl": self.imageUrl
+        ]
     }
 }

@@ -1,11 +1,13 @@
 
 import Foundation
+import AnyCodable
 
 public struct RevocationRegistryRecord: BaseRecord {
     public var id: String
     var createdAt: Date
     var updatedAt: Date?
     public var tags: Tags?
+    public var metadata: [String : AnyCodable] = [:]
 
     public var credDefId: String
     public var revocRegId: String
@@ -19,7 +21,8 @@ public struct RevocationRegistryRecord: BaseRecord {
 
 extension RevocationRegistryRecord: Codable {
     enum CodingKeys: String, CodingKey {
-        case id, createdAt, updatedAt, tags, credDefId, revocRegId, revocRegDef, revocRegPrivate, revocStatusList, registryIndex
+        case id, createdAt, updatedAt, tags, metadata
+        case credDefId, revocRegId, revocRegDef, revocRegPrivate, revocStatusList, registryIndex
     }
 
     init(

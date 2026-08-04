@@ -1,40 +1,42 @@
 
 import Foundation
+import AnyCodable
 
-public struct ConnectionRecord: BaseRecord {
+public struct ConnectionRecord: Codable, BaseRecord {
     public var id: String
     public var createdAt: Date
-    var updatedAt: Date?
+    public var updatedAt: Date?
     public var tags: Tags?
+    public var metadata: [String : AnyCodable] = [:]
 
     public var state: ConnectionState
     public var role: ConnectionRole
 
-    var didDoc: DidDoc
-    var did: String
-    var verkey: String
+    public var didDoc: DidDoc
+    public var did: String
+    public var verkey: String
 
-    var theirDidDoc: DidDoc?
-    var theirDid: String?
+    public var theirDidDoc: DidDoc?
+    public var theirDid: String?
     public var theirLabel: String?
 
-    var invitation: ConnectionInvitationMessage?
-    var outOfBandInvitation: OutOfBandInvitation?
+    public var invitation: ConnectionInvitationMessage?
+    public var outOfBandInvitation: OutOfBandInvitation?
     public var alias: String?
-    var autoAcceptConnection: Bool?
-    var imageUrl: String?
-    var multiUseInvitation: Bool
+    public var autoAcceptConnection: Bool?
+    public var imageUrl: String?
+    public var multiUseInvitation: Bool
 
-    var threadId: String?
-    var mediatorId: String?
-    var errorMessage: String?
+    public var threadId: String?
+    public var mediatorId: String?
+    public var errorMessage: String?
 
     public static let type = "ConnectionRecord"
-}
 
-extension ConnectionRecord: Codable {
+
     enum CodingKeys: String, CodingKey {
-        case id, createdAt, updatedAt, state, role, didDoc, did, verkey, theirDidDoc, theirDid, theirLabel, invitation, outOfBandInvitation, alias, autoAcceptConnection, imageUrl, multiUseInvitation, threadId, mediatorId, errorMessage
+        case id, tags = "_tags", createdAt, updatedAt, metadata
+        case state, role, didDoc, did, verkey, theirDidDoc, theirDid, theirLabel, invitation, outOfBandInvitation, alias, autoAcceptConnection, imageUrl, multiUseInvitation, threadId, mediatorId, errorMessage
     }
 
     init(
@@ -145,5 +147,30 @@ extension ConnectionRecord: Codable {
         if role != expectedRole {
             throw AriesFrameworkError.frameworkError("Connection record has invalid role \(role). Expected role \(expectedRole).")
         }
+    }
+    
+    public func toMap() -> [String: Any?] {
+        return [
+            "id": self.id,
+            "createdAt": String.fromDate(self.createdAt),
+            "updatedAt": String.fromDate(self.updatedAt),
+            "state": self.state.description,
+            "role": self.role.description,
+            "did": self.did,
+            "didDoc": self.didDoc.toMap(),
+            "verkey": self.verkey,
+            "theirDidDoc": self.theirDidDoc?.toMap() ?? nil,
+            "theirDid": self.theirDid,
+            "theirLabel": self.theirLabel,
+            "invitation": self.invitation?.toMap() ?? nil,
+            "alias": self.alias,
+            "autoAcceptConnection": self.autoAcceptConnection,
+            "imageUrl": self.imageUrl,
+            "multiUseInvitation": self.multiUseInvitation,
+            "outOfBandInvitation": self.outOfBandInvitation?.toMap() ?? nil,
+            "threadId": self.threadId,
+            "mediatorId": self.mediatorId,
+            "errorMessage": self.errorMessage
+        ]
     }
 }

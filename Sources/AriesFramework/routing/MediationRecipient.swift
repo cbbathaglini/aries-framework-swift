@@ -25,7 +25,7 @@ class MediationRecipient {
     }
 
     func initialize(mediatorConnectionsInvite: String) async throws {
-        logger.debug("Initialize mediation with invitation: \(mediatorConnectionsInvite)")
+        logDebug("Initialize mediation with invitation: \(mediatorConnectionsInvite)")
 
         let (outOfBandInvitation, invitation) = try await InvitationUrlParser.parseUrl(mediatorConnectionsInvite)
         let recipientKey = try outOfBandInvitation?.invitationKey() ?? invitation?.recipientKeys?.first
@@ -39,9 +39,13 @@ class MediationRecipient {
         if let connection = await agent.connectionService.findByInvitationKey(recipientKey), connection.isReady() {
             try await requestMediationIfNecessry(connection: connection)
         } else {
+            let routing = try await self.getRouting()
             var connection = try await agent.connectionService.processInvitation(invitation,
-                outOfBandInvitation: outOfBandInvitation, routing: self.getRouting(), autoAcceptConnection: true)
-            let message = try await agent.connectionService.createRequest(connectionId: connection.id)
+                outOfBandInvitation: outOfBandInvitation, routing: routing, autoAcceptConnection: true)
+        
+            //let message : OutboundMessage = try await agent.connectionService.createRequest(connectionId: connection.id)
+            let message : OutboundMessage = try await agent.didExchangeService.createRequest(connectionId: connection.id) //remoção do connectionservice
+            print("mensagem mediador \(message)")
             try await agent.messageSender.send(message: message)
 
             if try await agent.connectionService.fetchState(connectionRecord: connection) != .Complete {
@@ -107,7 +111,11 @@ class MediationRecipient {
         DispatchQueue.main.async {
             self.pickupTimer = Timer.scheduledTimer(withTimeInterval: self.agent.agentConfig.mediatorPollingInterval, repeats: true) { [self] timer in
                 Task {
-                    try await self.pickupMessages(mediatorConnection: mediatorConnection)
+                    do {
+                        try await self.pickupMessages(mediatorConnection: mediatorConnection)
+                    } catch {
+                        self.logger.error("Mediator pickup failed: \(error.localizedDescription)")
+                    }
                 }
             }
         }
@@ -121,6 +129,7 @@ class MediationRecipient {
             try await agent.messageSender.send(message: message)
         } else if agent.agentConfig.mediatorPickupStrategy == .Implicit {
             let message = OutboundMessage(payload: TrustPingMessage(comment: "pickup", responseRequested: false), connection: mediatorConnection)
+            logDebug("Initiating implicit mediator pickup over websocket")
             try await agent.messageSender.send(message: message, endpointPrefix: "ws")
         } else {
             throw AriesFrameworkError.frameworkError("Unsupported mediator pickup strategy: \(agent.agentConfig.mediatorPickupStrategy)")
@@ -208,7 +217,7 @@ class MediationRecipient {
         let decoder = JSONDecoder()
         let message = try decoder.decode(BatchMessage.self, from: Data(messageContext.plaintextMessage.utf8))
 
-        logger.debug("Get \(message.messages.count) batch messages")
+        logDebug("Get \(message.messages.count) batch messages")
         let forwardedMessages = message.messages
         for forwardedMessage in forwardedMessages {
             try await agent.receiveMessage(forwardedMessage.message)
@@ -224,9 +233,9 @@ class MediationRecipient {
         let message = try decoder.decode(KeylistUpdateResponseMessage.self, from: Data(messageContext.plaintextMessage.utf8))
         for update in message.updated {
             if update.action == .add {
-                logger.info("Key \(update.recipientKey) added to keylist")
+                logDebug("Key \(update.recipientKey) added to keylist")
             } else if update.action == .remove {
-                logger.info("Key \(update.recipientKey) removed from keylist")
+                logDebug("Key \(update.recipientKey) removed from keylist")
             }
         }
         keylistUpdateDone = true

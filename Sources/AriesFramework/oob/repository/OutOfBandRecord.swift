@@ -1,12 +1,15 @@
 
 import Foundation
 import os
+import AnyCodable
 
 public struct OutOfBandRecord: BaseRecord {
     public var id: String
     var createdAt: Date
     var updatedAt: Date?
     public var tags: Tags?
+    public var metadata: [String : AnyCodable] = [:]
+    
 
     public var outOfBandInvitation: OutOfBandInvitation
     var role: OutOfBandRole
@@ -23,7 +26,8 @@ public struct OutOfBandRecord: BaseRecord {
 
 extension OutOfBandRecord: Codable {
     enum CodingKeys: String, CodingKey {
-        case id, createdAt, updatedAt, tags, outOfBandInvitation, role, state, reusable, autoAcceptConnection, mediatorId, reuseConnectionId
+        case id, createdAt, updatedAt, tags, metadata
+        case outOfBandInvitation, role, state, reusable, autoAcceptConnection, mediatorId, reuseConnectionId
     }
 
     public func getTags() -> Tags {

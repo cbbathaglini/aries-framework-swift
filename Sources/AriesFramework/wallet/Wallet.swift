@@ -2,8 +2,8 @@
 
 import Foundation
 import os
-import Askar
 import Base58Swift
+import Askar
 
 public struct DidInfo {
     let did: String
@@ -53,7 +53,7 @@ public class Wallet {
     }
 
     func initialize() async throws {
-        logger.info("Initializing wallet for \(self.agent.agentConfig.label)")
+        logDebug("Initializing wallet for \(self.agent.agentConfig.label)")
         if store != nil {
           logger.warning("Wallet already initialized.")
           try await close()
@@ -86,9 +86,9 @@ public class Wallet {
     }
 
     func close() async throws {
-        logger.debug("Closing wallet")
-        try await session?.close()
-        try await store?.close()
+        logDebug("Closing wallet")
+        try await session?.closeSession()
+        try await store?.closeStore()
 
         session = nil
         store = nil
@@ -107,8 +107,8 @@ public class Wallet {
                 throw AriesFrameworkError.frameworkError("remove() returned false")
             }
         } catch {
-            logger.debug("Wallet deletion failed: \(error)")
-            logger.debug("Trying to delete wallet file manually...")
+            logDebug("Wallet deletion failed: \(error)")
+            logDebug("Trying to delete wallet file manually...")
             try? FileManager.default.removeItem(at: URL(fileURLWithPath: storePath))
         }
 
@@ -127,14 +127,14 @@ public class Wallet {
                                 try keyFactory.fromSecretBytes(alg: .ed25519, bytes: seed!.data(using: .utf8)!)
 
         let publicKey = try key.toPublicBytes()
-        let verkey = Base58.base58Encode([UInt8](publicKey))
-        let did = Base58.base58Encode([UInt8](publicKey[0..<16]))
+        let verkey = Base58.encode([UInt8](publicKey))
+        let did = Base58.encode([UInt8](publicKey[0..<16]))
         do {
             try await session!.insertKey(name: verkey, key: key, metadata: nil, tags: nil, expiryMs: nil)
         } catch ErrorCode.Duplicate(_) {
             logger.error("createDid: Ignoring error since key already exists. verkey=\(verkey)")
         }
-        logger.debug("Created DID \(did) with verkey \(verkey)")
+        logDebug("Created DID \(did) with verkey \(verkey)")
 
         return (did, verkey)
     }
@@ -149,9 +149,7 @@ public class Wallet {
 
         var recipients: [JweRecipient] = []
         for recipientKey in recipientKeys {
-            guard let recipientKeyBytes = Base58.base58Decode(recipientKey) else {
-                throw AriesFrameworkError.frameworkError("Invalid recipient key: \(recipientKey)")
-            }
+            let recipientKeyBytes = try Base58.decode(recipientKey)
             let targetExchangeKey = try keyFactory.fromPublicBytes(alg: .ed25519, bytes: Data(recipientKeyBytes)).convertKey(alg: .x25519)
             if let senderVerkey = senderVerkey, let senderExchangeKey = senderExchangeKey {
                 let encryptedSender = try crypto.boxSeal(receiverKey: targetExchangeKey, message: senderVerkey.data(using: .utf8)!)
@@ -222,16 +220,14 @@ public class Wallet {
                     let recipientExchangeKey = try recipientKeyEntry.loadLocalKey().convertKey(alg: .x25519)
                     if sender != nil {
                         senderKey = String(data: try crypto.boxSealOpen(receiverKey: recipientExchangeKey, ciphertext: sender!), encoding: .utf8)
-                        guard let senderKeyBytes = Base58.base58Decode(senderKey!) else {
-                            throw AriesFrameworkError.frameworkError("Invalid sender key: \(senderKey!)")
-                        }
+                        let senderKeyBytes = try Base58.decode(senderKey!) 
                         let senderExchangeKey = try keyFactory.fromPublicBytes(alg: .ed25519, bytes: Data(senderKeyBytes)).convertKey(alg: .x25519)
                         payloadKey = try crypto.boxOpen(receiverKey: recipientExchangeKey, senderKey: senderExchangeKey, message: encryptedKey, nonce: iv!)
                     } else {
                         payloadKey = try crypto.boxSealOpen(receiverKey: recipientExchangeKey, ciphertext: encryptedKey)
                     }
                 } else {
-                    logger.debug("Recipient key \(kid!) not found in wallet")
+                    logDebug("Recipient key \(kid!) not found in wallet")
                 }
             }
 

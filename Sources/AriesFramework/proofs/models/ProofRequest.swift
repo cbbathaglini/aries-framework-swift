@@ -1,7 +1,7 @@
 
 import Foundation
 
-public struct ProofRequest {
+public struct ProofRequest : Codable{
     public let name: String
     public let version: String
     public let nonce: String
@@ -11,7 +11,7 @@ public struct ProofRequest {
     public let ver: String?
 }
 
-extension ProofRequest: Codable {
+extension ProofRequest{
     private enum CodingKeys: String, CodingKey {
         case name, version, nonce, requestedAttributes = "requested_attributes", requestedPredicates = "requested_predicates", nonRevoked = "non_revoked", ver
     }

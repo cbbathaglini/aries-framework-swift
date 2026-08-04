@@ -1,11 +1,13 @@
 
 import Foundation
+import AnyCodable
 
 public struct CredentialDefinitionRecord: BaseRecord {
     public var id: String
     var createdAt: Date
     var updatedAt: Date?
     public var tags: Tags?
+    public var metadata: [String : AnyCodable] = [:]
 
     public var schemaId: String
     public var credDefId: String
@@ -18,7 +20,8 @@ public struct CredentialDefinitionRecord: BaseRecord {
 
 extension CredentialDefinitionRecord: Codable {
     enum CodingKeys: String, CodingKey {
-        case id, createdAt, updatedAt, tags, schemaId, credDefId, credDef, credDefPriv, keyCorrectnessProof
+        case id, createdAt, updatedAt, tags, metadata
+        case schemaId, credDefId, credDef, credDefPriv, keyCorrectnessProof
     }
 
     init(

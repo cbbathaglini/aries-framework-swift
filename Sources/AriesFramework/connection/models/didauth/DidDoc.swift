@@ -3,11 +3,11 @@ import Foundation
 import DIDCore
 
 public struct DidDoc {
-    var context: String = "https://w3id.org/did/v1"
-    var id: String
-    var publicKey: [PublicKey]
-    var service: [DidDocService]
-    var authentication: [Authentication]
+    public var context: String = "https://w3id.org/did/v1"
+    public var id: String
+    public var publicKey: [PublicKey]
+    public var service: [DidDocService]
+    public var authentication: [Authentication]
 }
 
 extension DidDoc: Codable {
@@ -45,17 +45,27 @@ extension DidDoc: Codable {
             }
         }
     }
+    
+    public func toMap() -> [String: Any?] {
+        return [
+            "id": self.id,
+            "context": self.context,
+            "publicKey": self.publicKey,
+            "authentication": String.toStringList(self.authentication),
+            "service": DidDocService.toList(self.service)
+        ]
+    }
 }
 
 extension DidDoc {
     // Construct a new DidDoc from a DIDDocument of peerdid-swift
     public init(from didDocument: DIDDocument) throws {
         id = didDocument.id
-        if didDocument.verificationMethods.isEmpty {
+        if (didDocument.verificationMethod?.isEmpty ?? true) {
             throw AriesFrameworkError.frameworkError("No verification method found in DIDDocument")
         }
-        let keyData = try didDocument.verificationMethods.first!.material.convertToBase58(type: .authentication(.ed25519VerificationKey2018)).value
-        let recipientKey = String(data: keyData, encoding: .utf8)!
+        let keyData = try didDocument.verificationMethod?.first!.material.convertToBase58(type: .authentication(.ed25519VerificationKey2018)).value
+        let recipientKey = String(data: keyData!, encoding: .utf8)!
 
         publicKey = [Ed25119Sig2018(
             id: "\(id)#1",

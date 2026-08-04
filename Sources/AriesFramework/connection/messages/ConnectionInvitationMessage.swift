@@ -2,12 +2,12 @@
 import Foundation
 
 public class ConnectionInvitationMessage: AgentMessage {
-    var label: String
-    var imageUrl: String?
-    var did: String?
-    var recipientKeys: [String]?
-    var serviceEndpoint: String?
-    var routingKeys: [String]?
+    public var label: String
+    public var imageUrl: String?
+    public var did: String?
+    public var recipientKeys: [String]?
+    public var serviceEndpoint: String?
+    public var routingKeys: [String]?
     public static var type: String = "https://didcomm.org/connections/1.0/invitation"
 
     private enum CodingKeys: String, CodingKey {
@@ -65,5 +65,17 @@ public class ConnectionInvitationMessage: AgentMessage {
         let invitationJson = try JSONEncoder().encode(self)
         let encodedInvitation = invitationJson.base64EncodedString().base64ToBase64url()
         return "\(domain)?c_i=\(encodedInvitation)"
+    }
+    
+    public func toMap() -> [String: Any?] {
+        return [
+            "id": self.id,
+            "label": self.label,
+            "imageUrl": self.imageUrl,
+            "did": self.did,
+            "recipientKeys": self.recipientKeys,
+            "serviceEndpoint": self.serviceEndpoint,
+            "routingKeys": self.routingKeys
+        ]
     }
 }
