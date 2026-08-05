@@ -28,7 +28,7 @@ struct ReceivedPresentationDetailView: View {
                     ForEach(Array(presentations.enumerated()), id: \.offset) { index, presentation in
                         NavigationLink {
                             if let proof = proofs[index] {
-                                ProofDetailView(proof: proof)
+                                ProofDetailView(proof: proof, verifiedOverride: presentation.isVerified)
                             } else {
                                 ProgressView("Loading...")
                             }
