@@ -728,14 +728,14 @@ public class AnoncredsProofFormatService: ProofFormatService {
 
         for (name, matches) in credentialsForRequest.attributes {
             guard let first = matches.first else {
-                throw AriesFrameworkError.frameworkError("Unable to automatically select requested attributes.")
+                throw AriesFrameworkError.frameworkError(options.filterByNonRevocationRequirements == true ? "Nao ha credencial NAO-REVOGADA com o atributo solicitado \(name). Verifique se ainda existe uma credencial valida e ativa com esse atributo." : "Nao ha credencial com o atributo solicitado \(name). Verifique se a credencial foi emitida e contem esse atributo.")
             }
             selectedAttributes[name] = first
         }
 
         for (name, matches) in credentialsForRequest.predicates {
             guard let first = matches.first else {
-                throw AriesFrameworkError.frameworkError("Unable to automatically select requested predicates.")
+                throw AriesFrameworkError.frameworkError(options.filterByNonRevocationRequirements == true ? "Nao ha credencial NAO-REVOGADA que satisfaca o predicado solicitado \(name). Verifique se existe uma credencial valida e ativa que atenda ao predicado." : "Nao ha credencial que satisfaca o predicado solicitado \(name).")
             }
             selectedPredicates[name] = first
         }
