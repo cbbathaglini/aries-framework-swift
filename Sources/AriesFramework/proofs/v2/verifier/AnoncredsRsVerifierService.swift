@@ -102,6 +102,17 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
 
         let statusListUniffi = try Anoncreds.RevocationStatusList(json: statusListJson)
 
+        let timestampResult = try await verifyTimestamps(proof: proof, proofRequest: proofRequest)
+        guard timestampResult.verified else { return false }
+
+        var intervalOverrides: [String: [UInt64: UInt64]] = [:]
+        if let overrides = timestampResult.nonRevokedIntervalOverrides {
+            for item in overrides {
+                intervalOverrides[item.revocationRegistryDefinitionId] =
+                    [item.requestedFromTimestamp: item.overrideRevocationStatusListTimestamp]
+            }
+        }
+
         do {
             let verified = try Verifier().verifyPresentation(
                 presentation: presentation,
@@ -110,7 +121,7 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
                 credDefs: credDefsAnoncreds,
                 revRegDefs: revRegDefsMap,
                 revStatusLists: [statusListUniffi],
-                nonrevokeIntervalOverride: nil
+                nonrevokeIntervalOverride: intervalOverrides.isEmpty ? nil : intervalOverrides
             )
             return verified
         } catch {
