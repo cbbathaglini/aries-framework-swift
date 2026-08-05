@@ -586,6 +586,12 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
                     "anonCredsRevocationRegistryId": credential.revocationRegistryId ?? "",
                     "anonCredsCredentialRevocationId": revocationId
                 ])
+                credentialExchangeRecord.updateRevocationInfos(
+                    credRevId: revocationId,
+                    revRegId: credential.revocationRegistryId,
+                    revRegDefId: credentialExchangeRecord.revRegDefId
+                )
+                print("🔍 DIAG processCredential preenchendo credRevId=\(String(describing: credentialExchangeRecord.credRevId)) a partir da credential armazenada")
             }
         }
         
