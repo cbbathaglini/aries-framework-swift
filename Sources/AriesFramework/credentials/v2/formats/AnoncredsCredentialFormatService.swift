@@ -451,6 +451,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
        let decodedData = fromBase64ToString(attachment.data.base64)
        let anonCredsCredential = try JSONDecoder().decode(AnonCredsCredential.self, from: Data(decodedData.utf8))
         print("🔍 DIAG processCredential revoc_id=\(String(describing: anonCredsCredential.revocId)) rev_reg_id=\(String(describing: anonCredsCredential.revRegId)) credDef_id=\(anonCredsCredential.credDefId)")
+        print("🔍 DIAG processCredential RAW do attach v2: \(decodedData)")
 
        let credDefJson = try await agent.ledgerService.getCredentialDefinition(id: anonCredsCredential.credDefId)
        let anoncredsCredentialDefinition : AnonCredsCredentialDefinition = try JSONDecoder().decode(AnonCredsCredentialDefinition.self, from: Data(credDefJson.utf8))
