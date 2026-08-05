@@ -28,6 +28,7 @@ enum W3cTypeExpander {
 
     /// Expands the given types using the document's @context.
     public static func expandTypes(spec: ContextSpec, types: [String]) -> [String] {
+        print("🔍 DIAG [W3C] expandTypes - entrada types=\(types) contexts=\(spec.contexts)")
         // Build the input document: { "@context": [...], "type": [...] }
         let contextValue: Any = spec.contexts.map { $0.value }
         var document: [String: Any] = [
@@ -48,11 +49,16 @@ enum W3cTypeExpander {
             document["@context"] = contexts
         }
 
-        guard let expanded = try? JSONLD().expand(data: JSON.wrap(document)) else {
+        print("🔍 DIAG [W3C] expandTypes - documento=\(document)")
+        do {
+            let expanded = try JSONLD().expand(data: JSON.wrap(document))
+            let result = extractTypes(from: expanded)
+            print("🔍 DIAG [W3C] expandTypes - tipos expandidos=\(result)")
+            return result
+        } catch {
+            print("🔍 DIAG [W3C] expandTypes - ERRO ao expandir: \(error)")
             return []
         }
-
-        return extractTypes(from: expanded)
     }
 
     /// Extracts the expanded `@type` values from the JSON-LD expansion result.

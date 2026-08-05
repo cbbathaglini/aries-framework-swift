@@ -23,6 +23,7 @@ public class W3cCredentialService {
         jsonLdVerifiableCredential: W3cJsonLdVerifiableCredential
     ) async throws -> W3cCredentialRecord {
         let expandedTypes = try await w3cJsonLdCredentialService.getExpandedTypesForCredential(credential: jsonLdVerifiableCredential)
+        print("🔍 DIAG [W3C] storeCredentialW3cJsonLd - expandedTypes=\(expandedTypes)")
         print("verifiable: \(jsonLdVerifiableCredential)")
 
         let w3cCredential = W3cCredential(
