@@ -227,6 +227,7 @@ extension CredentialExchangeRecord: Codable {
         tags["connectionId"] = connectionId
         tags["state"] = self.state.rawValue
         tags["credentialIds"] = credentialIds.joined(separator: ",")
+        tags["role"] = self.role?.rawValue
 
         return tags
     }
