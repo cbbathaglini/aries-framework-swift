@@ -151,12 +151,18 @@ class CredentialHandler: ObservableObject, AgentDelegate {
                 )
 
             case .Done:
-                let verifiedText: String
-                if let isVerified = proofRecord.isVerified {
-                    verifiedText = isVerified ? "Yes" : "No"
-                } else {
-                    verifiedText = "Unknown"
+                var effectiveVerified = proofRecord.isVerified
+
+                if effectiveVerified == nil, let agent, !proofRecord.id.isEmpty {
+                    do {
+                        let stored = try await agent.proofRepository.getById(proofRecord.id)
+                        effectiveVerified = stored.isVerified
+                    } catch {
+                        effectiveVerified = proofRecord.isVerified
+                    }
                 }
+
+                let verifiedText = effectiveVerified.map { $0 ? "Yes" : "No" } ?? "Unknown"
 
                 notificationHandler.addNotification(
                     title: "Proof completed",
