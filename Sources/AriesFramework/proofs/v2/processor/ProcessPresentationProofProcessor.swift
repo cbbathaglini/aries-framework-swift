@@ -35,7 +35,7 @@ final class ProcessPresentationProofProcessor {
         
         
         let presentationMessage = message
-        let formatServices = try resolveFormatServices(from: presentationMessage)
+        let formatServices = try await resolveFormatServices(from: presentationMessage)
         
         var proofRecord = ProofExchangeRecord(
             connectionId: "connectionless-proof-presentation",
@@ -94,7 +94,7 @@ final class ProcessPresentationProofProcessor {
 
         try validate(proofRecord: proofRecord)
         
-        let formatServices = try resolveFormatServices(from: presentationMessage)
+        let formatServices = try await resolveFormatServices(from: presentationMessage, andAbandon: proofRecord)
         
         try await validateConnection(for: proofRecord, context: messageContext)
         proofRecord.connectionId = messageContext.connection?.id ?? proofRecord.connectionId
@@ -163,9 +163,12 @@ private extension ProcessPresentationProofProcessor {
         )
     }
 
-    func resolveFormatServices(from presentationMessage: PresentationMessageV2) throws -> [any ProofFormatService] {
+    func resolveFormatServices(from presentationMessage: PresentationMessageV2, andAbandon proofRecord: ProofExchangeRecord? = nil) async throws -> [any ProofFormatService] {
         let services = common.getFormatServicesFromMessage(presentationMessage.formats)
         guard !services.isEmpty else {
+            if var proofRecordToAbandon = proofRecord {
+                try await common.updateState(proofRecord: &proofRecordToAbandon, newState: .Abandoned)
+            }
             throw PresentationProblemReportErrorV2(
                 message: "Unable to process presentation. No supported formats.",
                 problemCode: "abandoned",
