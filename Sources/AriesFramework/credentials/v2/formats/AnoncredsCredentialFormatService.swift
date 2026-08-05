@@ -411,6 +411,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         )
 
         var credential = createCredentialReturn.credential
+        print("🔍 DIAG acceptRequest createCredentialReturn.credentialRevocationId=\(String(describing: createCredentialReturn.credentialRevocationId)) credential.revRegId=\(String(describing: credential.revRegId))")
         if let revocationId = createCredentialReturn.credentialRevocationId,
            let revocId = Int64(revocationId) {
             credential.revocId = revocId
