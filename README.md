@@ -8,15 +8,22 @@ Aries Framework Swift supports most of [AIP 1.0](https://github.com/hyperledger/
 
 ### Supported features
 - ✅ ([RFC 0160](https://github.com/hyperledger/aries-rfcs/blob/master/features/0160-connection-protocol/README.md)) Connection Protocol
+- ✅ ([RFC 0023](https://github.com/hyperledger/aries-rfcs/tree/main/features/0023-did-exchange)) DID Exchange Protocol (AIP 2.0)
 - ✅ ([RFC 0211](https://github.com/hyperledger/aries-rfcs/blob/master/features/0211-route-coordination/README.md)) Mediator Coordination Protocol
+- ✅ ([RFC 0212](https://github.com/hyperledger/aries-rfcs/tree/main/features/0212-pickup/README.md)) Message Pickup Protocol
 - ✅ ([RFC 0095](https://github.com/hyperledger/aries-rfcs/blob/master/features/0095-basic-message/README.md)) Basic Message Protocol
-- ✅ ([RFC 0036](https://github.com/hyperledger/aries-rfcs/blob/master/features/0036-issue-credential/README.md)) Issue Credential Protocol
-- ✅ ([RFC 0037](https://github.com/hyperledger/aries-rfcs/tree/master/features/0037-present-proof/README.md)) Present Proof Protocol
-  - Does not implement alternate begining (Prover begins with proposal)
-- ✅ HTTP, WebSocket and Bluetooth Transport
+- ✅ ([RFC 0048](https://github.com/hyperledger/aries-rfcs/blob/main/features/0048-trust-ping/README.md)) Trust Ping Protocol
+- ✅ ([RFC 0036](https://github.com/hyperledger/aries-rfcs/blob/master/features/0036-issue-credential/README.md)) Issue Credential Protocol (1.0)
+- ✅ ([RFC 0453](https://github.com/hyperledger/aries-rfcs/blob/main/features/0453-issue-credential-v2/README.md)) Issue Credential Protocol (2.0)
+- ✅ ([RFC 0037](https://github.com/hyperledger/aries-rfcs/tree/master/features/0037-present-proof/README.md)) Present Proof Protocol (1.0)
+  - Does not implement alternate beginning (Prover begins with proposal)
+- ✅ ([RFC 0454](https://github.com/hyperledger/aries-rfcs/blob/main/features/0454-present-proof-v2/README.md)) Present Proof Protocol (2.0)
+- ✅ ([RFC 0183](https://github.com/hyperledger/aries-rfcs/tree/main/features/0183-revocation-notification/README.md)) Revocation Notification Protocol (1.0)
+- ✅ ([RFC 0721](https://github.com/hyperledger/aries-rfcs/tree/main/features/0721-revocation-notification-v2/README.md)) Revocation Notification Protocol (2.0)
 - ✅ ([RFC 0434](https://github.com/hyperledger/aries-rfcs/blob/main/features/0434-outofband/README.md)) Out of Band Protocol (AIP 2.0)
 - ✅ ([RFC 0035](https://github.com/hyperledger/aries-rfcs/blob/main/features/0035-report-problem/README.md)) Report Problem Protocol
-- ✅ ([RFC 0023](https://github.com/hyperledger/aries-rfcs/tree/main/features/0023-did-exchange)) DID Exchange Protocol (AIP 2.0)
+- ✅ ([RFC 0234](https://github.com/hyperledger/aries-rfcs/blob/main/features/0234-signature-decorator/README.md)) Signature Decorator
+- ✅ HTTP and WebSocket Transport
 
 ### Not supported yet
 - ❌ ([RFC 0056](https://github.com/hyperledger/aries-rfcs/blob/main/features/0056-service-decorator/README.md)) Service Decorator
@@ -139,27 +146,6 @@ Another way to handle those requests is to implement your own `MessageHandler` c
     let messageHandler = MyOfferCredentialHandler()
     agent.dispatcher.registerHandler(handler: messageHandler)
 ```
-
-## Bluetooth support
-
-Aries Framework Swift supports phone to phone communication over Bluetooth.
-You will need to add `NSBluetoothAlwaysUsageDescription` key to the info.plist of your app to use Bluetooth.
-
-### How to use
-
-Verifier side:
-1. Call `try await agent.startBLE()` to create an endpoint over BLE. The endpoint has the form of "ble://aries/endpoint?uuid={uuid}".
-2. Create an oob-invitation and create a QR code with the invitation url. This invitation will use the endpoint created above even though the agent has a mediator connection. You should create an oob-invitation attaching a proof request message without handshake option. This allows the prover sends the proof directly to the verifier without preparing any endpoint.
-```swift
-let oob = try await agent!.oob.createInvitation(config: CreateOutOfBandInvitationConfig(handshake: false, messages: [message]))
-let invitationUrl = oob.outOfBandInvitation.toUrl(domain: "http://example.com")
-```
-3. Call `try? await agent.stopBLE()` after you finish verification.
-
-Prover side:
-- There is nothing you need to do to communicate over BLE on prover side. The agent will recognize the `ble://` scheme and connect to the verifier's device over BLE. The connection will be closed automatically after the message is sent.
-
-The sample app has sample codes that demonstrates proof exchange over Bluetooth.
 
 ## Sample App
 

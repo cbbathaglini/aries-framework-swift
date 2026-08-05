@@ -190,7 +190,6 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
                     )
                 }
                 
-                let tag = definition.tag
                 
                 let valueJsonData = try JSONEncoder().encode(definition.value)
                 let valueJson = try JSONSerialization.jsonObject(with: valueJsonData) as? [String: Any]
@@ -555,7 +554,6 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
             tags = queryFromRestrictions(restrictions)
         }
 
-        var jsontags = try tags.toJsonString()
         var credentials: [W3cCredentialRecord] = []
 
         if let tagsJson = try? tags.toJsonString() {
@@ -693,7 +691,6 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
             )
         }
 
-        let w3cCredential = try Anoncreds.W3cCredential(json: credentialW3cStr)
 
         if credential.credentialSubject.count > 1 {
             throw NSError(domain: "CredoError", code: 100, userInfo: [NSLocalizedDescriptionKey: "Credential subject must be an object, not an array."])

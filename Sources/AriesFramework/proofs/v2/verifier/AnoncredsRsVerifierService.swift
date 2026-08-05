@@ -19,7 +19,6 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
     }
     
     public func verifyProof(options: VerifyProofOptions) async throws -> Bool {
-        let proofRequest = options.proofRequest
         let presentationMessage = options.presentationMessage
         let requestMessage = options.requestMessage
         let proof = options.proof

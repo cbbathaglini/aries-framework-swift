@@ -65,18 +65,7 @@ public struct StoreCredential {
                 print("getQualifiedDidIndyDid(2): \(revocationRegistry.id)")
             }
 
-            let qualifiedDefinition = IndyIdentifiers.isUnqualifiedDidIndyRevocationRegistryDefinition(definition)
-                ? try IndyIdentifiers.getQualifiedDidIndyRevocationRegistryDefinition(definition, namespace: indyNamespace ?? "")
-                : definition
 
-            let qualifiedId = IndyIdentifiers.isUnqualifiedRevocationRegistryId(revocationRegistry.id)
-                ? try IndyIdentifiers.getQualifiedDidIndyDid(identifier: revocationRegistry.id, namespace: indyNamespace ?? "")
-                : revocationRegistry.id
-
-            let revocationRegistryInfo = RevocationRegistryInfo(
-                id: qualifiedId,
-                definition: qualifiedDefinition
-            )
 
         }
 

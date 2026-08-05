@@ -290,7 +290,6 @@ public class AnoncredsProofFormatService: ProofFormatService {
             print("item::::: \(item.credentialInfo.toJsonElement())")
         }
         
-        let selectedCredentials = anoncredsFormat ?? anoncredsSelected
 
         let format = ProofFormatSpec(
             attachmentId: attachmentId,
@@ -545,9 +544,6 @@ public class AnoncredsProofFormatService: ProofFormatService {
         print("requestJsonString: \(requestJsonString)")
         let proofRequest = try JSONDecoder().decode(AnonCredsProofRequest.self, from: Data(requestJsonString.utf8))
 
-        let anoncredsFormat: AnonCredsSelectedCredentials? = try FormatGeneric.getAnonCredsFormatGeneric(
-            from: proofFormats
-        )
         
         let options = AnonCredsGetCredentialsForProofRequestOptions(
             filterByNonRevocationRequirements: true
@@ -572,9 +568,6 @@ public class AnoncredsProofFormatService: ProofFormatService {
 
         let jsonString = try requestAttachment.getDataAsJson()
         let proofRequest = try JSONDecoder().decode(AnonCredsProofRequest.self, from: Data(jsonString.utf8))
-        let anoncredsFormat: AnonCredsSelectedCredentials? = try FormatGeneric.getAnonCredsFormatGeneric(
-            from: proofFormats
-        )
         let options = AnonCredsGetCredentialsForProofRequestOptions(
             filterByNonRevocationRequirements: true
         )

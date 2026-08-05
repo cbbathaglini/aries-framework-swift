@@ -41,32 +41,6 @@ final class AckProofProcessor {
 
         proofRecord.connectionId = connection.id
 
-        // Retrieve last sent and received messages (for consistency validation)
-        let lastSentMessage: PresentationMessageV2? = try await agent.didCommMessageRepository.getTypedAgentMessage(
-            associatedRecordId: proofRecord.id,
-            messageType: PresentationMessageV2.type,
-            role: .Sender
-        )
-
-        let lastReceivedMessage: RequestPresentationMessageV2? = try await agent.didCommMessageRepository.getTypedAgentMessage(
-            associatedRecordId: proofRecord.id,
-            messageType: RequestPresentationMessageV2.type,
-            role: .Receiver
-        )
-
-        // Validate current state and protocol version
-        try validate(proofRecord: proofRecord)
-
-        // (Optional) Connection or out-of-band validation
-        /*
-        try await agent.connectionService.assertConnectionOrOutOfBandExchange(
-            messageContext: messageContext,
-            lastReceivedMessage: lastReceivedMessage,
-            lastSentMessage: lastSentMessage,
-            expectedConnectionId: proofRecord.connectionId
-        )
-        */
-
         try await common.updateState(proofRecord: &proofRecord, newState: .Done)
 
         logDebug("[end] ACK processed successfully — proof \(proofRecord.id) is now \(proofRecord.state.rawValue)")

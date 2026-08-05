@@ -223,7 +223,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         let credentialDefinitionJson = cd.replacingOccurrences(of: "\\\"", with: "\"")
 
         let linkSecret = try await agent.anoncredsService.getLinkSecret(id: agent.wallet.linkSecretId!)
-        let holderDid = try await getHolderDid(credentialRecord: credentialExchangeRecord)
 
         let credentialDefinitionUniffi: CredentialDefinition
         do {
@@ -252,7 +251,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         }
 
 
-        let encoder = JSONEncoder()
         do {
             let credentialRequestTupleJsonElement = try convertJsonStringToJsonObject(credReqTuple.metadata.toJson())
             credentialExchangeRecord.metadata[MetadataKeys.anonCredsCredentialRequestMetadataKey] = credentialRequestTupleJsonElement
@@ -385,7 +383,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
                 credentialRevocationId: createCredentialReturn.credentialRevocationId
             )
 
-            let encoder = JSONEncoder()
             do {
                 let encodedMetadata = try JSONEncoder().encode(metadata)
                 let anonCredsCredentialMetadataJson = try JSONSerialization.jsonObject(with: encodedMetadata, options: [])
@@ -514,7 +511,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
             throw CredoError("❌ Invalid credentialRequestMetadata or missing key")
         }
 
-        let finalMetadata = credentialRequestMetadataAnoncreds
 
        var revocationRegistryInfo: RevocationRegistryInfo?
        if let revRegResult = revocationRegistryResult,
@@ -551,7 +547,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
                                     metadata: nil
                                )
 
-        if let revRegId = anonCredsCredential.revRegId {
+        if anonCredsCredential.revRegId != nil {
             let credential = try await agent.anonCredsHolderService.getCredential(credentialId: credentialId)
 
             let metadata = AnonCredsCredentialMetadata(
@@ -654,7 +650,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
             throw CredoError("Missing anoncreds credential offer in shouldAutoRespondToProposal")
         }
         
-        guard let requestOffer: AnonCredsCredentialRequest = try? FormatDataUtil.parseAttachmentData(requestAttachment, as: AnonCredsCredentialRequest.self) else {
+        guard (try? FormatDataUtil.parseAttachmentData(requestAttachment, as: AnonCredsCredentialRequest.self)) != nil else {
             throw CredoError("Missing anoncreds credential request in shouldAutoRespondToProposal")
         }
         
@@ -717,7 +713,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
             linkedAttachments: input.linkedAttachments
         )
         
-        let attachments = credentialLinkedAttachmentsResult.attachments
         let previewAttributes = credentialLinkedAttachmentsResult.previewAttributes
 
         guard let previewAttributes else {

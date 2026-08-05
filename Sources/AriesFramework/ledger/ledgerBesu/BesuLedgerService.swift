@@ -550,7 +550,6 @@ public class BesuLedgerService: LedgerService {
 
     public func getRevocationRegistryDelta(id: String, to: Int, from: Int) async throws -> (String, Int) {
         let client = try ledgerClient ?? getLedgerClient(network: id)
-        let revocationRD = try await resolveRevocationRegistryDefinition(client: client, revRegDefId: id)
 
         ensureRevRegId(id)
 
@@ -682,8 +681,6 @@ public class BesuLedgerService: LedgerService {
         }
 
         private static func getFile(path: String) -> [String: AnyObject]? {
-            let cleanPath = path.replacingOccurrences(of: "/", with: "")
-                .replacingOccurrences(of: ".json", with: "")
 
             let directory = (path as NSString).deletingLastPathComponent
             let fileName = ((path as NSString).lastPathComponent as NSString).deletingPathExtension

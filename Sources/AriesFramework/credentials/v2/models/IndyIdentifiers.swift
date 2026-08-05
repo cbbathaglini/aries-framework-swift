@@ -235,7 +235,7 @@ class IndyIdentifiers {
             let (namespaceIdentifier, schemaSeqNo, tag) = try parseIndyCredentialDefinitionId(identifier)
             return "did:indy:\(namespace):\(namespaceIdentifier)/anoncreds/v0/CLAIM_DEF/\(schemaSeqNo)/\(tag)"
         } else if IndyIdentifiers.isUnqualifiedRevocationRegistryId(identifier) {
-            let (did, namespaceIdentifier, schemaSeqNo, credentialDefinitionTag, revocationRegistryTag, _) = try parseIndyRevocationRegistryId(identifier)
+            let (_, namespaceIdentifier, schemaSeqNo, credentialDefinitionTag, revocationRegistryTag, _) = try parseIndyRevocationRegistryId(identifier)
             return "did:indy:\(namespace):\(namespaceIdentifier)/anoncreds/v0/REV_REG_DEF/\(schemaSeqNo)/\(credentialDefinitionTag)/\(revocationRegistryTag)"
         } else if IndyIdentifiers.isUnqualifiedIndyDid(identifier) {
         

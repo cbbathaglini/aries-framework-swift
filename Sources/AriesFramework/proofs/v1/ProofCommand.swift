@@ -145,7 +145,6 @@ public class ProofCommand {
     public func getRequestedCredentialsForProofRequest(proofRecordId: String) async throws -> RetrievedCredentials {
         let record = try await agent.proofRepository.getById(proofRecordId)
         
-        let recordMessageType = try await agent.didCommMessageRepository.getSingleByQuery("{\"associatedRecordId\": \"\(proofRecordId)\"}")
         
         logDebug("Select Version 1.0")
         let proofRequestMessageJson = try await agent.didCommMessageRepository.getAgentMessage(

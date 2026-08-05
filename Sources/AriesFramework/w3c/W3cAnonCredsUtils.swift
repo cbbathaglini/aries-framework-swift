@@ -140,7 +140,7 @@ class W3cAnonCredsUtils {
     }
 
     static func getAnonCredsTagsFromRecord(record: W3cCredentialRecord) -> AnonCredsCredentialTags? {
-        guard let metadata = record.metadata[MetadataKeys.w3cAnonCredsCredentialMetadataKey] else {
+        guard record.metadata[MetadataKeys.w3cAnonCredsCredentialMetadataKey] != nil else {
             return nil
         }
 

@@ -93,9 +93,6 @@ public struct RequestedCredentialsAnoncreds: Codable {
             ])
         }
 
-        // Para debug: visualize o JSON final legível
-        let prettyData = try JSONSerialization.data(withJSONObject: serializableDict, options: .prettyPrinted)
-        let jsonString = String(data: prettyData, encoding: .utf8)
 
         let jsonData = try JSONSerialization.data(withJSONObject: serializableDict, options: [])
         let decoder = JSONDecoder()

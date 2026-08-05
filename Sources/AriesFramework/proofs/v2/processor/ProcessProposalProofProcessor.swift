@@ -93,30 +93,9 @@ private extension ProcessProposalProofProcessor {
         messageContext: InboundMessageContext,
         formatServices: [any ProofFormatService]
     ) async throws {
-        let lastReceivedMessage: ProposePresentationMessageV2 = try await didCommMessageRepository.getTypedAgentMessage(
-            associatedRecordId: record.id,
-            messageType: ProposePresentationMessageV2.type,
-            role: .Receiver
-        ) ?? { throw CredoError("Last received proposal message not found") }()
-
-        let lastSentMessage: RequestPresentationMessageV2 = try await didCommMessageRepository.getTypedAgentMessage(
-            associatedRecordId: record.id,
-            messageType: RequestPresentationMessageV2.type,
-            role: .Sender
-        ) ?? { throw CredoError("Last sent request message not found") }()
 
         try record.assertProtocolVersion(ProofConstants.PROTOCOL_VERSION_V2)
         try record.assertState(.RequestSent)
-
-        // (Optional) Validate connection or OOB exchange
-        /*
-        try await agent.connectionService.assertConnectionOrOutOfBandExchange(
-            messageContext: messageContext,
-            lastReceivedMessage: lastReceivedMessage,
-            lastSentMessage: lastSentMessage,
-            expectedConnectionId: record.connectionId
-        )
-        */
 
         try await proofFormatCoordinator.processProposal(
             proofRecord: record,

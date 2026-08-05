@@ -35,7 +35,6 @@ final class ProcessPresentationProofProcessor {
         
         
         let presentationMessage = message
-        let formatServices = try resolveFormatServices(from: presentationMessage)
         
         var proofRecord = ProofExchangeRecord(
             connectionId: "connectionless-proof-presentation",
@@ -50,14 +49,6 @@ final class ProcessPresentationProofProcessor {
         var verifierRecord : VerifierRecord = try await agent.verifierRepository.getByGlobalThreadId(
             globalThreadId: threadId)
         
-        let lastSentMessage : RequestPresentationMessageV2 = verifierRecord.requestMessage!
-
-        let result : ProcessPresentationReturn = try await proofFormatCoordinator.processPresentation(
-            proofRecord: &proofRecord,
-            presentationMessage: presentationMessage,
-            requestMessage: lastSentMessage,
-            formatServices: formatServices
-        )
 
             
         let presentationVerifier = PresentationVerifier(

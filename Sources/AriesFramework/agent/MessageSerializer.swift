@@ -42,7 +42,7 @@ public class MessageSerializer {
 
 
     public static func encodeToString(message: AgentMessage) -> String? {
-        guard let serializer = serializers[message.type] else {
+        guard serializers[message.type] != nil else {
             logger.error("Message type \(message.type) is not registered for JSON encoding")
             return nil
         }

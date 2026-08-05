@@ -53,7 +53,7 @@ public class RevocationRegistries {
         for credential in referentCredentials {
             guard
                 let referent = credential["referent"] as? String,
-                let type = credential["type"] as? String,
+                let _ = credential["type"] as? String,
                 let selected = credential["selectedCredential"],
                 let nonRevoked = credential["nonRevoked"] as? AnonCredsNonRevokedInterval
             else {
@@ -198,7 +198,6 @@ public class RevocationRegistries {
                     )
                     
                     let statusList = result.revocationStatusList
-                    let metadataStatus = result.resolutionMetadata
                     
                     guard let statusList else {
                         throw NSError(

@@ -30,7 +30,7 @@ public class EthrAnonCredsRegistry: AnonCredsRegistry {
             throw AnonCredsError("Schema id não suportado por EthrAnonCredsRegistry: \(schemaId)")
         }
 
-        let (name, version) = parseEthrSchemaId(schemaId)
+        let (_, _) = parseEthrSchemaId(schemaId)
         let (rawJson, _) = try await agent.ledgerService.getSchema(schemaId: schemaId)
         let jsonData = rawJson.data(using: .utf8)!
         let jsonElement = try JSONDecoder().decode(FetchSchemaReturn.self, from: jsonData)
@@ -78,13 +78,11 @@ public class EthrAnonCredsRegistry: AnonCredsRegistry {
         
         revocationRegistryResult.revocationRegistryDefinitionId = revocationRegistryDefinitionId
         
-        guard
-            let revRegId = revocationRegistryResult.revocationRegistryDefinitionId
-        else {
+        guard revocationRegistryResult.revocationRegistryDefinitionId != nil else {
             throw CredoError("Invalid revocation registry definition response")
         }
 
-        guard let credentialDefinitionId = extractCredentialDefinitionId(from: revocationRegistryDefinitionId) else {
+        guard extractCredentialDefinitionId(from: revocationRegistryDefinitionId) != nil else {
             throw CredoError("Could not extract credential definition ID")
         }
 
