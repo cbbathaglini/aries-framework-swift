@@ -21,7 +21,6 @@ public class W3cJsonLdCredentialService {
     public func getExpandedTypesForCredential(
         credential: W3cJsonLdVerifiableCredential
     ) throws -> [String: [String]] {
-        print("credential2 => \(credential)")
 
         let contextList = credential.context
         let types = credential.type
