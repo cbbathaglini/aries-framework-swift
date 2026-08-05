@@ -31,7 +31,7 @@ public final class CredentialFormatCoordinator {
     
         let credentialFormats = params.credentialFormats
         let formatServices = params.formatServices
-        var credentialRecord = params.credentialRecord
+        let credentialRecord = params.credentialRecord
         let comment = params.comment
         let goalCode = params.goalCode
         let goal = params.goal
@@ -108,7 +108,7 @@ public final class CredentialFormatCoordinator {
     public func acceptProposal(params: AcceptProposalParams) async throws
     -> (OfferCredentialMessageV2)
     {
-        var credentialExchangeRecord = params.credentialRecord
+        let credentialExchangeRecord = params.credentialRecord
             
         var formats: [Format] = []
         var offerAttachments: [Attachment] = []
@@ -154,7 +154,7 @@ public final class CredentialFormatCoordinator {
             credentialPreview = CredentialPreviewV2(attributes: [])
         }
         
-        var message = OfferCredentialMessageV2(
+        let message = OfferCredentialMessageV2(
             formats: formats,
             offerAttachments: offerAttachments,
             goalCode: params.goalCode,
@@ -184,7 +184,7 @@ public final class CredentialFormatCoordinator {
         var offerAttachments: [Attachment] = []
         var credentialPreview: CredentialPreviewV2? = nil
         
-        var credentialExchangeRecord = params.credentialRecord
+        let credentialExchangeRecord = params.credentialRecord
         let credentialFormat = params.credentialFormats
         
         for formatService in formatServices {
@@ -264,7 +264,7 @@ public final class CredentialFormatCoordinator {
     public func acceptOffer(params: AcceptOfferParams) async throws
     -> RequestCredentialMessageV2
     {
-        var credentialExchangeRecord = params.credentialRecord
+        let credentialExchangeRecord = params.credentialRecord
         logDebug("credentialExchangeRecord: \(credentialExchangeRecord)")
 
         var formats: [Format] = []

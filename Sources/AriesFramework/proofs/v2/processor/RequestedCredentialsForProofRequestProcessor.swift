@@ -25,8 +25,8 @@ final class RequestedCredentialsForProofRequestProcessor {
         let predicates = try await fetchRequestedPredicates(for: anoncredsProofRequest, credentialW3cId: credentialW3cId)
 
         var retrieved = RetrievedCredentialsAnonCreds()
-        retrieved.requestedAttributes = try await attributes
-        retrieved.requestedPredicates = try await predicates
+        retrieved.requestedAttributes = attributes
+        retrieved.requestedPredicates = predicates
 
         logDebug("[end] Successfully retrieved credentials for proof request \(anoncredsProofRequest.name)")
         return retrieved

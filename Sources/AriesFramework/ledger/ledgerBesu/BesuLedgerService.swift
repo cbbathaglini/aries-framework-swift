@@ -91,12 +91,8 @@ public class BesuLedgerService: LedgerService {
                 continue
             }
             
-            do {
-                let config = try ContractConfigBesu.loadFromFile(address: address, specPath: specPath)
-                configs.append(config)
-            } catch {
-                logger.error("❌ Failed to load contract spec \(specPath): \(error.localizedDescription)")
-            }
+            let config = ContractConfigBesu.loadFromFile(address: address, specPath: specPath)
+            configs.append(config)
         }
         return configs
     }
@@ -365,7 +361,7 @@ public class BesuLedgerService: LedgerService {
     {
         let start = Date()
 
-        if let hit = try await schemaJsonCache.getIfFreshWithMeta(schemaId) {
+        if let hit = await schemaJsonCache.getIfFreshWithMeta(schemaId) {
             logDebug("[DISK CACHE HIT][SCHEMA] schemaId=\(schemaId) expiresAt=\(hit.expiresAtDate) took \(Int(Date().timeIntervalSince(start)*1000))ms")
             return hit
         }
@@ -393,23 +389,12 @@ public class BesuLedgerService: LedgerService {
         return hit
     }
 
-//    public func getCredentialDefinitionVdr(credentialId id: String) async throws -> indy_besu_vdr_uniffi.CredentialDefinition {
-//        let client = try ledgerClient ?? getLedgerClient(network: id)
-//        do {
-//            return try await resolveCredentialDefinition(client: client, id: id)
-//        } catch {
-//            logger.error("error cred def >>> \(error.localizedDescription)")
-//            throw NSError(domain: "LedgerError", code: 3,
-//                          userInfo: [NSLocalizedDescriptionKey: "Credential definition not found"])
-//        }
-//    }
-    
     public func getCredentialDefinitionVdr(credentialId id: String) async throws -> indy_besu_vdr_uniffi.CredentialDefinition {
         let start = Date()
         let ttlDays = credDefTtlDaysFor(id)
         let cache = credDefVdrCacheFor(id)
 
-        if let hit = try await cache.getIfFreshWithMeta(id) {
+        if let hit = await cache.getIfFreshWithMeta(id) {
             logDebug("[DISK CACHE HIT] getCredentialDefinitionVdr(\(id)) ttlDays=\(ttlDays) expiresAt=\(hit.expiresAtDate) took \(Int(Date().timeIntervalSince(start)*1000))ms")
             return hit.value.toVdr()
         }
@@ -437,7 +422,7 @@ public class BesuLedgerService: LedgerService {
         let ttlDays = credDefTtlDaysFor(id)
         let cache = credDefJsonCacheFor(id)
 
-        if let hit = try await cache.getIfFreshWithMeta(id) {
+        if let hit = await cache.getIfFreshWithMeta(id) {
             logDebug("[DISK CACHE HIT] getCredentialDefinition(\(id)) ttlDays=\(ttlDays) expiresAt=\(hit.expiresAtDate) took \(Int(Date().timeIntervalSince(start)*1000))ms")
             return hit.value
         }
@@ -566,7 +551,6 @@ public class BesuLedgerService: LedgerService {
     public func getRevocationRegistryDelta(id: String, to: Int, from: Int) async throws -> (String, Int) {
         let client = try ledgerClient ?? getLedgerClient(network: id)
         let revocationRD = try await resolveRevocationRegistryDefinition(client: client, revRegDefId: id)
-        //logDebug("revocationRD: \(revocationRD)")
 
         ensureRevRegId(id)
 

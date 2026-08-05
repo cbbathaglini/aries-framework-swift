@@ -153,7 +153,7 @@ public class RevocationNotificationServiceV2 {
                 credentialRecord = try await credentialExchangeRepository.getByCredentialRevocationId(credentialRevocationId)
             }
 
-            guard var record = credentialRecord else {
+            guard let record = credentialRecord else {
                 throw CredoError("Not found credential record by CredentialRevocationId and RevocationRegistryId")
             }
 

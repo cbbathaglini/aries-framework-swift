@@ -86,7 +86,7 @@ class RequestsEquals {
                 return false
             }
 
-            var attrsA = Array(a.requestedAttributes.values)
+            let attrsA = Array(a.requestedAttributes.values)
             var attrsB = Array(b.requestedAttributes.values)
 
             if attrsA.count != attrsB.count { return false }
@@ -104,7 +104,7 @@ class RequestsEquals {
                 }
             }
 
-            var predsA = Array(a.requestedPredicates.values)
+            let predsA = Array(a.requestedPredicates.values)
             var predsB = Array(b.requestedPredicates.values)
 
             if predsA.count != predsB.count { return false }

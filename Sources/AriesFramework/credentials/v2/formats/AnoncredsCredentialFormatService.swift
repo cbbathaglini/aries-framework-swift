@@ -41,7 +41,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         ) async throws -> CredentialFormatCreateProposalReturn {
         let format = Format(format: AnoncredsCredentialFormatService.ANONCREDS_CREDENTIAL_FILTER)
         
-        var credentialExchangeRecord = credentialExchangeRecord
+        let credentialExchangeRecord = credentialExchangeRecord
         logDebug("credentialFormats------- \(String(describing: credentialFormats))")
         
         guard let anoncredsFormat: AnonCredsProposeCredentialFormat =
@@ -114,7 +114,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         credentialRecord: CredentialExchangeRecord,
         proposalAttachments: Attachment
     ) async throws -> CredentialFormatCreateOfferReturn {
-        //logDebug("credentialFormats------- \(credentialFormats ?? [:])")
 
        let anoncredsFormat: AnoncredsCredentialFormat = try FormatGeneric.getAnonCredsFormatGeneric(from: credentialFormats)
         
@@ -158,7 +157,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         attachmentId: String?
     ) async throws -> CredentialFormatCreateOfferReturn {
         
-        //print("credentialFormats------- \(String(describing: credentialFormats))")
 
         let anoncredsFormat: AnoncredsCredentialFormat = try FormatGeneric.getAnonCredsFormatGeneric(from: credentialFormats)
 
@@ -185,7 +183,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         attachment: Attachment,
         credentialExchangeRecord: CredentialExchangeRecord
     ) async throws {
-        //logDebug("Processing anoncreds credential offer for credential record \(credentialExchangeRecord.id)")
 
         let offer = try AnonCredsCredentialOffer.fromAttachment(attachment)
 
@@ -208,7 +205,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         
         logDebug("Processing anoncreds credential offer for credential record \(credentialExchangeRecord.id)")
 
-        var credentialExchangeRecord = credentialExchangeRecord
+        let credentialExchangeRecord = credentialExchangeRecord
         let offer = try AnonCredsCredentialOffer.fromAttachment(attachment)
 
         guard !offer.schemaId.isEmpty, !offer.credDefId.isEmpty else {
@@ -220,7 +217,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
 
         let credentialOfferJson = try offerCredentialMessageV2.getCredentialOfferAttach(attachment.id)
         let credentialOffer = try CredentialOffer(json: credentialOfferJson)
-        //logDebug("credentialOffer: \(credentialOffer.toJson())")
 
         let cd = try await agent.ledgerService.getCredentialDefinition(id: offer.credDefId)
         
@@ -250,25 +246,21 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
                 linkSecretId: agent.wallet.linkSecretId!,
                 credOffer: credentialOffer
             )
-            //logDebug("credReqTuple: \(credReqTuple)")
         } catch {
             //logger.error("error --->>>>> : \(error.localizedDescription)")
             throw error
         }
 
-        //logDebug("credReqTuple.metadata: \(credReqTuple.metadata.toJson())")
 
         let encoder = JSONEncoder()
         do {
             let credentialRequestTupleJsonElement = try convertJsonStringToJsonObject(credReqTuple.metadata.toJson())
             credentialExchangeRecord.metadata[MetadataKeys.anonCredsCredentialRequestMetadataKey] = credentialRequestTupleJsonElement
             
-            //logDebug("credentialRequestTupleJsonElement: \(credentialRequestTupleJsonElement.description)")
             let encodedMetadata = try JSONEncoder().encode(AnonCredsCredentialMetadata(
                 schemaId: offer.schemaId,
                 credentialDefinitionId: offer.credDefId
             ))
-            //logDebug("encodedMetadata: \(encodedMetadata.description)")
             
             let anonCredsCredentialMetadataJson = try JSONSerialization.jsonObject(with: encodedMetadata, options: [])
             credentialExchangeRecord.metadata[MetadataKeys.anonCredsCredentialMetadataKey] = AnyCodable(anonCredsCredentialMetadataJson)
@@ -278,20 +270,17 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         }
         
     
-//        logDebug("credentialExchangeRecord: \(credentialExchangeRecord)")
-//        logDebug("credentialExchangeRecord.metadata: \(credentialExchangeRecord.metadata)")
 
         let format = Format(
             attachId: attachmentId ?? CredentialExchangeRecord.generateId(),
             format: AnoncredsCredentialFormatService.ANONCREDS_CREDENTIAL_REQUEST
         )
 
-        let attach = try Attachment.fromData(
+        let attach = Attachment.fromData(
             credReqTuple.request.toJson().data(using: .utf8)!,
             id: format.attachId
         )
 
-        //try await agent.credentialExchangeRepository.save(credentialExchangeRecord)
         
         return CredentialFormatCreateReturn(
             attachment: attach,
@@ -322,7 +311,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         attachmentId: String?
     ) async throws -> CredentialFormatCreateReturn {
 
-        var credentialExchangeRecord = credentialExchangeRecord
+        let credentialExchangeRecord = credentialExchangeRecord
         
         guard let credentialAttributes = credentialExchangeRecord.credentialAttributes else {
             throw CredoError("Missing required credential attribute values on credential record with id \(credentialExchangeRecord.id)")
@@ -440,7 +429,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         requestAppendAttachments: [Attachment]?
     ) async throws{
         
-        var credentialExchangeRecord = credentialExchangeRecord
+        let credentialExchangeRecord = credentialExchangeRecord
        
         guard let credentialRequestMetadata = credentialExchangeRecord.metadata[MetadataKeys.anonCredsCredentialRequestMetadataKey] else {
            throw CredoError("Missing required request metadata for credential exchange with id \(credentialExchangeRecord.id)")
@@ -455,7 +444,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
        let anonCredsCredential = try JSONDecoder().decode(AnonCredsCredential.self, from: Data(decodedData.utf8))
 
        let credDefJson = try await agent.ledgerService.getCredentialDefinition(id: anonCredsCredential.credDefId)
-       var anoncredsCredentialDefinition : AnonCredsCredentialDefinition = try JSONDecoder().decode(AnonCredsCredentialDefinition.self, from: Data(credDefJson.utf8))
+       let anoncredsCredentialDefinition : AnonCredsCredentialDefinition = try JSONDecoder().decode(AnonCredsCredentialDefinition.self, from: Data(credDefJson.utf8))
         
        let schemaTuple = try await agent.ledgerService.getSchema(schemaId: anonCredsCredential.schemaId)
        let schemaData = Data(schemaTuple.0.utf8)
@@ -711,7 +700,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
     
     
     private func createAnonCredsOffer(_ input: CreateAnoncredsOffer) async throws -> CredentialFormatCreateOfferReturn {
-        var credentialExchangeRecord = input.credentialExchangeRecord
+        let credentialExchangeRecord = input.credentialExchangeRecord
         let revocationRegistryDefinitionId = input.revocationRegistryDefinitionId
         let credentialDefinitionId = input.credentialDefinitionId
         let revocationRegistryIndex = input.revocationRegistryIndex

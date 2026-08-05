@@ -104,7 +104,6 @@ public class GetCredentialsForProofRequestReferent {
                         )
                         
 //                        if(rev.isRevoked){
-//                            logDebug("Credential is revoked")
 //                        }
                         
                         return AnonCredsRequestedAttributeMatch(

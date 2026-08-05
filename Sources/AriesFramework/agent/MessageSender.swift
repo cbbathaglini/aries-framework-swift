@@ -37,7 +37,6 @@ public class MessageSender {
 
     func decorateMessage(_ message: OutboundMessage) -> AgentMessage {
         let agentMessage = message.payload
-//        if agent.agentConfig.useLegacyDidSovPrefix {
 //            agentMessage.replaceNewDidCommPrefixWithLegacyDidSov()
 //        }
 
@@ -133,7 +132,6 @@ public class MessageSender {
         var recipientKeys = keys.recipientKeys
         for routingKey in keys.routingKeys {
             let forwardMessage = ForwardMessage(to: recipientKeys[0], message: encryptedMessage)
-//            if agent.agentConfig.useLegacyDidSovPrefix {
 //                forwardMessage.replaceNewDidCommPrefixWithLegacyDidSov()
 //            }
             recipientKeys = [routingKey]

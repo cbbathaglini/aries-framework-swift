@@ -85,7 +85,7 @@ public final class CredentialServiceV2 {
         
         let connection = messageContext.connection
         
-        var credentialRecord = try await agent.credentialExchangeRepository.getByThreadAndRole(
+        let credentialRecord = try await agent.credentialExchangeRepository.getByThreadAndRole(
             threadId: proposalMessage.threadId,
             role: CredentialRole.issuer
         )
@@ -96,23 +96,10 @@ public final class CredentialServiceV2 {
         }
 
         if var rec = credentialRecord {
-            let proposalMsg = try await agent.didCommMessageRepository.getTypedAgentMessage(
-                associatedRecordId: rec.id,
-                messageType: ProposeCredentialMessageV2.type,
-                role: DidCommMessageRole.Receiver
-            ) as ProposeCredentialMessageV2?
-
-            let offerMsg = try await didCommMessageRepository.getTypedAgentMessage(
-                associatedRecordId: rec.id,
-                messageType: OfferCredentialMessageV2.type,
-                role: DidCommMessageRole.Sender
-            ) as OfferCredentialMessageV2?
-
             try rec.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
             try rec.assertState(CredentialState.OfferSent)
 
             //[TODO]
-//            try await agent.connectionService.assertConnectionOrOutOfBandExchange(
 //                messageContext: messageContext,
 //                lastReceivedMessage: proposalMsg,
 //                lastSentMessage: offerMsg,
@@ -140,9 +127,8 @@ public final class CredentialServiceV2 {
         }
 
         //[TODO]
-        //try await agent.connectionService.assertConnectionOrOutOfBandExchange(messageContext: messageContext)
 
-        var newRecord = CredentialExchangeRecord(
+        let newRecord = CredentialExchangeRecord(
             connectionId: connection?.id ?? "unknown",
             threadId: proposalMessage.threadId,
             parentThreadId: proposalMessage.thread?.parentThreadId,
@@ -280,7 +266,7 @@ public final class CredentialServiceV2 {
         
         logDebug("Processing credential offer with id \(offer.id)")
 
-        var rec = try await agent.credentialExchangeRepository.findByThreadRoleAndConnectionId(
+        let rec = try await agent.credentialExchangeRepository.findByThreadRoleAndConnectionId(
             threadId: offer.threadId,
             role: .holder,
             connectionId: connection?.id
@@ -290,23 +276,10 @@ public final class CredentialServiceV2 {
         guard !formatServices.isEmpty else { throw CredoError("Unable to process offer. No supported formats") }
 
         if var record = rec {
-            let proposeMsg = try await agent.didCommMessageRepository.getTypedAgentMessage(
-                associatedRecordId: record.id,
-                messageType: ProposeCredentialMessageV2.type,
-                role: DidCommMessageRole.Sender
-            ) as ProposeCredentialMessageV2?
-
-            let offerMsg = try await didCommMessageRepository.getTypedAgentMessage(
-                associatedRecordId: record.id,
-                messageType: OfferCredentialMessageV2.type,
-                role: DidCommMessageRole.Receiver
-            ) as OfferCredentialMessageV2?
-
             try record.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
             try record.assertState(CredentialState.ProposalSent)
 
             //[TODO]
-//            try await agent.connectionService.assertConnectionOrOutOfBandExchange(
 //                messageContext: messageContext,
 //                lastReceivedMessage: offerMsg,
 //                lastSentMessage: proposeMsg,
@@ -330,7 +303,6 @@ public final class CredentialServiceV2 {
         }
 
         //[TODO]
-        //try await agent.connectionService.assertConnectionOrOutOfBandExchange(messageContext: messageContext)
         
         let newRec = CredentialExchangeRecordBuilder()
             .setConnectionId(connection?.id)
@@ -463,7 +435,7 @@ public final class CredentialServiceV2 {
         let request: RequestCredentialMessageV2 = try JSONDecoder().decode(RequestCredentialMessageV2.self, from: Data(messageContext.plaintextMessage.utf8))
         logDebug("Processing credential request with id \(request.id)")
 
-        var rec = try await agent.credentialExchangeRepository.findSingleByQuery("""
+        let rec = try await agent.credentialExchangeRepository.findSingleByQuery("""
             {"threadId": "\(request.threadId)", "role": "\(CredentialRole.issuer)"}
         """)
 
@@ -471,23 +443,11 @@ public final class CredentialServiceV2 {
         guard !formatServices.isEmpty else { throw CredoError("Unable to process proposal. No supported formats") }
 
         if var record = rec {
-            let proposalMsg = try await agent.didCommMessageRepository.getTypedAgentMessage(
-                associatedRecordId: record.id,
-                messageType: ProposeCredentialMessageV2.type,
-                role: DidCommMessageRole.Receiver
-            ) as ProposeCredentialMessageV2?
-
-            let offerMsg = try await didCommMessageRepository.getTypedAgentMessage(
-                associatedRecordId: record.id,
-                messageType: OfferCredentialMessageV2.type,
-                role: DidCommMessageRole.Sender
-            ) as OfferCredentialMessageV2?
 
             try record.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
             try record.assertState(CredentialState.OfferSent)
 
             //[TODO]
-//            try await agent.connectionService.assertConnectionOrOutOfBandExchange(
 //                messageContext: messageContext,
 //                lastReceivedMessage: proposalMsg,
 //                lastSentMessage: offerMsg,
@@ -517,7 +477,6 @@ public final class CredentialServiceV2 {
         }
 
         //[TODO]
-        //try await agent.connectionService.assertConnectionOrOutOfBandExchange(messageContext: messageContext)
 
         let newRec = CredentialExchangeRecordBuilder()
             .setConnectionId(connection?.id)
@@ -599,21 +558,14 @@ public final class CredentialServiceV2 {
         let request: RequestCredentialMessageV2 = try await agent.didCommMessageRepository.getTypedAgentMessage(
             associatedRecordId: rec.id,
             messageType: RequestCredentialMessageV2.type,
-            role: .Sender
-        ) ?? { throw CredoError("Request message not found") }()
-
-        let offer: OfferCredentialMessageV2? = try await didCommMessageRepository.getTypedAgentMessage(
-            associatedRecordId: rec.id,
-            messageType: OfferCredentialMessageV2.type,
             role: .Receiver
-        )
+        ) ?? { throw CredoError("Request message not found") }()
 
         try rec.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
         try rec.assertState(.RequestSent)
 
         
         //[TODO]
-//        try await agent.connectionService.assertConnectionOrOutOfBandExchange(
 //            messageContext: messageContext,
 //            lastReceivedMessage: request,
 //            lastSentMessage: offer,
@@ -642,7 +594,7 @@ public final class CredentialServiceV2 {
         try record.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
         try record.assertState(.CredentialReceived)
 
-        var ack = CredentialAckMessageV2(
+        let ack = CredentialAckMessageV2(
             threadId: record.threadId,
             status: .OK
         )
@@ -666,23 +618,9 @@ public final class CredentialServiceV2 {
         """)
         rec.connectionId = connection?.id
 
-        let request: RequestCredentialMessageV2 = try await agent.didCommMessageRepository.getTypedAgentMessage(
-            associatedRecordId: rec.id,
-            messageType: RequestCredentialMessageV2.type,
-            role: .Receiver
-        ) ?? { throw CredoError("Request message not found") }()
-
-        let issue: IssueCredentialMessageV2 = try await didCommMessageRepository.getTypedAgentMessage(
-            associatedRecordId: rec.id,
-            messageType: IssueCredentialMessageV2.type,
-            role: .Sender
-        ) ?? { throw CredoError("issue credential message not found") }()
-
-        try rec.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
         try rec.assertState(.CredentialIssued)
 
         //[TODO]
-//        try await agent.connectionService.assertConnectionOrOutOfBandExchange(
 //            messageContext: messageContext,
 //            lastReceivedMessage: request,
 //            lastSentMessage: issue,
@@ -701,7 +639,7 @@ public final class CredentialServiceV2 {
         -> (CredentialExchangeRecord, CredentialProblemReportMessageV2)
     {
         let rec = options.credentialExchangeRecord
-        var msg = CredentialProblemReportMessageV2(
+        let msg = CredentialProblemReportMessageV2(
             description: DescriptionOptions(
                 en: options.description,
                 code: CredentialProblemReportReason.issuanceAbandoned.rawValue
@@ -735,9 +673,9 @@ public final class CredentialServiceV2 {
   
     public func sendProblemReport(_ options: SendCredentialProblemReportOptions) async throws -> CredentialExchangeRecord {
         let rec = try await agent.credentialExchangeRepository.getById(options.credentialRecordId)
-        let _ = try await agent.credentialServiceV2.findOfferMessage(credentialExchangeId: rec.id)
+        let _ = await agent.credentialServiceV2.findOfferMessage(credentialExchangeId: rec.id)
 
-        let (record, problem) = try await createProblemReport(
+        let (_, problem) = try await createProblemReport(
             options: CreateCredentialProblemReportOptions(credentialExchangeRecord: rec, description: options.description)
         )
 
@@ -774,7 +712,7 @@ public final class CredentialServiceV2 {
         if autoAccept == .always { return true }
         if autoAccept == .never  { return false }
 
-        guard let offer = try await findOfferMessage(credentialExchangeId: rec.id) else { return false }
+        guard let offer = await findOfferMessage(credentialExchangeId: rec.id) else { return false }
 
         let formatServices = getFormatServicesFromMessage(offer.formats)
         for formatService in formatServices {
@@ -816,7 +754,7 @@ public final class CredentialServiceV2 {
             case .never:  return false
         }
 
-        guard let proposal = try await findProposalMessage(credentialExchangeId: rec.id) else { return false }
+        guard let proposal = await findProposalMessage(credentialExchangeId: rec.id) else { return false }
         let formatServices = getFormatServicesFromMessage(proposal.formats)
 
         for formatService in formatServices {
@@ -856,8 +794,8 @@ public final class CredentialServiceV2 {
         if autoAccept == .never  { return false }
 
         guard
-            let proposal = try await findProposalMessage(credentialExchangeId: rec.id),
-            let offer    = try await findOfferMessage(credentialExchangeId: rec.id)
+            let proposal = await findProposalMessage(credentialExchangeId: rec.id),
+            let offer    = await findOfferMessage(credentialExchangeId: rec.id)
         else { return false }
 
         let services = getFormatServicesFromMessage(offer.formats)
@@ -900,9 +838,9 @@ public final class CredentialServiceV2 {
         if autoAccept == .never  { return false }
 
         guard
-            let proposal = try await findProposalMessage(credentialExchangeId: rec.id),
-            let offer    = try await findOfferMessage(credentialExchangeId: rec.id),
-            let request  = try await findRequestMessage(credentialExchangeId: rec.id)
+            let proposal = await findProposalMessage(credentialExchangeId: rec.id),
+            let offer    = await findOfferMessage(credentialExchangeId: rec.id),
+            let request  = await findRequestMessage(credentialExchangeId: rec.id)
         else { return false }
 
         let services = getFormatServicesFromMessage(offer.formats)

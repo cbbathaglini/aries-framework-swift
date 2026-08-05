@@ -69,7 +69,7 @@ final class AcceptPresentationProofProcessor {
 
     /// Builds the PresentationAckMessageV2 based on the proof record.
     private func buildAckMessage(for proofRecord: ProofExchangeRecord) -> PresentationAckMessageV2 {
-        var message = PresentationAckMessageV2(
+        let message = PresentationAckMessageV2(
             threadId: proofRecord.threadId,
             status: AckStatus.OK
         )

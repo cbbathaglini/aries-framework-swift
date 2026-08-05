@@ -34,7 +34,7 @@ final class ProcessPresentationProofProcessor {
         logDebug("[init] Processing presentation in ProcessPresentationProofProcessor")
         
         
-        var presentationMessage = message
+        let presentationMessage = message
         let formatServices = try resolveFormatServices(from: presentationMessage)
         
         var proofRecord = ProofExchangeRecord(

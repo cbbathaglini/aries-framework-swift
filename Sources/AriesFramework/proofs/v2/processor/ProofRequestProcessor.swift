@@ -108,7 +108,7 @@ final class ProofRequestProcessor {
         logDebug("No proof record found. Creating new one")
 
         
-        var newRecord = ProofExchangeRecord(
+        let newRecord = ProofExchangeRecord(
             connectionId: connection?.id ?? "connectionless",
             threadId: message.threadId,
             parentThreadId: message.thread?.parentThreadId,

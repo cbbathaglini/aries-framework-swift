@@ -30,7 +30,6 @@ public class Dispatcher {
             throw AriesFrameworkError.frameworkError("No handler for message type: \(messageContext.message.type)")
         }
         
-        //printDispatcherMessages(messageContext: messageContext)
 
         do {
             if let outboundMessage = try await handler.handle(messageContext: messageContext) {

@@ -102,7 +102,7 @@ public class ProofCommandV2 {
             credentialW3cId: chosenCredential?.w3cCredentialId
         )
 
-        var requestedCredentials: RequestedCredentialsAnoncreds = try await agent.proofServiceV2.autoSelectCredentialsForProofRequest(
+        let requestedCredentials: RequestedCredentialsAnoncreds = try await agent.proofServiceV2.autoSelectCredentialsForProofRequest(
             retrievedCredentials: retrievedCredentials
         )
                 

@@ -10,7 +10,7 @@ import Foundation
 public class BasicMessageRepository: Repository<BasicMessageRecord> {
     
     public func findByConnectionRecordId(connectionRecordId: String) async throws -> [BasicMessageRecord] {
-        return try await findByQuery("""
+        return await findByQuery("""
             {"connectionRecordId": "\(connectionRecordId)" }
             """
         )

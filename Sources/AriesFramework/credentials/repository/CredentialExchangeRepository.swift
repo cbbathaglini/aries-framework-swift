@@ -18,7 +18,7 @@ public class CredentialExchangeRepository: Repository<CredentialExchangeRecord> 
     }
     
     public func getByW3cCredentialId(_ w3cId: String) async throws -> CredentialExchangeRecord {
-        let all = try await getAll()
+        let all = await getAll()
 
         if let record = all.first(where: { record in
             record.credentials.contains(where: { $0.credentialRecordId == w3cId })

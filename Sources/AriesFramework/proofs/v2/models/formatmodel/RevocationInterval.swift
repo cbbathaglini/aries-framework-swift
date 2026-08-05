@@ -12,8 +12,6 @@ public struct RevocationInterval: Codable {
             throw CredoError("Presentation requests proof of non-revocation with no 'to' value specified.")
         }
 
-//        if let from = revocationInterval.from, from != to {
-//            throw CredoError("""
 //            Presentation requests proof of non-revocation with an interval from: '\(from)' \
 //            that does not match the interval to: '\(to)', as specified in Aries RFC 0441.
 //            """)

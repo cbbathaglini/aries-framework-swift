@@ -133,7 +133,7 @@ private extension ProcessProposalProofProcessor {
         connection: ConnectionRecord,
         formatServices: [any ProofFormatService]
     ) async throws -> ProofExchangeRecord {
-        var newRecord = ProofExchangeRecord(
+        let newRecord = ProofExchangeRecord(
             connectionId: connection.id,
             threadId: proposalMessage.threadId,
             parentThreadId: proposalMessage.thread?.parentThreadId,

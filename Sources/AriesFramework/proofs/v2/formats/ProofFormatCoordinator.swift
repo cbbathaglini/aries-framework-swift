@@ -45,7 +45,7 @@ public final class ProofFormatCoordinator {
             formats.append(proofFormatCreateProposalReturn.format)
         }
 
-        var message = ProposePresentationMessageV2(
+        let message = ProposePresentationMessageV2(
             comment: comment,
             goalCode: goalCode,
             goal: goal,
@@ -191,7 +191,7 @@ public final class ProofFormatCoordinator {
 
         logDebug("createRequest after formatService")
 
-        var message = RequestPresentationMessageV2(
+        let message = RequestPresentationMessageV2(
             comment: comment,
             goal: goal,
             goalCode: goalCode,
@@ -229,7 +229,7 @@ public final class ProofFormatCoordinator {
                 attachments: message.requestPresentationAttachments
             ) 
 
-            var options = ProofFormatProcessOptions(
+            let options = ProofFormatProcessOptions(
                 attachment: attachment,
                 proofRecord: proofRecord
             )
@@ -271,7 +271,7 @@ public final class ProofFormatCoordinator {
 
         let proposalMessage: ProposePresentationMessageV2? = {
             if let proposalRaw {
-                return try? MessageSerializer.decodeFromString(proposalRaw) as? ProposePresentationMessageV2
+                return MessageSerializer.decodeFromString(proposalRaw) as? ProposePresentationMessageV2
             }
             return nil
         }()

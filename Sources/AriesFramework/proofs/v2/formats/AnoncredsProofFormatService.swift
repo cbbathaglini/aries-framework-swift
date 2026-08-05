@@ -533,44 +533,6 @@ public class AnoncredsProofFormatService: ProofFormatService {
     private func getRevocationRegistriesForProof(proof: AnonCredsProof){
         
     }
-    
-//    private func getRevRegistries(revocationRegistryId: String) async throws -> [String: RevocationRegistryEntry]{
-//        
-//        var revocationRegistries: [String: RevocationRegistryEntry] = [:]
-//        
-//        //let revocationRegistry = try await agent.ledgerService.getRevocationRegistryDefinitionIndyBesuLib(id: revocationRegistryId)
-//        //let revRegValue = try JSONDecoder().decode(RevocationRegistryValue.self, from: Data(revocationRegistry.value.utf8))
-//
-//        let revocationJson = try await agent.ledgerService.getRevocationRegistryDefinition(id: revocationRegistryId)
-//        var revocationRegistryResult = try JSONDecoder().decode(
-//            FetchIntermediateRevocationRegistryDefinitionResult.self,
-//            from: Data(revocationJson.utf8)
-//        )
-//        revocationRegistryResult.revocationRegistryDefinitionId = revocationRegistryId
-//        
-//        let anonCredsRevocationRegistryDefinition = AnonCredsRevocationRegistryDefinition(
-//            issuerId: revocationRegistryResult.issuerId,
-//            revocDefType: revocationRegistryResult.revocDefType,
-//            credDefId: revocationRegistryResult.credDefId,
-//            tag: revocationRegistryResult.tag,
-//            value: revocationRegistryResult.value
-//        )
-//        
-//        let revocationStatusList = getRevocationStatusList
-//      
-//        revocationRegistries[revocationRegistryId] = await RevocationRegistryEntry(
-//            definition: anonCredsRevocationRegistryDefinition,
-//            revocationStatusLists: [Int64: AnonCredsRevocationStatusList]?
-//        )
-//        
-////        revocationRegistries[revocationRegistryId] = await RevocationRegistryEntry(
-////            definition: revocationRegistry,
-////            tailsFilePath: try agent.ledgerService.getTailsPath(),
-////            tailsHash: revRegValue.tailsHash
-////        )
-//        
-//        return revocationRegistries
-//    }
 
     public func getCredentialsForRequest(
         proofRecord: ProofExchangeRecord,

@@ -14,7 +14,7 @@ public struct StoreCredential {
         indyNamespace: String? = nil
     ) throws -> StoreCredentialOptions {
         
-        var revocationRegistry = options.revocationRegistry
+        let revocationRegistry = options.revocationRegistry
         let credentialDefinitionId = options.credentialDefinitionId
         let schema = options.schema
         let credential = options.credential

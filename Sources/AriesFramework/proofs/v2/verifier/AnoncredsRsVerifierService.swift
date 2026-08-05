@@ -233,7 +233,6 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
                         )
                     )
                 } else {
-                    //                    logDebug(
                     //                        "VDR timestamp for \(requestedFrom) does not correspond to the one provided in proof identifiers. " +
                     //                        "Expected: \(timestamp), received: \(vdrTimestamp)"
                     //                    )

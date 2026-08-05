@@ -43,7 +43,6 @@ class MediationRecipient {
             var connection = try await agent.connectionService.processInvitation(invitation,
                 outOfBandInvitation: outOfBandInvitation, routing: routing, autoAcceptConnection: true)
         
-            //let message : OutboundMessage = try await agent.connectionService.createRequest(connectionId: connection.id)
             let message : OutboundMessage = try await agent.didExchangeService.createRequest(connectionId: connection.id) //remoção do connectionservice
             print("mensagem mediador \(message)")
             try await agent.messageSender.send(message: message)
@@ -176,7 +175,7 @@ class MediationRecipient {
 
     func processMediationGrant(messageContext: InboundMessageContext) async throws {
         let connection = try messageContext.assertReadyConnection()
-        var mediationRecord = try await repository.getByConnectionId(connection.id)
+        let mediationRecord = try await repository.getByConnectionId(connection.id)
         let decoder = JSONDecoder()
         let message = try decoder.decode(MediationGrantMessage.self, from: Data(messageContext.plaintextMessage.utf8))
 
@@ -200,7 +199,7 @@ class MediationRecipient {
 
     func processMediationDeny(messageContext: InboundMessageContext) async throws {
         let connection = try messageContext.assertReadyConnection()
-        var mediationRecord = try await repository.getByConnectionId(connection.id)
+        let mediationRecord = try await repository.getByConnectionId(connection.id)
         try mediationRecord.assertState(.Requested)
 
         mediationRecord.state = .Denied

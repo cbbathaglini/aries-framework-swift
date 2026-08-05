@@ -65,7 +65,7 @@ public class CredentialService {
         if options.connection == nil {
             logDebug("Creating credential offer without connection. This should be used for out-of-band request message with handshake.")
         }
-        var credentialRecord = CredentialExchangeRecord(
+        let credentialRecord = CredentialExchangeRecord(
             connectionId: options.connection?.id ?? "connectionless-offer",
             threadId: CredentialExchangeRecord.generateId(),
             state: .OfferSent,

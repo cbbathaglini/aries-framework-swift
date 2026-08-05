@@ -192,7 +192,7 @@ public class RevocationService {
         revocationInterval: AnonCredsNonRevokedInterval
     ) async throws -> (Bool, Int) {
         var from = revocationInterval.from
-        var to = revocationInterval.to
+        let to = revocationInterval.to
         let toInt: Int = to != nil ? Int(to!) : Int(Date().timeIntervalSince1970)
 
 

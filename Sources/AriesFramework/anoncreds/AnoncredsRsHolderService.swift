@@ -220,13 +220,6 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
                 let statusListUniffi = try Anoncreds.RevocationStatusList(json:revocationStatusListJson)
 
                 
-//                let tailsFile = URL(fileURLWithPath: registryData.tailsFilePath)
-//                    .appendingPathComponent(registryData.tailsHash!)
-//                logDebug("tails file: \(tailsFile.path)")
-//                guard FileManager.default.fileExists(atPath: tailsFile.path) else {
-//                    fatalError("Tails file not found at \(tailsFile.path)")
-//                }
-                
                 guard let hash = registryData.tailsHash else {
                     fatalError("tailsHash is nil")
                 }
@@ -307,8 +300,6 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
                 fatalError("Tipo de credential desconhecido.")
             }
 
-//            var revocationStateJsonElement: JsonElement? = nil
-//            if let revState = revocationState {
 //                revocationStateJsonElement = Json.parseToJsonElement(revState.toJson())
 //            }
 
@@ -568,7 +559,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         var credentials: [W3cCredentialRecord] = []
 
         if let tagsJson = try? tags.toJsonString() {
-            credentials = try await agent.w3cCredentialRepository.findByQuery(tagsJson) ?? []
+            credentials = await agent.w3cCredentialRepository.findByQuery(tagsJson) ?? []
         }
 
         if let credentialW3cId = options.chosenCredentialId {
@@ -671,12 +662,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
     func storeW3cCredential(options: StoreCredentialW3cOptions) async throws -> W3cCredentialRecord {
         logDebug("storeW3cCredential")
         let credential = options.credential as W3cJsonLdVerifiableCredential
-//        let credentialDefinitionId: String = options.credentialDefinitionId
-        //let schema: AnonCredsSchema = options.schema
         let schemaId: String? = options.schemaId
-//        let credentialDefinition: AnonCredsCredentialDefinition = options.credentialDefinition
-//        let revocationRegistryId: String? = options.revocationRegistryId
-//        let credentialRequestMetadata: AnonCredsCredentialRequestMetadata =
 //                    options.credentialRequestMetadata
         
         let issuer = credential.issuer //revisar aqui
@@ -684,7 +670,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes]
 
-        var jsonData = try JSONEncoder().encode(credential)
+        let jsonData = try JSONEncoder().encode(credential)
         var encoded = String(data: jsonData, encoding: .utf8)!
         encoded = encoded.replacingOccurrences(of: "\\\"", with: "")
         let regex = try NSRegularExpression(pattern: #""credentialSubject"\s*:\s*\[(\{.*?\})\]"#, options: [])
@@ -728,7 +714,7 @@ public class AnonCredsRsHolderService: AnonCredsHolderService {
             methodName: methodName
         )
 
-        var record = try await agent.w3cCredentialService.storeCredentialW3cJsonLdVerifiableCredential(jsonLdVerifiableCredential: credential)
+        let record = try await agent.w3cCredentialService.storeCredentialW3cJsonLdVerifiableCredential(jsonLdVerifiableCredential: credential)
         record.setTags(tags)
 
         let metadata = W3cAnonCredsCredentialMetadata(

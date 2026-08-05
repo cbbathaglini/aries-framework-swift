@@ -88,7 +88,7 @@ public class OutOfBandInvitation: AgentMessage {
            let message = String(data: data, encoding: .utf8) {
             var replaced = replaceLegacyDidSovWithNewDidCommPrefix(message: message)
             replaced = try serializeJsonAttatchments(message: replaced)
-            var returnval = try JSONDecoder().decode(OutOfBandInvitation.self, from: replaced.data(using: .utf8)!)
+            let returnval = try JSONDecoder().decode(OutOfBandInvitation.self, from: replaced.data(using: .utf8)!)
             return returnval
         } else {
             throw AriesFrameworkError.frameworkError("InvitationUrl is invalid. It needs to contain one, and only one, of the following parameters; `oob`")

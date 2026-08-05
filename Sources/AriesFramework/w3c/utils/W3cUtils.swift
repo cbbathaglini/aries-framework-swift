@@ -35,7 +35,7 @@ class W3cUtils {
         
         let jsonld = try JSONDecoder().decode(W3cJsonLdVerifiableCredential.self, from: jsonData)
         
-        var jsonldData = try JSONEncoder().encode(jsonld)
+        let jsonldData = try JSONEncoder().encode(jsonld)
         var jsonStr = String(data: jsonldData, encoding: .utf8) ?? ""
         
         jsonStr = jsonStr.replacingOccurrences(of: "\\\"", with: "")
