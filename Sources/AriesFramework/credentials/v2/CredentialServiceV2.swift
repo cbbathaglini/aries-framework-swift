@@ -558,7 +558,7 @@ public final class CredentialServiceV2 {
         let request: RequestCredentialMessageV2 = try await agent.didCommMessageRepository.getTypedAgentMessage(
             associatedRecordId: rec.id,
             messageType: RequestCredentialMessageV2.type,
-            role: .Receiver
+            role: .Sender
         ) ?? { throw CredoError("Request message not found") }()
 
         try rec.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
