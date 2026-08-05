@@ -8,6 +8,7 @@ import AriesFramework
 
 struct ProofDetailView: View {
     let proof: ProofExchangeRecord
+    var verifiedOverride: Bool? = nil
 
     @State private var proofRequest: AnonCredsProofRequest?
     @State private var isLoading = true
@@ -95,7 +96,7 @@ extension ProofDetailView {
             Label("Role", systemImage: "person.fill")
             Text(proof.role.rawValue.capitalized).font(.footnote)
             
-            if let verified = proof.isVerified {
+            if let verified = proof.isVerified ?? verifiedOverride {
                 Label("Verified", systemImage: verified ? "checkmark.seal.fill" : "xmark.seal")
                     .foregroundColor(verified ? .green : .red)
             }
