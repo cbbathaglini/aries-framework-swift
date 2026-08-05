@@ -506,7 +506,9 @@ public final class CredentialServiceV2 {
         var rec = options.credentialExchangeRecord
         
         try rec.assertProtocolVersion(CredentialsConstants.PROTOCOL_VERSION_V2)
-        try rec.assertState(.OfferSent)
+        print("🔍 DIAG acceptRequest ANTES assertState - record.state=\(String(describing: rec.state)) id=\(rec.id) stateRaw=\(rec.state.rawValue)")
+        try rec.assertState(.RequestReceived)
+        print("🔍 DIAG acceptRequest DEPOIS assertState OK - emitindo, id=\(rec.id)")
 
         var formatServices = getFormatServices(options.credentialFormats ?? [:])
         if formatServices.isEmpty {
