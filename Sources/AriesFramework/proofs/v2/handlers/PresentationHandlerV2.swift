@@ -19,7 +19,6 @@ class PresentationHandlerV2: MessageHandler {
     func handle(messageContext: InboundMessageContext) async throws -> OutboundMessage? {
         logDebug("Entering in PresentationHandlerV2")
         var proofRecord = try await agent.proofServiceV2.processPresentation(messageContext: messageContext)
-        print("🔍 DIAG PresentationHandlerV2 processada isVerified=\(String(describing: proofRecord.isVerified)) state=\(proofRecord.state)")
 
         if (proofRecord.autoAcceptProof != nil &&
             proofRecord.autoAcceptProof! == .always) ||

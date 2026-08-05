@@ -411,11 +411,9 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
         )
 
         var credential = createCredentialReturn.credential
-        print("🔍 DIAG acceptRequest createCredentialReturn.credentialRevocationId=\(String(describing: createCredentialReturn.credentialRevocationId)) credential.revRegId=\(String(describing: credential.revRegId))")
         if let revocationId = createCredentialReturn.credentialRevocationId,
            let revocId = Int64(revocationId) {
             credential.revocId = revocId
-            print("🔍 DIAG createCredential setando revocId=\(revocId) no attach da credential")
         }
 
         let attachment = try FormatDataUtil.getFormatData(
@@ -450,8 +448,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
 
        let decodedData = fromBase64ToString(attachment.data.base64)
        let anonCredsCredential = try JSONDecoder().decode(AnonCredsCredential.self, from: Data(decodedData.utf8))
-        print("🔍 DIAG processCredential revoc_id=\(String(describing: anonCredsCredential.revocId)) rev_reg_id=\(String(describing: anonCredsCredential.revRegId)) credDef_id=\(anonCredsCredential.credDefId)")
-        print("🔍 DIAG processCredential RAW do attach v2: \(decodedData)")
 
        let credDefJson = try await agent.ledgerService.getCredentialDefinition(id: anonCredsCredential.credDefId)
        let anoncredsCredentialDefinition : AnonCredsCredentialDefinition = try JSONDecoder().decode(AnonCredsCredentialDefinition.self, from: Data(credDefJson.utf8))
@@ -476,7 +472,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
            
            credentialExchangeRecord.setRevRegId(revRegId)
            credentialExchangeRecord.setRevRegDefId(revocationRegistryResult?.revocationRegistryDefinitionId)
-           print("🔍 DIAG processCredential APOS set - record.credRevId=\(String(describing: credentialExchangeRecord.credRevId)) record.revRegId=\(String(describing: credentialExchangeRecord.revRegId)) record.revRegDefId=\(String(describing: credentialExchangeRecord.revRegDefId)) revocId_do_json=\(String(describing: anonCredsCredential.revocId)))")
        }
 
        credentialExchangeRecord.setCredentialDefinitionId(anonCredsCredential.credDefId)
@@ -591,7 +586,6 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
                     revRegId: credential.revocationRegistryId,
                     revRegDefId: credentialExchangeRecord.revRegDefId
                 )
-                print("🔍 DIAG processCredential preenchendo credRevId=\(String(describing: credentialExchangeRecord.credRevId)) a partir da credential armazenada")
             }
         }
         

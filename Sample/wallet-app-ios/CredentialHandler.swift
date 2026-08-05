@@ -151,7 +151,6 @@ class CredentialHandler: ObservableObject, AgentDelegate {
                 )
 
             case .Done:
-                print("🔍 DIAG proof .Done event isVerified=\(String(describing: proofRecord.isVerified)) id=\(proofRecord.id) role=\(proofRecord.role) state=\(proofRecord.state)")
                 var effectiveVerified = proofRecord.isVerified
 
                 if effectiveVerified == nil, let agent, !proofRecord.id.isEmpty {

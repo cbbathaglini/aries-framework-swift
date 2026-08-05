@@ -524,7 +524,6 @@ public class AnoncredsProofFormatService: ProofFormatService {
         }
         
         
-        print("🔍 DIAG Anoncreds processPresentation isVerified=\(isVerified) proof.id=\(proofRecord.id)")
         proofRecord.isVerified = isVerified
                     
         return isVerified
