@@ -410,8 +410,15 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
             format: AnoncredsCredentialFormatService.ANONCREDS_CREDENTIAL
         )
 
+        var credential = createCredentialReturn.credential
+        if let revocationId = createCredentialReturn.credentialRevocationId,
+           let revocId = Int64(revocationId) {
+            credential.revocId = revocId
+            print("🔍 DIAG createCredential setando revocId=\(revocId) no attach da credential")
+        }
+
         let attachment = try FormatDataUtil.getFormatData(
-            createCredentialReturn.credential,
+            credential,
             id: format.attachId
         )
 
