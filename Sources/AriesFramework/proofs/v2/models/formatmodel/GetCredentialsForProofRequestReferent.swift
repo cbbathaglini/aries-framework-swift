@@ -53,7 +53,7 @@ public class GetCredentialsForProofRequestReferent {
             return RevocationStatusResult(isRevoked: nil, timestamp: nil)
         }
 
-        // Aries RFC 0441 - validação (pode ser opcional)
+        // Aries RFC 0441 - validation (optional)
         try RevocationInterval.assertBestPractice(requestInterval)
 
         let toTimestamp = requestInterval.to ?? UInt64(Date().timeIntervalSince1970)

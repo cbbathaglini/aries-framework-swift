@@ -141,7 +141,7 @@ public class AnoncredsProofFormatService: ProofFormatService {
     func normalizeProofFormats(_ proofFormats: [String: AnyCodable]) throws -> AnonCredsProposeProofFormat {
 
         guard let anoncredsRaw = proofFormats["anoncreds"]?.value as? [String: Any] else {
-            throw NSError(domain: "ProofFormat", code: 400, userInfo: [NSLocalizedDescriptionKey: "Formato anoncreds não encontrado"])
+            throw NSError(domain: "ProofFormat", code: 400, userInfo: [NSLocalizedDescriptionKey: "Anoncreds format not found"])
         }
 
         var normalizedAnoncreds = anoncredsRaw
@@ -456,7 +456,7 @@ public class AnoncredsProofFormatService: ProofFormatService {
         
         let jsonStringRequest = try requestAttachment.getDataAsJson()
         guard let jsonData = jsonStringRequest.data(using: .utf8) else {
-            throw CredoError("Não foi possível converter o JSON String para Data.")
+            throw CredoError("Unable to convert the JSON String to Data.")
         }
 
         let requestJson = try JSONDecoder().decode(
@@ -469,7 +469,7 @@ public class AnoncredsProofFormatService: ProofFormatService {
         
         let jsonStringProof = try presentationAttachment.getDataAsJson()
         guard let jsonDataProof = jsonStringProof.data(using: .utf8) else {
-            throw CredoError("Não foi possível converter o JSON String para Data.")
+            throw CredoError("Unable to convert the JSON String to Data.")
         }
 
         let anonCredsProof : AnonCredsProof = try JSONDecoder().decode(
@@ -728,14 +728,14 @@ public class AnoncredsProofFormatService: ProofFormatService {
 
         for (name, matches) in credentialsForRequest.attributes {
             guard let first = matches.first else {
-                throw AriesFrameworkError.frameworkError(options.filterByNonRevocationRequirements == true ? "Nao ha credencial NAO-REVOGADA com o atributo solicitado \(name). Verifique se ainda existe uma credencial valida e ativa com esse atributo." : "Nao ha credencial com o atributo solicitado \(name). Verifique se a credencial foi emitida e contem esse atributo.")
+                throw AriesFrameworkError.frameworkError(options.filterByNonRevocationRequirements == true ? "No non-revoked credential found for the requested attribute (\(name)). Make sure there is a valid, active credential with this attribute." : "No credential found for the requested attribute (\(name)). Make sure the credential was issued and contains this attribute.")
             }
             selectedAttributes[name] = first
         }
 
         for (name, matches) in credentialsForRequest.predicates {
             guard let first = matches.first else {
-                throw AriesFrameworkError.frameworkError(options.filterByNonRevocationRequirements == true ? "Nao ha credencial NAO-REVOGADA que satisfaca o predicado solicitado \(name). Verifique se existe uma credencial valida e ativa que atenda ao predicado." : "Nao ha credencial que satisfaca o predicado solicitado \(name).")
+                throw AriesFrameworkError.frameworkError(options.filterByNonRevocationRequirements == true ? "No non-revoked credential found that satisfies the requested predicate (\(name)). Make sure there is a valid, active credential matching the predicate." : "No credential found that satisfies the requested predicate (\(name)).")
             }
             selectedPredicates[name] = first
         }
