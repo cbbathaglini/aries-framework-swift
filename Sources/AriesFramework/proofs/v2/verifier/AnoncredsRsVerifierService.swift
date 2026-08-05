@@ -80,6 +80,7 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
         }
 
         // Uses revocation
+        print("🔍 DIAG verifyProof REVOCACAO ativada - revRegId=\(String(describing: revRegId)) holderTimestamp=\(String(describing: holderTimestamp))")
         let ts = UInt64(holderTimestamp!)
 
         let revRegDefJson =
@@ -103,6 +104,7 @@ public class AnonCredsRsVerifierService: AnonCredsVerifierService {
         let statusListUniffi = try Anoncreds.RevocationStatusList(json: statusListJson)
 
         let timestampResult = try await verifyTimestamps(proof: proof, proofRequest: proofRequest)
+        print("🔍 DIAG verifyProof verifyTimestamps verified=\(timestampResult.verified) overrides=\(String(describing: timestampResult.nonRevokedIntervalOverrides?.count ?? 0))")
         guard timestampResult.verified else { return false }
 
         var intervalOverrides: [String: [UInt64: UInt64]] = [:]
