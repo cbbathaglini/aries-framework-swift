@@ -551,8 +551,7 @@ public final class CredentialServiceV2 {
         
         var rec = try await agent.credentialExchangeRepository.findByThreadRoleAndConnectionId(
             threadId: issue.threadId,
-            //role: CredentialRole.holder,
-            role: nil,
+            role: .holder,
             connectionId: connection?.id
         ) ?? { throw CredoError("Credential exchange record not found") }()
         
