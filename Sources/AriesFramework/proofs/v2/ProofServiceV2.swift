@@ -117,6 +117,7 @@ public class ProofServiceV2 {
             threadId: proofRecord.threadId,
             status: AckStatus.OK)
        
+        print("🔍 DIAG processOfflineAck -> Done isVerified=\(String(describing: record.isVerified))")
         try await common.updateState(proofRecord: &record, newState: ProofState.Done)
 
         return (ackMessage, record)
@@ -135,6 +136,7 @@ public class ProofServiceV2 {
             status: .OK
         )
         logDebug("proof record done: \(ackMessage)")
+        print("🔍 DIAG createAck -> Done isVerified=\(String(describing: proofRecord.isVerified))")
         try await common.updateState(proofRecord: &proofRecord, newState: .Done)
 
         return (ackMessage, proofRecord)

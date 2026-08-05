@@ -33,6 +33,7 @@ final class AcceptPresentationProofProcessor {
         try validateLastPresentation(presentation)
         let ackMessage = buildAckMessage(for: proofRecord)
 
+        print("🔍 DIAG acceptPresentation -> Done isVerified=\(String(describing: proofRecord.isVerified))")
         try await common.updateState(proofRecord: &proofRecord, newState: .Done)
 
         logDebug("[end] Presentation \(presentation.id) accepted — proof \(proofRecord.id) is now Done")

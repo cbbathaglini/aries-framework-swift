@@ -176,6 +176,7 @@ private extension ProcessPresentationProofProcessor {
     }
 
     func updateProofRecord(_ proofRecord: inout ProofExchangeRecord, with result: ProcessPresentationReturn) async throws {
+        print("🔍 DIAG updateProofRecord isValid=\(result.isValid) proofRecord.isVerified=\(String(describing: proofRecord.isVerified))")
         proofRecord.isVerified = result.isValid
         if result.isValid {
             try await common.updateState(proofRecord: &proofRecord, newState: .PresentationReceived)
