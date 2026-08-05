@@ -57,8 +57,30 @@ enum W3cTypeExpander {
             return result
         } catch {
             print("🔍 DIAG [W3C] expandTypes - ERRO ao expandir: \(error)")
+            print("🔍 DIAG [W3C] expandTypes - tentando fallback com contexto inline minimo")
+            return fallbackExpandTypes(types: types)
+        }
+    }
+
+    private static func fallbackExpandTypes(types: [String]) -> [String] {
+        // The remote contexts (e.g. w3.org/credentials/v1) use @protected terms that this
+        // JSON-LD library fails to process. Fall back to an inline context mapping the
+        // common V1 terms so the @type is not lost.
+        let inlineContext: [String: Any] = [
+            "type": "@type",
+            "id": "@id",
+            "VerifiableCredential": "https://www.w3.org/2018/credentials#VerifiableCredential",
+            "VerifiablePresentation": "https://www.w3.org/2018/credentials#VerifiablePresentation",
+            "CredentialSubject": "https://www.w3.org/2018/credentials#CredentialSubject",
+            "issuer": "https://www.w3.org/2018/credentials#issuer",
+            "issuanceDate": "https://www.w3.org/2018/credentials#issuanceDate",
+            "expirationDate": "https://www.w3.org/2018/credentials#expirationDate",
+        ]
+        let doc: [String: Any] = ["@context": inlineContext, "type": types]
+        guard let expanded = try? JSONLD().expand(data: JSON.wrap(doc)) else {
             return []
         }
+        return extractTypes(from: expanded)
     }
 
     /// Extracts the expanded `@type` values from the JSON-LD expansion result.
