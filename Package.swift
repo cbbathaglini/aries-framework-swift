@@ -24,8 +24,8 @@ let package = Package(
         .package(url: "https://github.com/Flight-School/AnyCodable", from: "0.6.0"),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.60.0"),
         .package(url: "https://github.com/LF-Decentralized-Trust-labs/aries-uniffi-wrappers.git", exact: "0.3.1"),
-        .package(url: "https://github.com/kasei/swift-jsonld.git", branch: "master"),
         .package(path: "./packages/indy-besu"),
+        .package(path: "./vendors/jsonld"),
         //.package(path: "./packages/anoncreds"),
         //.package(path: "./packages/askar"),
         //.package(path: "./packages/indy-vdr")
@@ -47,7 +47,7 @@ let package = Package(
                 .product(name: "IndyBesu", package: "indy-besu"),
                 .product(name: "NIO", package: "swift-nio"),
                 .product(name: "NIOHTTP1", package: "swift-nio"),
-                .product(name: "JSONLD", package: "swift-jsonld"),
+                .product(name: "JSONLD", package: "JSONLD"),
                 "CollectionConcurrencyKit",
                 "Base58Swift",
                 "Semaphore",
