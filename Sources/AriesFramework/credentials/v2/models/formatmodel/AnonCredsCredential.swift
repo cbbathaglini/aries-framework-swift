@@ -17,6 +17,7 @@ public struct AnonCredsCredential: Codable, CustomStringConvertible {
     public var signatureCorrectnessProof: [String: AnyCodable]
     public var revReg: [String: AnyCodable]?
     public var witness: [String: AnyCodable]?
+    public var revocId: Int64?
 
     enum CodingKeys: String, CodingKey {
         case schemaId = "schema_id"
@@ -27,6 +28,7 @@ public struct AnonCredsCredential: Codable, CustomStringConvertible {
         case signatureCorrectnessProof = "signature_correctness_proof"
         case revReg = "rev_reg"
         case witness
+        case revocId = "revoc_id"
     }
     
     public var description: String {

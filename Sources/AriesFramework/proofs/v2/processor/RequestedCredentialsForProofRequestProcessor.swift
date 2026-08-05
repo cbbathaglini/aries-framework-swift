@@ -124,6 +124,8 @@ final class RequestedCredentialsForProofRequestProcessor {
         let requestNonRevoked = nonRevoked ?? proofRequest.nonRevoked
         let credentialRevocationId = credential.credentialInfo.credentialRevocationId
         let revocationRegistryId = credential.credentialInfo.revocationRegistryId
+        print("🔍 DIAG getRevocationStatus credRevId=\(String(describing: credentialRevocationId)) revRegId=\(String(describing: revocationRegistryId)) nonRevoked=\(String(describing: requestNonRevoked))")
+        print("🔍 DIAG getRevocationStatus credInfo: revocationRegistryId=\(String(describing: credential.credentialInfo.revocationRegistryId)) credRevId=\(String(describing: credential.credentialInfo.credentialRevocationId))")
 
         guard
             let nonRevoked = requestNonRevoked,

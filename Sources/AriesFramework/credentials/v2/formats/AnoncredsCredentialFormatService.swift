@@ -442,6 +442,7 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
 
        let decodedData = fromBase64ToString(attachment.data.base64)
        let anonCredsCredential = try JSONDecoder().decode(AnonCredsCredential.self, from: Data(decodedData.utf8))
+        print("🔍 DIAG processCredential revoc_id=\(String(describing: anonCredsCredential.revocId)) rev_reg_id=\(String(describing: anonCredsCredential.revRegId)) credDef_id=\(anonCredsCredential.credDefId)")
 
        let credDefJson = try await agent.ledgerService.getCredentialDefinition(id: anonCredsCredential.credDefId)
        let anoncredsCredentialDefinition : AnonCredsCredentialDefinition = try JSONDecoder().decode(AnonCredsCredentialDefinition.self, from: Data(credDefJson.utf8))
@@ -460,12 +461,13 @@ public class AnoncredsCredentialFormatService: CredentialFormatService {
            revocationRegistryResult = try JSONDecoder().decode(FetchIntermediateRevocationRegistryDefinitionResult.self, from: Data(revocationJson.utf8))
            revocationRegistryResult?.revocationRegistryDefinitionId = revRegId
            credentialExchangeRecord.updateRevocationInfos(
-            credRevId: nil, //TODO
+            credRevId: anonCredsCredential.revocId.map { String($0) },
             revRegId: revRegId,
             revRegDefId: revocationRegistryResult?.revocationRegistryDefinitionId)
            
            credentialExchangeRecord.setRevRegId(revRegId)
            credentialExchangeRecord.setRevRegDefId(revocationRegistryResult?.revocationRegistryDefinitionId)
+           print("🔍 DIAG processCredential APOS set - record.credRevId=\(String(describing: credentialExchangeRecord.credRevId)) record.revRegId=\(String(describing: credentialExchangeRecord.revRegId)) record.revRegDefId=\(String(describing: credentialExchangeRecord.revRegDefId)) revocId_do_json=\(String(describing: anonCredsCredential.revocId)))")
        }
 
        credentialExchangeRecord.setCredentialDefinitionId(anonCredsCredential.credDefId)
