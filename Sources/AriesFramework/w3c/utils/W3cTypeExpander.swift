@@ -6,104 +6,80 @@
 //
 
 import Foundation
+import AnyCodable
+import JSONLD
 
+/// Expands the "type" values of a W3C VC using the JSONLD library.
+///
+/// Equivalent to credo-ts `jsonld.expand()` (and the Kotlin `W3cTypeExpander`,
+/// which delegates to jsonld-java). Remote contexts are resolved over HTTP by
+/// the JSONLD library itself.
 enum W3cTypeExpander {
-    
+
     struct ContextSpec {
-        let contexts: [Any?] // [String | [String: Any]]
+        let contexts: [AnyCodable]
         let additionalTermMap: [String: String]
-        
-        init(contexts: [Any?], additionalTermMap: [String: String] = [:]) {
+
+        init(contexts: [AnyCodable], additionalTermMap: [String: String] = [:]) {
             self.contexts = contexts
             self.additionalTermMap = additionalTermMap
         }
     }
 
-    private static let absoluteIriRegex = try! NSRegularExpression(pattern: #"^[a-zA-Z][a-zA-Z0-9+.-]*:.*"#)
-
-    private static let vcV1Terms: [String: String] = [
-        "VerifiableCredential": "https://www.w3.org/2018/credentials#VerifiableCredential",
-        "VerifiablePresentation": "https://www.w3.org/2018/credentials#VerifiablePresentation",
-        "CredentialStatusList2021": "https://www.w3.org/2018/credentials#CredentialStatusList2021",
-        "CredentialSubject": "https://www.w3.org/2018/credentials#CredentialSubject",
-        "issuer": "https://www.w3.org/2018/credentials#issuer",
-        "issuanceDate": "https://www.w3.org/2018/credentials#issuanceDate",
-        "expirationDate": "https://www.w3.org/2018/credentials#expirationDate"
-    ]
-
+    /// Expands the given types using the document's @context.
     public static func expandTypes(spec: ContextSpec, types: [String]) -> [String] {
-        let (termMap, prefixMap, vocab) = buildResolutionMaps(contexts: spec.contexts, additionalTermMap: spec.additionalTermMap)
+        // Build the input document: { "@context": [...], "type": [...] }
+        let contextValue: Any = spec.contexts.map { $0.value }
+        var document: [String: Any] = [
+            "@context": contextValue,
+            "type": types,
+        ]
 
-        return types.compactMap { raw in
-            let t = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !t.isEmpty else { return nil }
-
-            if matchesAbsoluteIri(t) {
-                return t
-            } else if t.contains(":"), let expanded = expandCurie(t, prefixMap: prefixMap) {
-                return expanded
+        // Optionally merge additional terms into the inline context.
+        if !spec.additionalTermMap.isEmpty {
+            var contexts = spec.contexts.map { $0.value }
+            var inlineContext = contexts.first as? [String: Any] ?? [:]
+            inlineContext.merge(spec.additionalTermMap) { $1 }
+            if contexts.isEmpty {
+                contexts.append(inlineContext)
             } else {
-                return fallbackTerm(t, termMap: termMap, vocab: vocab)
+                contexts[0] = inlineContext
             }
-        }.removingDuplicates()
+            document["@context"] = contexts
+        }
+
+        guard let expanded = try? JSONLD().expand(data: JSON.wrap(document)) else {
+            return []
+        }
+
+        return extractTypes(from: expanded)
     }
 
-    private static func buildResolutionMaps(contexts: [Any?], additionalTermMap: [String: String]) -> (termMap: [String: String], prefixMap: [String: String], vocab: String?) {
-        var termMap = vcV1Terms.merging(additionalTermMap) { $1 }
-        var prefixMap: [String: String] = [:]
-        var vocab: String?
+    /// Extracts the expanded `@type` values from the JSON-LD expansion result.
+    private static func extractTypes(from expanded: JSON) -> [String] {
+        // The expansion result is an array of node objects; read the first node's "@type".
+        guard let firstNode = expanded[0] else {
+            return []
+        }
 
-        for ctx in contexts {
-            if let ctxMap = ctx as? [String: Any] {
-                for (key, value) in ctxMap {
-                    guard let stringValue = value as? String else { continue }
+        guard let typeValue = firstNode["@type"] else {
+            return []
+        }
 
-                    if key == "@vocab" {
-                        vocab = stringValue
-                    } else if matchesAbsoluteIri(stringValue) {
-                        prefixMap[key] = ensureTrailingHashOrSlash(stringValue)
-                    } else {
-                        // treat as term mapping if absolute IRI
-                        if matchesAbsoluteIri(stringValue) {
-                            termMap[key] = stringValue
-                        }
-                    }
+        var result: [String] = []
+        switch typeValue.value {
+        case .string(let s):
+            result.append(s)
+        case .array(let items):
+            for item in items {
+                if case .string(let s) = item.value {
+                    result.append(s)
                 }
             }
+        default:
+            break
         }
 
-        return (termMap, prefixMap, vocab)
-    }
-
-    private static func expandCurie(_ curie: String, prefixMap: [String: String]) -> String? {
-        let parts = curie.split(separator: ":", maxSplits: 1).map(String.init)
-        guard parts.count == 2, let base = prefixMap[parts[0]] else { return nil }
-        return base + parts[1]
-    }
-
-    private static func fallbackTerm(_ term: String, termMap: [String: String], vocab: String?) -> String {
-        if let resolved = termMap[term] {
-            return resolved
-        } else if let vocabBase = vocab {
-            return ensureTrailingHashOrSlash(vocabBase) + term
-        } else {
-            return term
-        }
-    }
-
-    private static func ensureTrailingHashOrSlash(_ input: String) -> String {
-        return input.hasSuffix("#") || input.hasSuffix("/") ? input : input + "#"
-    }
-
-    private static func matchesAbsoluteIri(_ input: String) -> Bool {
-        let range = NSRange(location: 0, length: input.utf16.count)
-        return absoluteIriRegex.firstMatch(in: input, options: [], range: range) != nil
-    }
-}
-
-extension Array where Element: Hashable {
-    func removingDuplicates() -> [Element] {
-        var seen = Set<Element>()
-        return filter { seen.insert($0).inserted }
+        return Array(Set(result))
     }
 }
